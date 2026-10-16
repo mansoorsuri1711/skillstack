@@ -1,112 +1,226 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   AlertTriangle,
   Bot,
-  BrainCircuit,
   CheckCircle2,
-  CheckSquare,
+  ChevronDown,
   ChevronRight,
-  Code2,
-  Copy,
+  Download,
   ExternalLink,
-  Flame,
   Globe,
-  LineChart,
-  Lock,
-  RefreshCw,
+  Info,
+  Radar,
   Search,
-  Shield,
-  ShieldAlert,
-  TrendingUp,
-  Zap,
 } from "lucide-react";
-import Link from "next/link";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { DataForSeoBanner } from "@/components/dashboard/ProjectDomainBanner";
-import { SearchPanel, SearchToolbar, TabBar, TabPanel } from "@/components/dashboard/SearchToolbar";
 import {
   buttonGhostClass,
   buttonPrimaryClass,
   DashboardAlert,
   DashboardCard,
   EmptyBlock,
+  inputClass,
   LoadingBlock,
   MetricGrid,
   MetricTile,
   PageStack,
-  ResultsPanel,
 } from "@/components/dashboard/ui";
 import { useDashboardProject } from "@/components/dashboard/useDashboardProject";
+import {
+  getIssueDescriptor,
+  ISSUE_SEVERITY_ORDER,
+  type IssueSeverity,
+} from "@/lib/audit/crawl/audit-issues";
 import type {
-  AiSiteAuditDiagnosticReport,
-  RankingRootCause,
-} from "@/lib/audit/ai-diagnostic-types";
+  CrawlAuditReport,
+  DetectedCrawlIssue,
+} from "@/lib/audit/crawl/types";
+import type { AiSiteAuditDiagnosticReport } from "@/lib/audit/ai-diagnostic-types";
 
-type AuditTab = "verdict" | "serp" | "aeo" | "technical" | "gsc" | "action-plan";
+type Mode = "crawl" | "ai";
+type ResultTab = "issues" | "pages";
 
-const severityColors: Record<string, string> = {
-  critical: "text-red-400 bg-red-400/10 border-red-400/20",
-  high: "text-orange-400 bg-orange-400/10 border-orange-400/20",
-  medium: "text-yellow-400 bg-yellow-400/10 border-yellow-400/20",
-  low: "text-slate-400 bg-slate-400/10 border-slate-400/20",
+const severityStyles: Record<IssueSeverity, string> = {
+  critical: "border-l-red-500/70 bg-red-500/5",
+  warning: "border-l-amber-400/70 bg-amber-400/5",
+  info: "border-l-sky-400/70 bg-sky-400/5",
 };
 
-function SeverityBadge({ severity }: { severity: string }) {
-  return (
-    <span
-      className={`inline-flex rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-        severityColors[severity.toLowerCase()] ?? severityColors.low
-      }`}
-    >
-      {severity}
-    </span>
+const severityBadge: Record<IssueSeverity, string> = {
+  critical: "bg-red-500/15 text-red-300 border-red-500/30",
+  warning: "bg-amber-500/15 text-amber-200 border-amber-500/30",
+  info: "bg-sky-500/15 text-sky-200 border-sky-500/30",
+};
+
+type IssueGroup = {
+  issueType: string;
+  severity: IssueSeverity;
+  title: string;
+  explanation: string;
+  howToFix: string;
+  issues: DetectedCrawlIssue[];
+};
+
+function groupIssues(issues: DetectedCrawlIssue[]): IssueGroup[] {
+  const map = new Map<string, IssueGroup>();
+  for (const issue of issues) {
+    let group = map.get(issue.issueType);
+    if (!group) {
+      const descriptor = getIssueDescriptor(issue.issueType);
+      group = {
+        issueType: issue.issueType,
+        severity: issue.severity,
+        title: descriptor?.title ?? issue.title,
+        explanation: descriptor?.explanation ?? "",
+        howToFix: descriptor?.howToFix ?? "",
+        issues: [],
+      };
+      map.set(issue.issueType, group);
+    }
+    group.issues.push(issue);
+  }
+
+  return Array.from(map.values()).sort(
+    (a, b) =>
+      ISSUE_SEVERITY_ORDER[a.severity] - ISSUE_SEVERITY_ORDER[b.severity] ||
+      b.issues.length - a.issues.length,
   );
 }
 
-function CopyCodeBlock({ code, title, description }: { code: string; title: string; description: string }) {
-  const [copied, setCopied] = useState(false);
+function formatDetails(details?: Record<string, unknown>) {
+  if (!details) return null;
+  const parts = Object.entries(details)
+    .filter(([, v]) => v != null && v !== "")
+    .map(([k, v]) => {
+      const value = Array.isArray(v) ? v.join(" → ") : String(v);
+      const truncated =
+        value.length > 180 ? `${value.slice(0, 180)}…` : value;
+      return `${k}: ${truncated}`;
+    });
+  return parts.length ? parts.join(" · ") : null;
+}
 
-  function copyToClipboard() {
-    void navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
+function IssueGroupRow({ group }: { group: IssueGroup }) {
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className="rounded-xl border border-line bg-bg-soft/80 p-4 space-y-2">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <p className="text-sm font-medium text-snow flex items-center gap-2">
-            <Code2 className="h-4 w-4 text-accent" />
-            {title}
-          </p>
-          <p className="text-xs text-ink-muted">{description}</p>
+    <div
+      className={`overflow-hidden rounded-xl border border-line border-l-4 ${severityStyles[group.severity]}`}
+    >
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left transition hover:bg-white/[0.02]"
+        aria-expanded={open}
+      >
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-medium text-snow">{group.title}</p>
+            <span
+              className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${severityBadge[group.severity]}`}
+            >
+              {group.severity}
+            </span>
+          </div>
         </div>
-        <button
-          type="button"
-          onClick={copyToClipboard}
-          className={`${buttonGhostClass} !py-1 !px-2.5 text-xs text-snow`}
-        >
-          {copied ? <CheckCircle2 className="h-3.5 w-3.5 text-accent" /> : <Copy className="h-3.5 w-3.5" />}
-          {copied ? "Copied!" : "Copy Code"}
-        </button>
-      </div>
-      <pre className="overflow-x-auto rounded-lg bg-bg p-3 text-xs font-mono text-[#58a6ff] leading-relaxed border border-line/60 max-h-64">
-        {code}
-      </pre>
+        <div className="flex shrink-0 items-center gap-2 text-sm text-ink-muted">
+          <span>
+            {group.issues.length} {group.issues.length === 1 ? "page" : "pages"}
+          </span>
+          {open ? (
+            <ChevronDown className="h-4 w-4" />
+          ) : (
+            <ChevronRight className="h-4 w-4" />
+          )}
+        </div>
+      </button>
+
+      {open ? (
+        <div className="space-y-3 border-t border-line/70 px-4 py-4">
+          {group.explanation ? (
+            <p className="text-sm leading-relaxed text-ink-muted">
+              {group.explanation}
+            </p>
+          ) : null}
+          {group.howToFix ? (
+            <p className="text-sm leading-relaxed text-snow/90">
+              <span className="font-semibold text-accent">How to fix: </span>
+              {group.howToFix}
+            </p>
+          ) : null}
+          <ul className="space-y-2">
+            {group.issues.slice(0, 100).map((issue, idx) => {
+              const details = formatDetails(issue.details);
+              return (
+                <li
+                  key={`${issue.pageUrl}-${idx}`}
+                  className="rounded-lg border border-line/70 bg-bg/60 px-3 py-2.5"
+                >
+                  <a
+                    href={issue.pageUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 break-all text-sm font-medium text-accent hover:underline"
+                  >
+                    {issue.pageUrl}
+                    <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+                  </a>
+                  {details ? (
+                    <p className="mt-1 text-xs leading-relaxed text-ink-muted">
+                      {details}
+                    </p>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ) : null}
     </div>
   );
 }
 
+function exportIssuesCsv(report: CrawlAuditReport) {
+  const rows = [
+    ["issue_type", "severity", "title", "page_url", "details"],
+    ...report.issues.map((issue) => [
+      issue.issueType,
+      issue.severity,
+      issue.title,
+      issue.pageUrl,
+      JSON.stringify(issue.details ?? {}),
+    ]),
+  ];
+  const csv = rows
+    .map((row) =>
+      row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","),
+    )
+    .join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${report.domain}-site-audit-issues.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function SiteAuditPage() {
-  const { project, loading: projectLoading, dataForSeoConfigured } = useDashboardProject();
+  const { project, loading: projectLoading, dataForSeoConfigured } =
+    useDashboardProject();
+  const [mode, setMode] = useState<Mode>("crawl");
   const [domainInput, setDomainInput] = useState("");
+  const [maxPages, setMaxPages] = useState(30);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [report, setReport] = useState<AiSiteAuditDiagnosticReport | null>(null);
-  const [activeTab, setActiveTab] = useState<AuditTab>("verdict");
+  const [crawlReport, setCrawlReport] = useState<CrawlAuditReport | null>(null);
+  const [aiReport, setAiReport] = useState<AiSiteAuditDiagnosticReport | null>(
+    null,
+  );
+  const [resultTab, setResultTab] = useState<ResultTab>("issues");
 
   useEffect(() => {
     if (project?.domain && project.domain !== "example.com" && !domainInput) {
@@ -114,13 +228,50 @@ export default function SiteAuditPage() {
     }
   }, [project?.domain, domainInput]);
 
-  async function runAudit() {
+  const groups = useMemo(
+    () => (crawlReport ? groupIssues(crawlReport.issues) : []),
+    [crawlReport],
+  );
+
+  const severityCounts = useMemo(() => {
+    const counts = { critical: 0, warning: 0, info: 0 };
+    for (const issue of crawlReport?.issues ?? []) {
+      counts[issue.severity] += 1;
+    }
+    return counts;
+  }, [crawlReport]);
+
+  async function runCrawlAudit() {
     const target = domainInput.trim() || project?.domain || "";
     if (!target || target === "example.com") {
-      setError("Please enter a domain to run the AI site audit.");
+      setError("Enter a domain to run the site audit.");
       return;
     }
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/dashboard/audit/crawl", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: target, maxPages }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Audit failed");
+      setCrawlReport(data.report);
+      setResultTab("issues");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Audit failed to run.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
+  async function runAiAudit() {
+    const target = domainInput.trim() || project?.domain || "";
+    if (!target || target === "example.com") {
+      setError("Enter a domain to run the AI diagnosis.");
+      return;
+    }
     setLoading(true);
     setError("");
     try {
@@ -130,11 +281,10 @@ export default function SiteAuditPage() {
         body: JSON.stringify({ domain: target }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Audit failed");
-      setReport(data.report);
-      setActiveTab("verdict");
+      if (!res.ok) throw new Error(data.message || "AI audit failed");
+      setAiReport(data.report);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Audit failed to run.");
+      setError(err instanceof Error ? err.message : "AI audit failed.");
     } finally {
       setLoading(false);
     }
@@ -142,508 +292,291 @@ export default function SiteAuditPage() {
 
   return (
     <DashboardShell
-      title="AI Site Audit & Diagnosis"
-      description="Deep technical SEO, AEO/GEO knowledge schemas, Core Web Vitals, and AI analysis of why your site is not ranking."
+      title="Site Audit"
+      description="Crawl your site for on-page SEO issues — titles, meta, headings, thin content, and more."
     >
       <PageStack>
         <DataForSeoBanner configured={dataForSeoConfigured} />
         {error ? <DashboardAlert variant="error">{error}</DashboardAlert> : null}
 
-        <SearchPanel
-          title="Audit Target Domain"
-          description="Enter your website domain to execute a full AI diagnostic crawl, AEO schema verification, and SERP root-cause analysis."
-        >
-          <SearchToolbar
-            value={domainInput}
-            onChange={setDomainInput}
-            onSubmit={() => void runAudit()}
-            placeholder="example.com"
-            loading={loading}
-            submitLabel={loading ? "Analyzing..." : "Run AI Deep Audit"}
-          />
-        </SearchPanel>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setMode("crawl")}
+            className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+              mode === "crawl"
+                ? "bg-accent text-[#010409]"
+                : "border border-line text-ink-muted hover:text-snow"
+            }`}
+          >
+            <Radar className="h-3.5 w-3.5" /> Crawl audit
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("ai")}
+            className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+              mode === "ai"
+                ? "bg-accent text-[#010409]"
+                : "border border-line text-ink-muted hover:text-snow"
+            }`}
+          >
+            <Bot className="h-3.5 w-3.5" /> AI diagnosis
+          </button>
+        </div>
+
+        <DashboardCard>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <label className="min-w-0 flex-1 text-xs font-medium text-ink-muted">
+              Domain / URL
+              <div className="relative mt-1.5">
+                <Globe className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted" />
+                <input
+                  className={`${inputClass} pl-9`}
+                  value={domainInput}
+                  onChange={(e) => setDomainInput(e.target.value)}
+                  placeholder="example.com"
+                  disabled={loading || projectLoading}
+                />
+              </div>
+            </label>
+            {mode === "crawl" ? (
+              <label className="w-full text-xs font-medium text-ink-muted sm:w-36">
+                Max pages
+                <select
+                  className={`${inputClass} mt-1.5`}
+                  value={maxPages}
+                  onChange={(e) => setMaxPages(Number(e.target.value))}
+                  disabled={loading}
+                >
+                  {[10, 20, 30, 40, 50].map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+            <button
+              type="button"
+              onClick={() =>
+                void (mode === "crawl" ? runCrawlAudit() : runAiAudit())
+              }
+              disabled={loading || projectLoading}
+              className={buttonPrimaryClass}
+            >
+              <Search className="h-4 w-4" />
+              {loading
+                ? mode === "crawl"
+                  ? "Crawling…"
+                  : "Diagnosing…"
+                : mode === "crawl"
+                  ? "Run site audit"
+                  : "Run AI diagnosis"}
+            </button>
+          </div>
+          <p className="mt-3 text-xs text-ink-muted">
+            {mode === "crawl"
+              ? "Crawls internal pages and groups issues like title length, meta descriptions, heading skips, and duplicates — OpenSEO-style."
+              : "AI diagnosis still available for ranking root-cause analysis using DataForSEO signals."}
+          </p>
+        </DashboardCard>
 
         {loading ? (
-          <LoadingBlock label="Executing multi-layer AI crawl — analyzing robots.txt, JSON-LD Schemas, HTTP security, Core Web Vitals, and SERP ranking signals..." />
-        ) : null}
-
-        {!loading && !report ? (
-          <EmptyBlock
-            icon={BrainCircuit}
-            title="Start an AI Site Diagnostic"
-            description="Our AI system analyzes your technical infrastructure, schema markup, Google search performance, and reasons behind missing #1 Google rankings."
-            action={
-              <button
-                type="button"
-                onClick={() => void runAudit()}
-                className={buttonPrimaryClass}
-              >
-                <Search className="h-4 w-4" /> Run Deep Audit for {domainInput || "your domain"}
-              </button>
+          <LoadingBlock
+            label={
+              mode === "crawl"
+                ? "Crawling pages and checking on-page SEO…"
+                : "Running AI site diagnosis…"
             }
           />
         ) : null}
 
-        {report && !loading ? (
+        {mode === "crawl" && crawlReport ? (
           <>
-            {/* Top Score Cards */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-              <div className="rounded-2xl border border-accent/30 bg-gradient-to-br from-accent/[0.12] to-transparent p-3.5 sm:p-5">
-                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] text-accent">
-                  Overall Health Score
-                </p>
-                <div className="mt-1.5 sm:mt-2 flex items-baseline gap-1.5 sm:gap-2">
-                  <span className="font-display text-2xl sm:text-4xl font-bold text-snow">
-                    {report.overallScore}
-                  </span>
-                  <span className="text-xs sm:text-sm font-medium text-ink-muted">/ 100</span>
+            <DashboardCard>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="font-display text-xl font-semibold text-snow">
+                      {crawlReport.domain}
+                    </h2>
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-300">
+                      <CheckCircle2 className="h-3.5 w-3.5" /> Done
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-ink-muted">
+                    Site audit · Started{" "}
+                    {new Date(crawlReport.preparedAt).toLocaleString()}
+                  </p>
                 </div>
-                <p className="mt-1 sm:mt-2 text-[11px] sm:text-xs text-ink-muted truncate">
-                  {report.overallScore >= 75 ? "Healthy foundation" : "High-priority fixes"}
-                </p>
+                <button
+                  type="button"
+                  onClick={() => exportIssuesCsv(crawlReport)}
+                  className={buttonGhostClass}
+                >
+                  <Download className="h-4 w-4" /> Export
+                </button>
               </div>
 
-              <div className="rounded-2xl border border-line bg-bg-elevated p-3.5 sm:p-5">
-                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
-                  AEO & GEO Readiness
-                </p>
-                <div className="mt-1.5 sm:mt-2 flex items-baseline gap-2">
-                  <span className="font-display text-2xl sm:text-3xl font-bold text-snow">
-                    {report.aeoGeoScore}%
-                  </span>
-                </div>
-                <p className="mt-1 sm:mt-2 text-[11px] sm:text-xs text-ink-muted truncate">AI search visibility</p>
+              <div className="mt-4">
+                <MetricGrid>
+                  <MetricTile
+                    label="Pages crawled"
+                    value={String(crawlReport.pagesCrawled)}
+                  />
+                  <MetricTile
+                    label="Issues found"
+                    value={String(crawlReport.issuesFound)}
+                    hint={`Critical ${severityCounts.critical} · Warning ${severityCounts.warning} · Info ${severityCounts.info}`}
+                  />
+                  <MetricTile
+                    label="Avg response"
+                    value={`${crawlReport.averageResponseTimeMs}ms`}
+                  />
+                </MetricGrid>
               </div>
+            </DashboardCard>
 
-              <div className="rounded-2xl border border-line bg-bg-elevated p-3.5 sm:p-5">
-                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
-                  SEO & Crawl Health
-                </p>
-                <div className="mt-1.5 sm:mt-2 flex items-baseline gap-2">
-                  <span className="font-display text-2xl sm:text-3xl font-bold text-snow">
-                    {report.seoHealthScore}%
-                  </span>
-                </div>
-                <p className="mt-1 sm:mt-2 text-[11px] sm:text-xs text-ink-muted truncate">Indexation & signals</p>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setResultTab("issues")}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                    resultTab === "issues"
+                      ? "bg-accent text-[#010409]"
+                      : "text-ink-muted hover:text-snow"
+                  }`}
+                >
+                  Issues ({crawlReport.issuesFound})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setResultTab("pages")}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                    resultTab === "pages"
+                      ? "bg-accent text-[#010409]"
+                      : "text-ink-muted hover:text-snow"
+                  }`}
+                >
+                  Pages ({crawlReport.pagesCrawled})
+                </button>
               </div>
-
-              <div className="rounded-2xl border border-line bg-bg-elevated p-3.5 sm:p-5">
-                <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">
-                  Security Grade
-                </p>
-                <div className="mt-1.5 sm:mt-2 flex items-baseline gap-2">
-                  <span className="font-display text-2xl sm:text-3xl font-bold text-snow">
-                    {report.technicalSecurityScore >= 90 ? "A+" : report.technicalSecurityScore >= 75 ? "B" : "C-"}
-                  </span>
-                </div>
-                <p className="mt-1 sm:mt-2 text-[11px] sm:text-xs text-ink-muted truncate">HTTP headers & SSL</p>
+              <div className="flex flex-wrap gap-2 text-[11px] text-ink-muted">
+                <span className="inline-flex items-center gap-1">
+                  <AlertTriangle className="h-3.5 w-3.5 text-red-300" />{" "}
+                  {severityCounts.critical} critical
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <AlertTriangle className="h-3.5 w-3.5 text-amber-300" />{" "}
+                  {severityCounts.warning} warning
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <Info className="h-3.5 w-3.5 text-sky-300" />{" "}
+                  {severityCounts.info} info
+                </span>
               </div>
             </div>
 
-            {/* Executive Summary Banner */}
-            <div className="rounded-2xl border border-line bg-bg-elevated p-5 md:p-6 space-y-3">
-              <div className="flex items-center gap-2 text-accent font-mono text-xs uppercase tracking-wider">
-                <BrainCircuit className="h-4 w-4" />
-                Diagnostic Summary & Root Causes for {report.domain}
-              </div>
-              <h3 className="font-display text-lg font-semibold text-snow">
-                {report.executiveSummary.headline}
-              </h3>
-              <p className="text-sm text-ink-muted leading-relaxed">
-                {report.executiveSummary.verdict}
-              </p>
-              <div className="pt-2 flex flex-wrap gap-4 text-xs">
-                <div className="rounded-lg border border-line bg-bg px-3 py-1.5">
-                  <span className="text-ink-muted">Top Blocker: </span>
-                  <span className="font-medium text-red-400">{report.executiveSummary.topRankingBlocker}</span>
+            {resultTab === "issues" ? (
+              groups.length === 0 ? (
+                <EmptyBlock
+                  icon={CheckCircle2}
+                  title="No issues found"
+                  description="Nice — the crawled pages passed the on-page checks we run."
+                />
+              ) : (
+                <div className="space-y-3">
+                  {groups.map((group) => (
+                    <IssueGroupRow key={group.issueType} group={group} />
+                  ))}
                 </div>
-                <div className="rounded-lg border border-line bg-bg px-3 py-1.5">
-                  <span className="text-ink-muted">Potential Gain: </span>
-                  <span className="font-medium text-accent">{report.executiveSummary.estimatedGrowthPotential}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Tabbed Report Details */}
-            <ResultsPanel title="Detailed Diagnostic Analysis" description="Explore deep findings across 6 comprehensive SEO & AEO categories.">
-              <TabBar
-                tabs={[
-                  { id: "verdict", label: "🧠 Why Not Ranking & Root Causes" },
-                  { id: "serp", label: "🔍 SERP & Striking Keywords" },
-                  { id: "aeo", label: "🤖 AEO, GEO & Schemas" },
-                  { id: "technical", label: "🛠️ Robots.txt & Security" },
-                  { id: "gsc", label: "📈 GSC & Google Updates" },
-                  { id: "action-plan", label: "🚀 30-Day Plan & Code Fixes" },
-                ]}
-                active={activeTab}
-                onChange={(t) => setActiveTab(t as AuditTab)}
-              />
-
-              <TabPanel>
-                {/* 1. WHY NOT RANKING & ROOT CAUSES */}
-                {activeTab === "verdict" ? (
-                  <div className="space-y-4">
-                    <p className="text-xs text-ink-muted">
-                      Detailed root causes identified by SkillStack AI explaining why this domain is losing rankings or failing to reach position #1 on Google.
-                    </p>
-                    <div className="space-y-3">
-                      {report.rootCauses.map((rc, idx) => (
-                        <div
-                          key={idx}
-                          className="rounded-xl border border-line bg-bg-soft/60 p-4 space-y-2 hover:border-line transition"
+              )
+            ) : (
+              <DashboardCard flush className="overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="min-w-[720px] w-full text-left text-sm">
+                    <thead className="border-b border-line bg-bg-elevated/80 text-[11px] uppercase tracking-wide text-ink-muted">
+                      <tr>
+                        <th className="px-4 py-3">URL</th>
+                        <th className="px-4 py-3">Status</th>
+                        <th className="px-4 py-3">Title</th>
+                        <th className="px-4 py-3">Time</th>
+                        <th className="px-4 py-3">Words</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {crawlReport.pages.map((page) => (
+                        <tr
+                          key={page.url}
+                          className="border-b border-line/60 last:border-0"
                         >
-                          <div className="flex flex-wrap items-center justify-between gap-2">
-                            <div className="flex items-center gap-2">
-                              <SeverityBadge severity={rc.severity} />
-                              <span className="rounded bg-white/10 px-2 py-0.5 text-[11px] font-medium text-ink-muted">
-                                {rc.category}
-                              </span>
-                            </div>
-                            <span className="text-xs text-ink-muted">Affects: {rc.affectedAspect}</span>
-                          </div>
-                          <h4 className="text-sm font-semibold text-snow">{rc.headline}</h4>
-                          <p className="text-xs text-ink-muted leading-relaxed">
-                            <strong className="text-slate-300">Why Google suppresses this: </strong>
-                            {rc.whyGooglePenalizes}
-                          </p>
-                          <div className="rounded-lg border border-accent/20 bg-accent/[0.04] p-3 text-xs text-snow flex items-start gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-accent shrink-0 mt-0.5" />
-                            <div>
-                              <strong className="text-accent">Actionable Fix: </strong>
-                              {rc.actionableFix}
-                              <div className="mt-1 text-ink-muted font-medium">Expected Impact: {rc.impactOnRankings}</div>
-                            </div>
-                          </div>
-                        </div>
+                          <td className="max-w-[320px] truncate px-4 py-3">
+                            <a
+                              href={page.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-accent hover:underline"
+                            >
+                              {page.url}
+                            </a>
+                          </td>
+                          <td className="px-4 py-3 tabular-nums text-ink-muted">
+                            {page.statusCode || "—"}
+                          </td>
+                          <td className="max-w-[240px] truncate px-4 py-3 text-snow">
+                            {page.title || "—"}
+                          </td>
+                          <td className="px-4 py-3 tabular-nums text-ink-muted">
+                            {page.responseTimeMs}ms
+                          </td>
+                          <td className="px-4 py-3 tabular-nums text-ink-muted">
+                            {page.wordCount}
+                          </td>
+                        </tr>
                       ))}
-                    </div>
-                  </div>
-                ) : null}
-
-                {/* 2. SERP & STRIKING DISTANCE KEYWORDS */}
-                {activeTab === "serp" ? (
-                  <div className="space-y-5">
-                    <div className="rounded-xl border border-line bg-bg-soft/60 p-4 space-y-1">
-                      <h4 className="text-sm font-semibold text-snow flex items-center gap-2">
-                        <TrendingUp className="h-4 w-4 text-accent" />
-                        Striking Distance Keywords (Position #4–#20)
-                      </h4>
-                      <p className="text-xs text-ink-muted">
-                        These keywords already have ranking traction on Google. Applying targeted AEO and FAQ additions can push them into high-traffic Top-3 positions.
-                      </p>
-                    </div>
-
-                    {report.strikingDistanceKeywords.length === 0 ? (
-                      <div className="py-8 text-center text-xs text-ink-muted">
-                        No immediate striking distance keywords detected. Focus on initial content clustering and schema deployment.
-                      </div>
-                    ) : (
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-left text-xs min-w-[650px]">
-                          <thead>
-                            <tr className="border-b border-line text-ink-muted">
-                              <th className="py-2.5 px-3">Keyword</th>
-                              <th className="py-2.5 px-3 text-center">Current Rank</th>
-                              <th className="py-2.5 px-3 text-center">Search Volume</th>
-                              <th className="py-2.5 px-3 text-center">CPC</th>
-                              <th className="py-2.5 px-3 text-center">Est. Traffic Gain</th>
-                              <th className="py-2.5 px-3">Missing Ranking Factor</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-line/60">
-                            {report.strikingDistanceKeywords.map((k, i) => (
-                              <tr key={i} className="hover:bg-white/[0.01]">
-                                <td className="py-3 px-3 font-medium text-snow">{k.keyword}</td>
-                                <td className="py-3 px-3 text-center font-bold text-accent">#{k.currentRank}</td>
-                                <td className="py-3 px-3 text-center tabular-nums text-ink-muted">{k.searchVolume.toLocaleString()}</td>
-                                <td className="py-3 px-3 text-center tabular-nums text-ink-muted">${k.cpc.toFixed(2)}</td>
-                                <td className="py-3 px-3 text-center tabular-nums text-emerald-400 font-medium">+{k.potentialTrafficGain}/mo</td>
-                                <td className="py-3 px-3 text-ink-muted">{k.missingSignal}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
-                ) : null}
-
-                {/* 3. AEO, GEO & SCHEMAS */}
-                {activeTab === "aeo" ? (
-                  <div className="space-y-6">
-                    <div className="space-y-3">
-                      <h4 className="text-sm font-semibold text-snow flex items-center gap-2">
-                        <Bot className="h-4 w-4 text-accent" />
-                        AEO & Generative Engine Factors
-                      </h4>
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {report.aeoGeoFactors.map((f, i) => (
-                          <div key={i} className="rounded-xl border border-line bg-bg-soft/60 p-4 space-y-2">
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium text-snow text-xs">{f.name}</span>
-                              <span
-                                className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase ${
-                                  f.status === "pass"
-                                    ? "bg-emerald-500/20 text-emerald-400"
-                                    : f.status === "warning"
-                                    ? "bg-amber-500/20 text-amber-400"
-                                    : "bg-red-500/20 text-red-400"
-                                }`}
-                              >
-                                {f.status} ({f.score}%)
-                              </span>
-                            </div>
-                            <p className="text-xs text-ink-muted">{f.details}</p>
-                            <p className="text-xs text-accent font-medium">💡 Fix: {f.recommendation}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-3 pt-2">
-                      <h4 className="text-sm font-semibold text-snow">Schema.org Structured Data Audit</h4>
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-left text-xs min-w-[600px]">
-                          <thead>
-                            <tr className="border-b border-line text-ink-muted">
-                              <th className="py-2.5 px-3">Schema Type</th>
-                              <th className="py-2.5 px-3 text-center">Status</th>
-                              <th className="py-2.5 px-3">Purpose & Search Benefit</th>
-                              <th className="py-2.5 px-3 text-center">Impact</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-line/60">
-                            {report.schemaAudit.schemaList.map((s, idx) => (
-                              <tr key={idx}>
-                                <td className="py-3 px-3 font-mono font-medium text-snow">{s.type}</td>
-                                <td className="py-3 px-3 text-center">
-                                  {s.status === "present" ? (
-                                    <span className="rounded bg-emerald-500/20 text-emerald-400 px-2 py-0.5 text-[10px] font-bold">
-                                      DETECTED
-                                    </span>
-                                  ) : (
-                                    <span className="rounded bg-red-500/20 text-red-400 px-2 py-0.5 text-[10px] font-bold">
-                                      MISSING
-                                    </span>
-                                  )}
-                                </td>
-                                <td className="py-3 px-3 text-ink-muted">{s.description}</td>
-                                <td className="py-3 px-3 text-center">
-                                  <SeverityBadge severity={s.impact} />
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
-
-                {/* 4. TECHNICAL & ROBOTS.TXT */}
-                {activeTab === "technical" ? (
-                  <div className="space-y-6">
-                    <div className="rounded-xl border border-line bg-bg-soft/60 p-4 space-y-3">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <h4 className="text-sm font-semibold text-snow flex items-center gap-2">
-                          <Globe className="h-4 w-4 text-accent" />
-                          robots.txt Health & AI Crawler Directives
-                        </h4>
-                        <span className="text-xs text-ink-muted font-mono">{report.robotsTxt.url}</span>
-                      </div>
-                      <div className="grid gap-3 sm:grid-cols-4 pt-1">
-                        <div className="rounded-lg border border-line bg-bg p-3 text-center">
-                          <p className="text-[10px] uppercase text-ink-muted">GPTBot</p>
-                          <p className={`mt-1 font-bold text-xs ${report.robotsTxt.aiBotDirectives.gptBot === "allowed" ? "text-emerald-400" : "text-amber-400"}`}>
-                            {report.robotsTxt.aiBotDirectives.gptBot.toUpperCase()}
-                          </p>
-                        </div>
-                        <div className="rounded-lg border border-line bg-bg p-3 text-center">
-                          <p className="text-[10px] uppercase text-ink-muted">Google-Extended</p>
-                          <p className={`mt-1 font-bold text-xs ${report.robotsTxt.aiBotDirectives.googleOther === "allowed" ? "text-emerald-400" : "text-amber-400"}`}>
-                            {report.robotsTxt.aiBotDirectives.googleOther.toUpperCase()}
-                          </p>
-                        </div>
-                        <div className="rounded-lg border border-line bg-bg p-3 text-center">
-                          <p className="text-[10px] uppercase text-ink-muted">ClaudeBot</p>
-                          <p className={`mt-1 font-bold text-xs ${report.robotsTxt.aiBotDirectives.claudeBot === "allowed" ? "text-emerald-400" : "text-amber-400"}`}>
-                            {report.robotsTxt.aiBotDirectives.claudeBot.toUpperCase()}
-                          </p>
-                        </div>
-                        <div className="rounded-lg border border-line bg-bg p-3 text-center">
-                          <p className="text-[10px] uppercase text-ink-muted">Sitemap Reference</p>
-                          <p className={`mt-1 font-bold text-xs ${report.robotsTxt.hasSitemap ? "text-emerald-400" : "text-red-400"}`}>
-                            {report.robotsTxt.hasSitemap ? "DECLARED" : "MISSING"}
-                          </p>
-                        </div>
-                      </div>
-                      {report.robotsTxt.issues.length > 0 ? (
-                        <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-xs text-red-200 space-y-1">
-                          {report.robotsTxt.issues.map((iss, i) => (
-                            <p key={i}>⚠️ {iss}</p>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-
-                    <div className="rounded-xl border border-line bg-bg-soft/60 p-4 space-y-3">
-                      <h4 className="text-sm font-semibold text-snow flex items-center gap-2">
-                        <Lock className="h-4 w-4 text-accent" />
-                        HTTP Security Headers & SSL Grade
-                      </h4>
-                      <p className="text-xs text-ink-muted">
-                        Search engines require secure transport to trust website properties for top tier search positions.
-                      </p>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-ink-muted">Security Score:</span>
-                        <span className="font-bold text-snow">{report.technicalSecurityScore}/100</span>
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
-
-                {/* 5. GSC & GOOGLE UPDATES */}
-                {activeTab === "gsc" ? (
-                  <div className="space-y-6">
-                    {report.gscData.connected ? (
-                      <div className="rounded-xl border border-accent/20 bg-accent/[0.04] p-5 space-y-4">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-sm font-semibold text-snow flex items-center gap-2">
-                            <LineChart className="h-4 w-4 text-accent" />
-                            Google Search Console Insights Connected ({report.gscData.siteUrl})
-                          </h4>
-                          <span className="rounded bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 font-bold">LIVE SYNC</span>
-                        </div>
-                        <div className="grid gap-3 sm:grid-cols-4">
-                          <div className="rounded-lg border border-line bg-bg p-3">
-                            <p className="text-[10px] text-ink-muted">Clicks (Last 28 Days)</p>
-                            <p className="mt-1 text-lg font-bold text-snow">{(report.gscData.clicksLast28Days ?? 0).toLocaleString()}</p>
-                          </div>
-                          <div className="rounded-lg border border-line bg-bg p-3">
-                            <p className="text-[10px] text-ink-muted">Impressions</p>
-                            <p className="mt-1 text-lg font-bold text-snow">{(report.gscData.impressionsLast28Days ?? 0).toLocaleString()}</p>
-                          </div>
-                          <div className="rounded-lg border border-line bg-bg p-3">
-                            <p className="text-[10px] text-ink-muted">Average CTR</p>
-                            <p className="mt-1 text-lg font-bold text-accent">{report.gscData.averageCtr ?? 0}%</p>
-                          </div>
-                          <div className="rounded-lg border border-line bg-bg p-3">
-                            <p className="text-[10px] text-ink-muted">Average Position</p>
-                            <p className="mt-1 text-lg font-bold text-snow">#{report.gscData.averagePosition ?? 0}</p>
-                          </div>
-                        </div>
-
-                        {report.gscData.highImpressionLowCtrQueries && report.gscData.highImpressionLowCtrQueries.length > 0 ? (
-                          <div className="space-y-2 pt-2">
-                            <p className="text-xs font-semibold text-snow">High Impression / Low CTR Anomaly Opportunities:</p>
-                            <div className="space-y-2">
-                              {report.gscData.highImpressionLowCtrQueries.map((q, i) => (
-                                <div key={i} className="rounded-lg border border-line bg-bg p-3 text-xs flex flex-wrap items-center justify-between gap-2">
-                                  <div>
-                                    <span className="font-semibold text-snow">"{q.query}"</span>
-                                    <span className="text-ink-muted ml-2">({q.impressions.toLocaleString()} impr, {q.ctr}% CTR, Pos #{q.position})</span>
-                                  </div>
-                                  <span className="text-accent text-[11px] font-medium">{q.opportunity}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ) : null}
-                      </div>
-                    ) : (
-                      <div className="rounded-xl border border-line bg-bg-soft/60 p-5 space-y-3">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="text-sm font-semibold text-snow">Google Search Console Not Connected</h4>
-                            <p className="text-xs text-ink-muted mt-1">
-                              Link your Search Console account to unlock automated click-loss analysis and real search query CTR opportunities.
-                            </p>
-                          </div>
-                          <Link href="/dashboard/gsc-insights-tool" className={buttonPrimaryClass}>
-                            Connect GSC <ExternalLink className="h-3.5 w-3.5" />
-                          </Link>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Google Algorithm Updates Timeline */}
-                    <div className="space-y-3">
-                      <h4 className="text-sm font-semibold text-snow flex items-center gap-2">
-                        <Flame className="h-4 w-4 text-orange-400" />
-                        Google Algorithm & Core Update Chronology
-                      </h4>
-                      <div className="space-y-3">
-                        {report.googleUpdateImpacts.map((up, i) => (
-                          <div key={i} className="rounded-xl border border-line bg-bg-soft/60 p-4 space-y-2">
-                            <div className="flex flex-wrap items-center justify-between gap-2">
-                              <span className="font-semibold text-snow text-xs">{up.updateName}</span>
-                              <span className="text-xs text-ink-muted font-mono">{up.date}</span>
-                            </div>
-                            <p className="text-xs text-ink-muted leading-relaxed">{up.explanation}</p>
-                            <div className="rounded-lg border border-line bg-bg p-2.5 text-xs text-snow">
-                              <span className="text-accent font-medium">🛡️ Recommended Protection: </span>
-                              {up.remedy}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
-
-                {/* 6. 30-DAY RECOVERY PLAN & CODE SNIPPETS */}
-                {activeTab === "action-plan" ? (
-                  <div className="space-y-6">
-                    <div className="space-y-3">
-                      <h4 className="text-sm font-semibold text-snow flex items-center gap-2">
-                        <CheckSquare className="h-4 w-4 text-accent" />
-                        30-Day Step-by-Step Recovery & Growth Roadmap
-                      </h4>
-                      <div className="space-y-3">
-                        {report.recoveryPlan.map((step, idx) => (
-                          <div
-                            key={idx}
-                            className="rounded-xl border border-line bg-bg-soft/60 p-4 space-y-2"
-                          >
-                            <div className="flex flex-wrap items-center justify-between gap-2">
-                              <span className="rounded bg-accent/10 border border-accent/20 px-2.5 py-0.5 text-xs font-semibold text-accent">
-                                {step.phase}
-                              </span>
-                              <div className="flex items-center gap-2 text-xs">
-                                <span className="text-ink-muted">Effort: {step.effort}</span>
-                                <span className="text-ink-muted">|</span>
-                                <span className="text-emerald-400 font-medium">Impact: {step.impact}</span>
-                              </div>
-                            </div>
-                            <h5 className="text-sm font-semibold text-snow">{step.title}</h5>
-                            <p className="text-xs text-ink-muted leading-relaxed">{step.task}</p>
-                            <div className="text-xs text-accent font-medium">
-                              🎯 Goal: {step.expectedOutcome}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="space-y-4 pt-2">
-                      <h4 className="text-sm font-semibold text-snow flex items-center gap-2">
-                        <Code2 className="h-4 w-4 text-accent" />
-                        Ready-to-Paste Code Snippets for {report.domain}
-                      </h4>
-                      {report.generatedSnippets.map((snip, idx) => (
-                        <CopyCodeBlock
-                          key={idx}
-                          title={snip.title}
-                          description={snip.description}
-                          code={snip.code}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ) : null}
-              </TabPanel>
-            </ResultsPanel>
+                    </tbody>
+                  </table>
+                </div>
+              </DashboardCard>
+            )}
           </>
+        ) : null}
+
+        {mode === "ai" && aiReport ? (
+          <DashboardCard>
+            <h2 className="font-display text-lg font-semibold text-snow">
+              AI diagnosis · {aiReport.domain}
+            </h2>
+            <p className="mt-2 text-sm text-ink-muted">
+              {aiReport.executiveSummary?.headline ??
+                "Diagnosis complete. Open technical and action-plan sections from the previous AI UI flow as needed."}
+            </p>
+            <div className="mt-4 space-y-2">
+              {(aiReport.rootCauses ?? []).slice(0, 6).map((cause, idx) => (
+                <div
+                  key={idx}
+                  className="rounded-lg border border-line bg-bg/50 px-3 py-2.5"
+                >
+                  <p className="text-sm font-medium text-snow">{cause.headline}</p>
+                  <p className="mt-1 text-xs text-ink-muted">
+                    {cause.whyGooglePenalizes}
+                  </p>
+                  <p className="mt-1 text-xs text-accent/90">
+                    Fix: {cause.actionableFix}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </DashboardCard>
+        ) : null}
+
+        {!loading && mode === "crawl" && !crawlReport ? (
+          <EmptyBlock
+            icon={Radar}
+            title="Run a crawl audit"
+            description="We'll fetch internal pages and group SEO issues by type — titles, meta descriptions, headings, thin content, and duplicates."
+          />
         ) : null}
       </PageStack>
     </DashboardShell>
