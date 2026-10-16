@@ -31,6 +31,7 @@ import { ToolbarSelect } from "@/components/dashboard/SearchToolbar";
 import {
   buttonGhostClass,
   buttonPrimaryClass,
+  CompactSelect,
   DashboardAlert,
   EmptyBlock,
   inputClass,
@@ -174,13 +175,13 @@ function TablePaginationFooter({
       {showRowsPerPage && onPageSizeChange && pageSizeOptions ? (
         <label className="flex items-center gap-2">
           <span>Rows per page</span>
-          <select
+          <CompactSelect
+            className="w-auto min-w-[4.5rem]"
             value={pageSize}
             onChange={(e) => {
               onPageSizeChange(Number(e.target.value));
               onPageChange(0);
             }}
-            className="rounded-lg border border-line bg-bg px-2.5 py-1.5 text-xs text-snow outline-none transition focus:border-accent/40 focus:ring-1 focus:ring-accent/20"
             aria-label="Rows per page"
           >
             {pageSizeOptions.map((option) => (
@@ -188,7 +189,7 @@ function TablePaginationFooter({
                 {option}
               </option>
             ))}
-          </select>
+          </CompactSelect>
         </label>
       ) : (
         <span className="hidden sm:block" />
@@ -1136,21 +1137,23 @@ export function KeywordResearchPanel({
                         </label>
                         <label className="mt-3 block text-xs font-medium text-ink-muted">
                           Difficulty
-                          <select
-                            className={`${inputClass} mt-1.5`}
+                          <CompactSelect
+                            fieldSize="md"
+                            className="mt-1.5"
                             value={kdFilter}
                             onChange={(e) => setKdFilter(e.target.value)}
                           >
                             <option value="all">All difficulties</option>
-                            <option value="easy">Easy (KD &le; 10)</option>
+                            <option value="easy">Easy (KD ≤ 10)</option>
                             <option value="medium">Medium (KD 11-30)</option>
                             <option value="hard">Hard (KD &gt; 30)</option>
-                          </select>
+                          </CompactSelect>
                         </label>
                         <label className="mt-3 block text-xs font-medium text-ink-muted">
                           Intent
-                          <select
-                            className={`${inputClass} mt-1.5`}
+                          <CompactSelect
+                            fieldSize="md"
+                            className="mt-1.5"
                             value={intentFilter}
                             onChange={(e) => setIntentFilter(e.target.value)}
                           >
@@ -1159,7 +1162,7 @@ export function KeywordResearchPanel({
                             <option value="navigational">Navigational</option>
                             <option value="commercial">Commercial</option>
                             <option value="transactional">Transactional</option>
-                          </select>
+                          </CompactSelect>
                         </label>
                       </div>
                     ) : null}

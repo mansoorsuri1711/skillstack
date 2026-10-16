@@ -79,8 +79,9 @@ export async function getOrCreatePromptTracking(
     doc = await PromptTracking.create({
       userId,
       projectId,
-      schedule: "weekly",
-      nextRunAt: nextWeekly(),
+      // Manual Analyze only until the user opts into a weekly reminder schedule.
+      schedule: "paused",
+      nextRunAt: null,
       scrapedEngines: ["chatgpt"],
       apiEngines: [],
       locationCode: defaults?.locationCode ?? 2840,

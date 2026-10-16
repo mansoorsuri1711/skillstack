@@ -195,7 +195,7 @@ export const productFeatures: ProductFeature[] = [
       "Prompt Tracking stores the questions that matter for your brand, runs them on a schedule across AI engines, and charts brand mentions and owned citations over time.",
     dashboardHref: "/dashboard/prompt-tracking-tool",
     highlights: [
-      "Weekly tracking with manual Run now",
+      "Track prompts and analyze on demand",
       "Brand mentions and owned citations",
       "Topic-grouped prompt lists and exports",
     ],

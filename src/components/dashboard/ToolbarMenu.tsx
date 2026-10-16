@@ -227,14 +227,24 @@ export function ToolbarMenu({
         onClick={() => setOpen((prev) => !prev)}
         className={`flex w-full items-center justify-between gap-2 rounded-lg border border-line bg-bg-input text-left text-snow transition hover:border-line disabled:cursor-not-allowed disabled:opacity-70 ${
           size === "sm"
-            ? "px-2.5 py-1.5 text-xs"
-            : "px-3 py-2.5 text-sm"
+            ? "py-1.5 pl-2.5 pr-2 text-xs"
+            : "py-2.5 pl-3 pr-2.5 text-sm"
         } ${open ? "border-accent/40" : ""}`}
       >
-        <span className="truncate">{selected?.label ?? value}</span>
-        <ChevronDown
-          className={`${size === "sm" ? "h-3.5 w-3.5" : "h-4 w-4"} shrink-0 text-ink-muted transition ${open ? "rotate-180" : ""}`}
-        />
+        <span className="min-w-0 flex-1 truncate leading-5">
+          {selected?.label ?? value}
+        </span>
+        <span
+          aria-hidden
+          className={`inline-flex shrink-0 items-center justify-center text-ink-muted ${
+            size === "sm" ? "h-5 w-5" : "h-6 w-6"
+          }`}
+        >
+          <ChevronDown
+            className={`${size === "sm" ? "h-3.5 w-3.5" : "h-4 w-4"} transition ${open ? "rotate-180" : ""}`}
+            strokeWidth={2}
+          />
+        </span>
       </button>
 
       {typeof document !== "undefined" && menuPanel

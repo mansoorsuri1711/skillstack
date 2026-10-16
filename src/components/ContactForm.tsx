@@ -138,24 +138,22 @@ export default function ContactForm() {
           </select>
           <span
             aria-hidden
-            className="pointer-events-none absolute inset-y-0 right-0 flex w-11 items-center justify-center"
+            className="pointer-events-none absolute inset-y-0 right-0 flex w-11 items-center justify-center text-ink-muted"
           >
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#2cd4bf]/15 ring-1 ring-[#2cd4bf]/35">
-              <svg
-                viewBox="0 0 16 16"
-                className="h-3.5 w-3.5 text-[#2cd4bf]"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4 6.25 8 10l4-3.75"
-                  stroke="currentColor"
-                  strokeWidth="1.75"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </span>
+            <svg
+              viewBox="0 0 16 16"
+              className="h-4 w-4"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M4 6.25 8 10l4-3.75"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </span>
         </span>
       </label>

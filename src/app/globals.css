@@ -29,6 +29,9 @@ html:not([data-theme]) {
   --warn: #fbbf24;
   --warn-bg: rgba(251, 191, 36, 0.12);
   --warn-border: rgba(251, 191, 36, 0.35);
+  --danger: #f87171;
+  --danger-bg: rgba(248, 113, 113, 0.12);
+  --danger-border: rgba(248, 113, 113, 0.35);
   --foreground: var(--ink);
   --background: var(--bg);
   color-scheme: dark;
@@ -57,6 +60,9 @@ html[data-theme="light"] {
   --warn: #b45309;
   --warn-bg: rgba(180, 83, 9, 0.1);
   --warn-border: rgba(180, 83, 9, 0.28);
+  --danger: #b91c1c;
+  --danger-bg: rgba(185, 28, 28, 0.08);
+  --danger-border: rgba(185, 28, 28, 0.28);
   --foreground: var(--ink);
   --background: var(--bg);
   color-scheme: light;
@@ -86,6 +92,9 @@ html:not([data-theme]) {
   --color-warn: var(--warn);
   --color-warn-bg: var(--warn-bg);
   --color-warn-border: var(--warn-border);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-border: var(--danger-border);
 }
 
 /* Logo mark is dark artwork — invert only on dark backgrounds */
@@ -114,6 +123,9 @@ html:not([data-theme="light"]) .logo-mark-invert {
   --color-warn: var(--warn);
   --color-warn-bg: var(--warn-bg);
   --color-warn-border: var(--warn-border);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-border: var(--danger-border);
   --font-sans: var(--font-body);
   --font-display: var(--font-display);
 }
@@ -149,6 +161,9 @@ body {
 .text-warn { color: var(--warn) !important; }
 .bg-warn-bg { background-color: var(--warn-bg) !important; }
 .border-warn-border { border-color: var(--warn-border) !important; }
+.text-danger { color: var(--danger) !important; }
+.bg-danger-bg { background-color: var(--danger-bg) !important; }
+.border-danger-border { border-color: var(--danger-border) !important; }
 
 /* Accent / green CTAs: black text in dark theme, white text in light theme */
 .bg-accent {

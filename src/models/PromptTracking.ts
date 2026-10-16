@@ -53,7 +53,7 @@ const PromptTrackingSchema = new Schema(
     schedule: {
       type: String,
       enum: ["weekly", "paused"],
-      default: "weekly",
+      default: "paused",
     },
     nextRunAt: { type: Date, default: null },
     lastRunAt: { type: Date, default: null },

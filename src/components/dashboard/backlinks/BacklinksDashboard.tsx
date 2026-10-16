@@ -6,6 +6,7 @@ import { DomainOverviewToolbar } from "@/components/dashboard/DomainOverviewTool
 import { TabBar, TabPanel } from "@/components/dashboard/SearchToolbar";
 import {
   buttonGhostClass,
+  CompactSelect,
   DashboardAlert,
   DataTable,
   EmptyBlock,
@@ -79,20 +80,21 @@ function TablePaginationFooter({
       </span>
       <label className="flex items-center gap-2">
         <span>Rows per page</span>
-        <select
+        <CompactSelect
+          className="w-auto min-w-[4.5rem]"
           value={pageSize}
           onChange={(e) => {
             onPageSizeChange(Number(e.target.value));
             onPageChange(0);
           }}
-          className="rounded-lg border border-line bg-bg px-2.5 py-1.5 text-xs text-snow outline-none focus:border-accent/40"
+          aria-label="Rows per page"
         >
           {ROWS_PER_PAGE_OPTIONS.map((option) => (
             <option key={option} value={option}>
               {option}
             </option>
           ))}
-        </select>
+        </CompactSelect>
       </label>
       <div className="flex items-center gap-2">
         <span className="tabular-nums">

@@ -163,15 +163,17 @@ export function DashboardAlert({
 }) {
   const styles =
     variant === "error"
-      ? "border-red-500/20 bg-red-500/10 text-red-300"
+      ? "border-danger-border bg-danger-bg text-danger"
       : variant === "warning"
-        ? "border-amber-500/20 bg-amber-500/10 text-amber-300"
+        ? "border-warn-border bg-warn-bg text-warn"
         : variant === "success"
-          ? "border-emerald-500/20 bg-emerald-500/10 text-emerald-300"
-          : "border-accent/20 bg-accent/10 text-snow";
+          ? "border-success-border bg-success-bg text-success"
+          : "border-accent/25 bg-mist text-ink";
 
   return (
-    <div className={`rounded-xl border px-4 py-3 text-sm ${styles}`}>{children}</div>
+    <div className={`rounded-xl border px-4 py-3 text-sm font-medium ${styles}`}>
+      {children}
+    </div>
   );
 }
 
@@ -312,7 +314,7 @@ export const buttonAccentTabClass =
 export const buttonGhostClass =
   "inline-flex items-center justify-center gap-2 rounded-lg border border-line px-4 py-2.5 text-sm font-medium text-ink transition hover:border-accent/30 hover:bg-white/5 disabled:opacity-50";
 
-/** Native select with a centered custom chevron (browser arrows misalign across widths). */
+/** Native select with a vertically/horizontally centered custom chevron. */
 export function CompactSelect({
   className = "",
   fieldSize = "sm",
@@ -328,18 +330,20 @@ export function CompactSelect({
         {...props}
         className={`w-full appearance-none rounded-lg border border-line bg-bg-input text-ink outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-50 ${
           sm
-            ? "py-1.5 pl-2.5 pr-8 text-xs leading-5"
-            : "px-3 py-2.5 pr-10 text-sm leading-5"
+            ? "py-1.5 pl-2.5 pr-9 text-xs leading-5"
+            : "px-3 py-2.5 pr-11 text-sm leading-5"
         }`}
       >
         {children}
       </select>
-      <ChevronDown
+      <span
         aria-hidden
-        className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-ink-muted ${
-          sm ? "right-2 h-3.5 w-3.5" : "right-3 h-4 w-4"
+        className={`pointer-events-none absolute inset-y-0 right-0 flex items-center justify-center text-ink-muted ${
+          sm ? "w-9" : "w-11"
         }`}
-      />
+      >
+        <ChevronDown className={sm ? "h-3.5 w-3.5" : "h-4 w-4"} strokeWidth={2} />
+      </span>
     </div>
   );
 }

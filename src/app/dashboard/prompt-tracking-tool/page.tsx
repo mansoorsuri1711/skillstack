@@ -15,6 +15,7 @@ import { DataForSeoBanner } from "@/components/dashboard/ProjectDomainBanner";
 import {
   buttonGhostClass,
   buttonPrimaryClass,
+  CompactSelect,
   DashboardAlert,
   DashboardCard,
   EmptyBlock,
@@ -63,7 +64,7 @@ function VisibilityChart({
   if (points.length < 2) {
     return (
       <div className="flex h-48 items-center justify-center rounded-xl border border-dashed border-line text-sm text-ink-muted">
-        Run tracking to build a visibility chart.
+        Click Analyze to build a visibility chart.
       </div>
     );
   }
@@ -127,6 +128,7 @@ export default function PromptTrackingPage() {
     setLoading(true);
     setError("");
     try {
+      // Load saved prompts/settings only — never start an AI check here.
       const res = await fetch("/api/dashboard/prompt-tracking");
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
@@ -141,6 +143,8 @@ export default function PromptTrackingPage() {
   useEffect(() => {
     if (!projectLoading) void load();
   }, [projectLoading, load]);
+
+  // Analysis must stay manual — do not auto-call /run on open or when prompts load.
 
   const grouped = useMemo(() => {
     const map = new Map<string, TrackedPrompt[]>();
@@ -206,7 +210,8 @@ export default function PromptTrackingPage() {
     }
   }
 
-  async function runNow() {
+  async function analyze() {
+    if (running) return;
     setRunning(true);
     setError("");
     try {
@@ -217,7 +222,7 @@ export default function PromptTrackingPage() {
       if (!res.ok) throw new Error(data.message);
       setTracking(data.tracking);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Run failed");
+      setError(err instanceof Error ? err.message : "Analyze failed");
     } finally {
       setRunning(false);
     }
@@ -252,7 +257,11 @@ export default function PromptTrackingPage() {
         {error ? <DashboardAlert variant="error">{error}</DashboardAlert> : null}
 
         {loading || projectLoading ? (
-          <LoadingBlock label="Loading prompt tracking…" />
+          <LoadingBlock label="Loading saved prompts…" />
+        ) : null}
+
+        {running ? (
+          <LoadingBlock label="Analyzing prompts across AI engines…" />
         ) : null}
 
         {tracking && !loading ? (
@@ -266,17 +275,18 @@ export default function PromptTrackingPage() {
                     </h2>
                     <span className="rounded-full border border-line px-2 py-0.5 text-[11px] text-ink-muted">
                       {tracking.settings.schedule === "weekly"
-                        ? "Weekly tracking"
-                        : "Paused"}
+                        ? "Weekly schedule (manual Analyze still required)"
+                        : "Manual only"}
                     </span>
                   </div>
                   <p className="mt-1 text-xs text-ink-muted">
-                    Last update{" "}
+                    Last analyze{" "}
                     {tracking.settings.lastRunAt
                       ? new Date(tracking.settings.lastRunAt).toLocaleString()
-                      : "never"}
-                    {tracking.settings.nextRunAt
-                      ? ` · Next ${new Date(tracking.settings.nextRunAt).toLocaleString()}`
+                      : "never — click Analyze when ready"}
+                    {tracking.settings.schedule === "weekly" &&
+                    tracking.settings.nextRunAt
+                      ? ` · Suggested next ${new Date(tracking.settings.nextRunAt).toLocaleString()}`
                       : ""}
                   </p>
                 </div>
@@ -291,11 +301,15 @@ export default function PromptTrackingPage() {
                   <button
                     type="button"
                     className={buttonPrimaryClass}
-                    disabled={running || !dataForSeoConfigured}
-                    onClick={() => void runNow()}
+                    disabled={
+                      running ||
+                      !dataForSeoConfigured ||
+                      !(tracking.prompts ?? []).some((p) => p.active !== false)
+                    }
+                    onClick={() => void analyze()}
                   >
                     <Play className="h-4 w-4" />
-                    {running ? "Running…" : "Run now"}
+                    {running ? "Analyzing…" : "Analyze"}
                   </button>
                 </div>
               </div>
@@ -563,7 +577,7 @@ export default function PromptTrackingPage() {
                   p.engines.every((e) => !(e.sources ?? []).length),
                 ) ? (
                   <p className="text-sm text-ink-muted">
-                    No citations yet — run tracking after adding prompts.
+                    No citations yet — add prompts, then click Analyze.
                   </p>
                 ) : null}
               </DashboardCard>
@@ -669,8 +683,9 @@ export default function PromptTrackingPage() {
 
                 <label className="block">
                   <span className="text-xs text-ink-muted">Country</span>
-                  <select
-                    className={`${inputClass} mt-1`}
+                  <CompactSelect
+                    fieldSize="md"
+                    className="mt-1"
                     value={tracking.settings.locationCode}
                     onChange={(e) =>
                       void saveSettings({
@@ -683,7 +698,7 @@ export default function PromptTrackingPage() {
                         {loc.label}
                       </option>
                     ))}
-                  </select>
+                  </CompactSelect>
                 </label>
               </div>
 

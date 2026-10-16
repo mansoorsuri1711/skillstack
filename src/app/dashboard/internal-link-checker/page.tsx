@@ -12,6 +12,7 @@ import { OrganicSearchLayout } from "@/components/dashboard/OrganicSearchLayout"
 import { useInternalLinksReport } from "@/components/dashboard/useInternalLinksReport";
 import {
   buttonGhostClass,
+  CompactSelect,
   EmptyBlock,
   inputClass,
   LoadingBlock,
@@ -184,14 +185,14 @@ export default function InternalLinksPage() {
 
                 {/* Group similar dropdown */}
                 <div className="flex items-center gap-1.5">
-                  <select
+                  <CompactSelect
+                    className="w-auto min-w-[9rem]"
                     value={groupFilter}
                     onChange={(e) => setGroupFilter(e.target.value as "similar" | "all")}
-                    className="rounded-lg border border-line bg-bg px-2.5 py-1 text-xs font-medium text-snow outline-none focus:border-accent"
                   >
-                    <option value="similar">Group similar ▾</option>
-                    <option value="all">Show all links ▾</option>
-                  </select>
+                    <option value="similar">Group similar</option>
+                    <option value="all">Show all links</option>
+                  </CompactSelect>
                 </div>
 
                 <div className="relative w-full sm:w-auto sm:min-w-[200px] max-w-xs flex-1">
