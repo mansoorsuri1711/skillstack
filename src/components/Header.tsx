@@ -38,8 +38,9 @@ export default function Header() {
   }, []);
 
   const showAuth = status === "authenticated" && Boolean(session?.user);
-  const showGuest = status === "unauthenticated";
-  const isLoading = status === "loading";
+  // Treat loading as guest so Log in / Register never pop in after paint.
+  // Server-hydrated session (Providers) usually skips loading entirely.
+  const showGuest = !showAuth;
 
   return (
     <header
@@ -67,10 +68,6 @@ export default function Header() {
 
         <div className="relative z-10 flex shrink-0 items-center gap-2">
           <ThemeToggle compact />
-
-          {isLoading ? (
-            <div className="hidden h-9 w-36 rounded-md sm:block" />
-          ) : null}
 
           {showAuth ? (
             <>

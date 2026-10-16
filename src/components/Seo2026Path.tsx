@@ -72,28 +72,20 @@ function CardStack({
           const restRot = rank * 1.1 - 4;
 
           const cardBg = card.accent
-            ? "from-accent/20 to-bg-soft"
-            : isNew
-              ? "from-sky-500/15 to-bg-soft"
-              : "from-bg-elevated to-bg-soft";
+            ? "from-[#1a3028] to-[#0f1a16]"
+            : "from-[#161b22] to-[#0d1117]";
           const cardBorder = isOut
-            ? card.accent
-              ? "border-accent/70"
-              : isNew
-                ? "border-sky-400/50"
-                : "border-line"
+            ? card.accent || isNew
+              ? "border-accent/45"
+              : "border-line"
             : card.accent
-              ? "border-accent/40"
-              : isNew
-                ? "border-sky-500/20"
-                : "border-line";
+              ? "border-accent/25"
+              : "border-line";
           const labelColor = card.accent
             ? "text-accent"
             : isOut
-              ? "text-snow"
-              : isNew
-                ? "text-sky-700"
-                : "text-ink-muted";
+              ? "text-[#f0f3f6]"
+              : "text-[#c9d1d9]";
 
           return (
             <motion.button
@@ -103,7 +95,7 @@ function CardStack({
               onClick={() =>
                 setOrder((prev) => [i, ...prev.filter((idx) => idx !== i)])
               }
-              className={`absolute left-1/2 w-[92%] -translate-x-1/2 cursor-pointer rounded-xl border bg-gradient-to-br px-4 py-2.5 text-left shadow-[0_16px_40px_color-mix(in_srgb,var(--ink)_12%,transparent)] ${cardBg} ${cardBorder}`}
+              className={`absolute left-1/2 w-[92%] -translate-x-1/2 cursor-pointer rounded-xl border bg-gradient-to-br px-4 py-2.5 text-left shadow-[0_12px_32px_rgba(0,0,0,0.45)] ${cardBg} ${cardBorder}`}
               style={{
                 transformStyle: "preserve-3d",
                 transformOrigin: "center bottom",
@@ -137,41 +129,25 @@ function CardStack({
                 mass: 0.75,
               }}
             >
-              {isOut && (
-                <motion.div
-                  aria-hidden
-                  className="pointer-events-none absolute -inset-px rounded-xl"
-                  style={{
-                    background: isNew
-                      ? "radial-gradient(ellipse 80% 70% at 50% 0%, rgba(45,212,191,0.22), transparent 70%)"
-                      : "radial-gradient(ellipse 80% 70% at 50% 0%, rgba(255,255,255,0.08), transparent 70%)",
-                  }}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                />
-              )}
               <div className="relative flex items-center justify-between gap-2">
                 <span
                   className={`min-w-0 truncate font-display text-sm font-semibold tracking-tight ${labelColor}`}
                 >
                   {card.label}
                 </span>
-                <span className="shrink-0 text-[10px] text-ink-muted">{card.sub}</span>
+                <span className="shrink-0 text-[10px] text-[#8b949e]">{card.sub}</span>
               </div>
               <div
                 className={`relative mt-2 h-px w-full bg-gradient-to-r ${
-                  card.accent || isOut
-                    ? "from-accent/50"
-                    : isNew
-                      ? "from-sky-500/25"
-                      : "from-line"
+                  card.accent || (isOut && isNew)
+                    ? "from-accent/40"
+                    : "from-white/15"
                 } to-transparent`}
               />
             </motion.button>
           );
         })}
       </div>
-      <div className="pointer-events-none absolute bottom-2 left-1/2 h-8 w-44 -translate-x-1/2 rounded-[100%] bg-accent/15 blur-2xl" />
     </div>
   );
 }
