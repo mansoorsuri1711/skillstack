@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { connectDB } from "@/lib/db";
+import { resolveUser } from "@/lib/resolve-user";
 import { User } from "@/models/User";
 import type { Session } from "next-auth";
 
@@ -52,23 +53,23 @@ export async function requireUser(request?: Request): Promise<
     };
   }
 
-  let userId = session.user.id;
-  if (!userId && session.user.email) {
-    await connectDB();
-    const dbUser = await User.findOne({
-      email: session.user.email.toLowerCase().trim(),
-    });
-    if (dbUser) userId = dbUser._id.toString();
-  }
+  const sessionId = session.user.id ?? "";
+  const dbUser = await resolveUser(sessionId, session.user.email, "_id name email image");
 
-  if (!userId) {
+  if (!dbUser) {
     return {
       response: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
     };
   }
 
   return {
-    user: { ...session.user, id: userId } as NonNullable<Session["user"]> & {
+    user: {
+      ...session.user,
+      id: dbUser._id.toString(),
+      name: dbUser.name ?? session.user.name,
+      email: dbUser.email ?? session.user.email,
+      image: dbUser.image ?? session.user.image,
+    } as NonNullable<Session["user"]> & {
       id: string;
     },
   };

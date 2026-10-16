@@ -81,12 +81,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.name = user.name ?? token.name;
         token.email = user.email ?? token.email;
         token.picture = user.image ?? token.picture;
-      } else if (!token.id && typeof token.email === "string") {
-        // Backfill MongoDB id for sessions created before jwt callback was wired.
+      }
+
+      // Repair stale JWTs that stored a Google sub (or missing id) instead of Mongo _id.
+      const email =
+        typeof token.email === "string" ? token.email.toLowerCase().trim() : "";
+      const tokenId = typeof token.id === "string" ? token.id : "";
+      const needsRepair =
+        Boolean(email) &&
+        (!tokenId ||
+          !(
+            tokenId.length === 24 &&
+            /^[a-f0-9]{24}$/i.test(tokenId)
+          ));
+
+      if (needsRepair || (tokenId && email && trigger === "update")) {
         await connectDB();
-        const dbUser = await User.findOne({
-          email: token.email.toLowerCase().trim(),
-        });
+        let dbUser =
+          tokenId && /^[a-f0-9]{24}$/i.test(tokenId)
+            ? await User.findById(tokenId).select("name image email")
+            : null;
+        if (!dbUser && tokenId) {
+          dbUser = await User.findOne({ googleId: tokenId }).select(
+            "name image email",
+          );
+        }
+        if (!dbUser && email) {
+          dbUser = await User.findOne({ email }).select("name image email");
+        }
         if (dbUser) {
           token.id = dbUser._id.toString();
           token.name = dbUser.name;
@@ -97,15 +119,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (trigger === "update" && session?.user) {
         if (session.user.name) token.name = session.user.name as string;
         if (session.user.image) token.picture = session.user.image as string;
-      }
-
-      if (trigger === "update" && token.id && !session?.user?.name) {
-        await connectDB();
-        const dbUser = await User.findById(token.id).select("name image");
-        if (dbUser) {
-          token.name = dbUser.name;
-          token.picture = dbUser.image ?? token.picture;
-        }
       }
 
       return token;

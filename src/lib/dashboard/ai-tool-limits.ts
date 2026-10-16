@@ -1,4 +1,5 @@
 import { connectDB } from "@/lib/db";
+import { resolveUser } from "@/lib/resolve-user";
 import { User } from "@/models/User";
 
 export const FREE_AI_TOOL_LIMIT = 3;
@@ -69,9 +70,11 @@ function buildUsage(
 export async function getAiToolUsage(
   userId: string,
   feature: AiToolFeature,
+  email?: string | null,
 ): Promise<AiToolUsage> {
-  await connectDB();
-  const user = await User.findById(userId).select(
+  const user = await resolveUser(
+    userId,
+    email,
     "dashboardPro brandLookupUsageCount promptExplorerUsageCount",
   );
   if (!user) {
@@ -97,8 +100,9 @@ export async function getAllAiToolUsage(userId: string): Promise<{
 export async function assertAiToolAvailable(
   userId: string,
   feature: AiToolFeature,
+  email?: string | null,
 ): Promise<AiToolUsage> {
-  const usage = await getAiToolUsage(userId, feature);
+  const usage = await getAiToolUsage(userId, feature, email);
   if (!usage.unlimited && usage.used >= FREE_AI_TOOL_LIMIT) {
     throw new AiToolLimitError(feature, usage);
   }
@@ -108,11 +112,17 @@ export async function assertAiToolAvailable(
 export async function incrementAiToolUsage(
   userId: string,
   feature: AiToolFeature,
+  email?: string | null,
 ): Promise<AiToolUsage> {
+  const resolved = await resolveUser(userId, email, "_id");
+  if (!resolved) {
+    throw new Error("User not found.");
+  }
+
   await connectDB();
   const field = USAGE_FIELDS[feature];
   const user = await User.findByIdAndUpdate(
-    userId,
+    resolved._id,
     { $inc: { [field]: 1 } },
     { new: true },
   ).select("dashboardPro brandLookupUsageCount promptExplorerUsageCount");
