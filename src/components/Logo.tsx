@@ -30,7 +30,7 @@ export default function Logo({
       alt=""
       width={px}
       height={px}
-      className="shrink-0 invert"
+      className="logo-mark-invert shrink-0"
       priority={priority}
     />
   );
@@ -42,11 +42,11 @@ export default function Logo({
       <span className="inline-flex items-center gap-1.5">
         {mark}
         <span
-          className={`font-display font-bold tracking-tight text-white ${textSize}`}
+          className={`font-display font-bold tracking-tight text-snow ${textSize}`}
         >
           SkillStack
           <span
-            className="ml-[0.15em] inline-block translate-y-[0.12em] align-baseline text-[0.55em] leading-none text-[#2cd4bf]"
+            className="ml-[0.15em] inline-block translate-y-[0.12em] align-baseline text-[0.55em] leading-none text-accent"
             aria-hidden
           >
             ●

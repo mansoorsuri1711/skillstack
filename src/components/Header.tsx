@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { signOutToHome } from "@/lib/sign-out";
 import { useEffect, useState } from "react";
 import Logo from "@/components/Logo";
+import ThemeToggle from "@/components/ThemeToggle";
 import { HEADER_HEIGHT_CLASS } from "@/lib/layout";
 
 const links = [
@@ -42,10 +43,10 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,backdrop-filter] duration-200 ${HEADER_HEIGHT_CLASS} ${
+      className={`fixed inset-x-0 top-0 z-50 border-b border-line transition-[background-color,backdrop-filter] duration-200 ${HEADER_HEIGHT_CLASS} ${
         solid || menuOpen
-          ? "border-white/10 bg-[#0d1117]/95 backdrop-blur-md"
-          : "border-white/10 bg-[#010409]/90 backdrop-blur-sm"
+          ? "bg-[var(--header-bg-solid)] backdrop-blur-md"
+          : "bg-[var(--header-bg)] backdrop-blur-sm"
       }`}
     >
       <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6 md:px-8">
@@ -57,7 +58,7 @@ export default function Header() {
               key={link.href}
               href={link.href}
               prefetch={true}
-              className="text-sm text-white/55 transition-colors hover:text-white"
+              className="text-sm text-[var(--nav-muted)] transition-colors hover:text-[var(--nav-strong)]"
             >
               {link.label}
             </Link>
@@ -65,6 +66,8 @@ export default function Header() {
         </nav>
 
         <div className="relative z-10 flex shrink-0 items-center gap-2">
+          <ThemeToggle compact className="hidden sm:inline-flex" />
+
           {isLoading ? (
             <div className="hidden h-9 w-36 rounded-md sm:block" />
           ) : null}
@@ -81,14 +84,14 @@ export default function Header() {
               <Link
                 href="/profile"
                 prefetch={true}
-                className="hidden rounded-md border border-white/20 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/10 sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
+                className="hidden rounded-md border border-line px-3 py-1.5 text-xs font-medium text-snow hover:bg-bg-soft sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
               >
                 Profile
               </Link>
               <button
                 type="button"
                 onClick={() => void signOutToHome()}
-                className="hidden rounded-md border border-white/20 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/10 sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
+                className="hidden rounded-md border border-line px-3 py-1.5 text-xs font-medium text-snow hover:bg-bg-soft sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
               >
                 Sign out
               </button>
@@ -100,23 +103,25 @@ export default function Header() {
               <Link
                 href="/login"
                 prefetch={true}
-                className="hidden rounded-md border border-white/20 px-3 py-1.5 text-xs font-medium text-white hover:bg-white/10 sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
+                className="hidden rounded-md border border-line px-3 py-1.5 text-xs font-medium text-snow hover:bg-bg-soft sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
               >
                 Log in
               </Link>
               <Link
                 href="/register"
                 prefetch={true}
-                className="hidden rounded-md bg-white px-3 py-1.5 text-xs font-medium text-[#010409] hover:bg-white/90 sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
+                className="hidden rounded-md bg-snow px-3 py-1.5 text-xs font-medium text-bg hover:opacity-90 sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
               >
                 Register
               </Link>
             </>
           ) : null}
 
+          <ThemeToggle compact className="sm:hidden" />
+
           <button
             type="button"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/15 text-white md:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line text-snow md:hidden"
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -124,13 +129,13 @@ export default function Header() {
           >
             <span className="flex w-4 flex-col gap-1" aria-hidden>
               <span
-                className={`h-0.5 w-full rounded-full bg-white transition ${menuOpen ? "translate-y-[6px] rotate-45" : ""}`}
+                className={`h-0.5 w-full rounded-full bg-snow transition ${menuOpen ? "translate-y-[6px] rotate-45" : ""}`}
               />
               <span
-                className={`h-0.5 w-full rounded-full bg-white transition ${menuOpen ? "opacity-0" : ""}`}
+                className={`h-0.5 w-full rounded-full bg-snow transition ${menuOpen ? "opacity-0" : ""}`}
               />
               <span
-                className={`h-0.5 w-full rounded-full bg-white transition ${menuOpen ? "-translate-y-[6px] -rotate-45" : ""}`}
+                className={`h-0.5 w-full rounded-full bg-snow transition ${menuOpen ? "-translate-y-[6px] -rotate-45" : ""}`}
               />
             </span>
           </button>
@@ -140,7 +145,7 @@ export default function Header() {
       {menuOpen ? (
         <nav
           id="mobile-nav"
-          className="absolute inset-x-0 top-full max-h-[calc(100svh-4rem)] overflow-y-auto border-b border-white/10 bg-[#0d1117] px-4 pb-6 pt-2 animate-in fade-in slide-in-from-top-2 duration-200 sm:max-h-[calc(100svh-4.5rem)] md:hidden"
+          className="absolute inset-x-0 top-full max-h-[calc(100svh-4rem)] overflow-y-auto border-b border-line bg-bg-soft px-4 pb-6 pt-2 animate-in fade-in slide-in-from-top-2 duration-200 sm:max-h-[calc(100svh-4.5rem)] md:hidden"
           aria-label="Mobile"
         >
           <ul className="flex flex-col">
@@ -148,7 +153,7 @@ export default function Header() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="block border-b border-white/5 px-1 py-3.5 text-base text-white/85"
+                  className="block border-b border-line px-1 py-3.5 text-base text-ink"
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.label}
@@ -180,7 +185,7 @@ export default function Header() {
                     setMenuOpen(false);
                     void signOutToHome();
                   }}
-                  className="w-full rounded-md border border-white/20 px-4 py-3 text-sm font-medium text-white"
+                  className="w-full rounded-md border border-line px-4 py-3 text-sm font-medium text-snow"
                 >
                   Sign out
                 </button>
@@ -191,14 +196,14 @@ export default function Header() {
                 <Link
                   href="/login"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full rounded-md border border-white/20 px-4 py-3 text-center text-sm font-medium text-white"
+                  className="w-full rounded-md border border-line px-4 py-3 text-center text-sm font-medium text-snow"
                 >
                   Log in
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full rounded-md bg-white px-4 py-3 text-center text-sm font-semibold text-[#010409]"
+                  className="w-full rounded-md bg-snow px-4 py-3 text-center text-sm font-semibold text-bg"
                 >
                   Register
                 </Link>

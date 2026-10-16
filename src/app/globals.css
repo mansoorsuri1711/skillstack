@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
-:root {
+:root,
+html[data-theme="dark"] {
   --bg: #010409;
   --bg-soft: #0d1117;
   --bg-elevated: #161b22;
@@ -11,9 +12,38 @@
   --accent-deep: #14b8a6;
   --line: rgba(240, 243, 246, 0.1);
   --mist: rgba(45, 212, 191, 0.1);
+  --header-bg: rgba(1, 4, 9, 0.9);
+  --header-bg-solid: rgba(13, 17, 23, 0.95);
+  --nav-muted: rgba(255, 255, 255, 0.55);
+  --nav-strong: #ffffff;
   --foreground: var(--ink);
   --background: var(--bg);
   color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-soft: #f4f6f8;
+  --bg-elevated: #ffffff;
+  --snow: #0d1117;
+  --ink: #1f2328;
+  --ink-muted: #656d76;
+  --accent: #0d9488;
+  --accent-deep: #0f766e;
+  --line: rgba(15, 23, 42, 0.12);
+  --mist: rgba(13, 148, 136, 0.1);
+  --header-bg: rgba(255, 255, 255, 0.9);
+  --header-bg-solid: rgba(255, 255, 255, 0.96);
+  --nav-muted: rgba(15, 23, 42, 0.55);
+  --nav-strong: #0d1117;
+  --foreground: var(--ink);
+  --background: var(--bg);
+  color-scheme: light;
+}
+
+/* Logo mark is dark artwork — invert only on dark backgrounds */
+html:not([data-theme="light"]) .logo-mark-invert {
+  filter: invert(1);
 }
 
 @theme inline {

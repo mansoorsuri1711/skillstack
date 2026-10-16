@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Download,
   ExternalLink,
+  Gauge,
   Globe,
   Info,
   Radar,
@@ -16,6 +17,8 @@ import {
 } from "lucide-react";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { DataForSeoBanner } from "@/components/dashboard/ProjectDomainBanner";
+import { AiDiagnosticReportView } from "@/components/dashboard/site-audit/AiDiagnosticReportView";
+import { ClassicSiteAuditReportView } from "@/components/dashboard/site-audit/ClassicSiteAuditReportView";
 import {
   buttonGhostClass,
   buttonPrimaryClass,
@@ -29,6 +32,7 @@ import {
   PageStack,
 } from "@/components/dashboard/ui";
 import { useDashboardProject } from "@/components/dashboard/useDashboardProject";
+import type { AiSiteAuditDiagnosticReport } from "@/lib/audit/ai-diagnostic-types";
 import {
   getIssueDescriptor,
   ISSUE_SEVERITY_ORDER,
@@ -38,9 +42,10 @@ import type {
   CrawlAuditReport,
   DetectedCrawlIssue,
 } from "@/lib/audit/crawl/types";
-import type { AiSiteAuditDiagnosticReport } from "@/lib/audit/ai-diagnostic-types";
+import { formatAuditUrlInput } from "@/lib/audit/parse-url";
+import type { SiteAuditReport } from "@/lib/audit/types";
 
-type Mode = "crawl" | "ai";
+type Mode = "crawl" | "ai" | "classic";
 type ResultTab = "issues" | "pages";
 
 const severityStyles: Record<IssueSeverity, string> = {
@@ -220,6 +225,10 @@ export default function SiteAuditPage() {
   const [aiReport, setAiReport] = useState<AiSiteAuditDiagnosticReport | null>(
     null,
   );
+  const [classicReport, setClassicReport] = useState<SiteAuditReport | null>(
+    null,
+  );
+  const [classicAuditId, setClassicAuditId] = useState<string | null>(null);
   const [resultTab, setResultTab] = useState<ResultTab>("issues");
 
   useEffect(() => {
@@ -290,10 +299,72 @@ export default function SiteAuditPage() {
     }
   }
 
+  async function runClassicAudit() {
+    const target = domainInput.trim() || project?.domain || "";
+    if (!target || target === "example.com") {
+      setError("Enter a domain to run the technical audit.");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/dashboard/audit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: formatAuditUrlInput(target) }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Technical audit failed");
+      setClassicReport(data.audit?.report ?? null);
+      setClassicAuditId(data.audit?.id ?? null);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Technical audit failed.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function runActiveAudit() {
+    if (mode === "crawl") return void runCrawlAudit();
+    if (mode === "ai") return void runAiAudit();
+    return void runClassicAudit();
+  }
+
+  const modeCopy = {
+    crawl: {
+      button: loading ? "Crawling…" : "Run crawl audit",
+      loading: "Crawling pages and checking on-page SEO…",
+      hint: "Crawls internal pages and groups issues like title length, meta descriptions, heading skips, and duplicates — OpenSEO-style.",
+      emptyTitle: "Run a crawl audit",
+      emptyDesc:
+        "We'll fetch internal pages and group SEO issues by type — titles, meta descriptions, headings, thin content, and duplicates.",
+    },
+    ai: {
+      button: loading ? "Diagnosing…" : "Run AI diagnosis",
+      loading:
+        "Running AI diagnosis — schema, robots.txt, security, SERP, and GSC signals…",
+      hint: "Full SkillStack AI diagnosis: root causes, AEO/GEO schema, robots.txt, GSC, and a 30-day recovery plan.",
+      emptyTitle: "Run AI site diagnosis",
+      emptyDesc:
+        "Deep technical SEO, AEO/GEO schemas, Core Web Vitals signals, and why the site is not ranking.",
+    },
+    classic: {
+      button: loading ? "Auditing…" : "Run technical audit",
+      loading:
+        "Auditing security headers, on-page SEO, backlinks, and Lighthouse mobile & desktop…",
+      hint: "Classic SkillStack technical report: security headers, DataForSEO on-page, backlinks, Lighthouse, crawl probes, and PDF export.",
+      emptyTitle: "Run technical site audit",
+      emptyDesc:
+        "Security headers, on-page H1 checks, backlink profile, Lighthouse scores, and a prioritized action plan.",
+    },
+  } as const;
+
   return (
     <DashboardShell
       title="Site Audit"
-      description="Crawl your site for on-page SEO issues — titles, meta, headings, thin content, and more."
+      description="OpenSEO-style crawl issues plus SkillStack AI diagnosis and the classic technical report — all in one place."
     >
       <PageStack>
         <DataForSeoBanner configured={dataForSeoConfigured} />
@@ -321,6 +392,17 @@ export default function SiteAuditPage() {
             }`}
           >
             <Bot className="h-3.5 w-3.5" /> AI diagnosis
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode("classic")}
+            className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+              mode === "classic"
+                ? "bg-accent text-[#010409]"
+                : "border border-line text-ink-muted hover:text-snow"
+            }`}
+          >
+            <Gauge className="h-3.5 w-3.5" /> Technical report
           </button>
         </div>
 
@@ -358,38 +440,18 @@ export default function SiteAuditPage() {
             ) : null}
             <button
               type="button"
-              onClick={() =>
-                void (mode === "crawl" ? runCrawlAudit() : runAiAudit())
-              }
+              onClick={runActiveAudit}
               disabled={loading || projectLoading}
               className={buttonPrimaryClass}
             >
               <Search className="h-4 w-4" />
-              {loading
-                ? mode === "crawl"
-                  ? "Crawling…"
-                  : "Diagnosing…"
-                : mode === "crawl"
-                  ? "Run site audit"
-                  : "Run AI diagnosis"}
+              {modeCopy[mode].button}
             </button>
           </div>
-          <p className="mt-3 text-xs text-ink-muted">
-            {mode === "crawl"
-              ? "Crawls internal pages and groups issues like title length, meta descriptions, heading skips, and duplicates — OpenSEO-style."
-              : "AI diagnosis still available for ranking root-cause analysis using DataForSEO signals."}
-          </p>
+          <p className="mt-3 text-xs text-ink-muted">{modeCopy[mode].hint}</p>
         </DashboardCard>
 
-        {loading ? (
-          <LoadingBlock
-            label={
-              mode === "crawl"
-                ? "Crawling pages and checking on-page SEO…"
-                : "Running AI site diagnosis…"
-            }
-          />
-        ) : null}
+        {loading ? <LoadingBlock label={modeCopy[mode].loading} /> : null}
 
         {mode === "crawl" && crawlReport ? (
           <>
@@ -543,39 +605,72 @@ export default function SiteAuditPage() {
           </>
         ) : null}
 
-        {mode === "ai" && aiReport ? (
-          <DashboardCard>
-            <h2 className="font-display text-lg font-semibold text-snow">
-              AI diagnosis · {aiReport.domain}
-            </h2>
-            <p className="mt-2 text-sm text-ink-muted">
-              {aiReport.executiveSummary?.headline ??
-                "Diagnosis complete. Open technical and action-plan sections from the previous AI UI flow as needed."}
-            </p>
-            <div className="mt-4 space-y-2">
-              {(aiReport.rootCauses ?? []).slice(0, 6).map((cause, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-lg border border-line bg-bg/50 px-3 py-2.5"
+        {mode === "ai" && aiReport && !loading ? (
+          <AiDiagnosticReportView report={aiReport} />
+        ) : null}
+
+        {mode === "classic" && classicReport && !loading ? (
+          <>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 className="font-display text-xl font-semibold text-snow">
+                  {classicReport.domain}
+                </h2>
+                <p className="mt-1 text-sm text-ink-muted">
+                  Technical report ·{" "}
+                  {new Date(classicReport.preparedAt).toLocaleString()}
+                </p>
+              </div>
+              {classicAuditId ? (
+                <a
+                  href={`/api/dashboard/audit/${classicAuditId}/pdf`}
+                  className={buttonGhostClass}
                 >
-                  <p className="text-sm font-medium text-snow">{cause.headline}</p>
-                  <p className="mt-1 text-xs text-ink-muted">
-                    {cause.whyGooglePenalizes}
-                  </p>
-                  <p className="mt-1 text-xs text-accent/90">
-                    Fix: {cause.actionableFix}
-                  </p>
-                </div>
-              ))}
+                  <Download className="h-4 w-4" /> Download PDF
+                </a>
+              ) : null}
             </div>
-          </DashboardCard>
+            <MetricGrid>
+              <MetricTile
+                label="Security"
+                value={classicReport.overallSecurityGrade}
+              />
+              <MetricTile
+                label="Mobile perf"
+                value={String(classicReport.performance.mobile.performance)}
+              />
+              <MetricTile
+                label="Mobile SEO"
+                value={String(classicReport.performance.mobile.seo)}
+              />
+              <MetricTile
+                label="Findings"
+                value={String(classicReport.findings.length)}
+              />
+            </MetricGrid>
+            <ClassicSiteAuditReportView report={classicReport} />
+          </>
         ) : null}
 
         {!loading && mode === "crawl" && !crawlReport ? (
           <EmptyBlock
             icon={Radar}
-            title="Run a crawl audit"
-            description="We'll fetch internal pages and group SEO issues by type — titles, meta descriptions, headings, thin content, and duplicates."
+            title={modeCopy.crawl.emptyTitle}
+            description={modeCopy.crawl.emptyDesc}
+          />
+        ) : null}
+        {!loading && mode === "ai" && !aiReport ? (
+          <EmptyBlock
+            icon={Bot}
+            title={modeCopy.ai.emptyTitle}
+            description={modeCopy.ai.emptyDesc}
+          />
+        ) : null}
+        {!loading && mode === "classic" && !classicReport ? (
+          <EmptyBlock
+            icon={Gauge}
+            title={modeCopy.classic.emptyTitle}
+            description={modeCopy.classic.emptyDesc}
           />
         ) : null}
       </PageStack>

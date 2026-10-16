@@ -4,6 +4,7 @@ import Providers from "@/components/Providers";
 import AttributionCapture from "@/components/AttributionCapture";
 import JsonLd from "@/components/JsonLd";
 import { SITE_URL, siteGraphJsonLd } from "@/lib/seo";
+import { THEME_BOOTSTRAP_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
 const syne = Syne({
@@ -147,8 +148,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#010409",
-  colorScheme: "dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#010409" },
+  ],
+  colorScheme: "dark light",
 };
 
 export default function RootLayout({
@@ -159,10 +163,16 @@ export default function RootLayout({
   return (
     <html
       lang="en-PK"
+      data-theme="dark"
       data-scroll-behavior="smooth"
-      className={`${syne.variable} ${publicSans.variable} h-full bg-[#010409] antialiased`}
+      className={`${syne.variable} ${publicSans.variable} h-full bg-bg antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP_SCRIPT }}
+        />
+      </head>
       <body
         className="flex min-h-full flex-col bg-bg font-sans text-ink"
         suppressHydrationWarning

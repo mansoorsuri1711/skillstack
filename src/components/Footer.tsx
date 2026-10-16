@@ -60,7 +60,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative z-10 border-t border-white/10 bg-[#0d1117]">
+    <footer className="relative z-10 border-t border-line bg-bg-soft">
       <div
         aria-hidden
         className="h-px w-full bg-gradient-to-r from-transparent via-accent/40 to-transparent"
@@ -73,11 +73,11 @@ export default function Footer() {
           <div className="flex max-w-sm flex-col gap-5">
             <div className="flex items-center gap-3">
               <Logo size="sm" />
-              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/50">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-ink-muted">
                 Private Limited
               </span>
             </div>
-            <p className="text-sm leading-relaxed text-white/60">
+            <p className="text-sm leading-relaxed text-ink-muted">
               Web development &amp; SEO from Gilgit-Baltistan — serving
               Pakistan and clients worldwide.
             </p>
@@ -85,7 +85,7 @@ export default function Footer() {
               href={OFFICE.mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-white/50 transition-colors hover:text-accent"
+              className="text-sm text-ink-muted transition-colors hover:text-accent"
             >
               {OFFICE.fullLabel}
             </a>
@@ -94,14 +94,14 @@ export default function Footer() {
                 href={SITE_EMAIL_HREF}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/55 transition-colors hover:text-accent"
+                className="text-ink-muted transition-colors hover:text-accent"
               >
                 {SITE_EMAIL}
               </a>
               {SITE_PHONE && (
                 <a
                   href={SITE_PHONE_HREF}
-                  className="text-white/55 transition-colors hover:text-accent"
+                  className="text-ink-muted transition-colors hover:text-accent"
                 >
                   {SITE_PHONE}
                 </a>
@@ -112,7 +112,7 @@ export default function Footer() {
                 href={LINKEDIN_URL}
                 target="_blank"
                 rel="noopener noreferrer me"
-                className="text-white/50 transition-colors hover:text-accent"
+                className="text-ink-muted transition-colors hover:text-accent"
               >
                 LinkedIn
               </a>
@@ -120,7 +120,7 @@ export default function Footer() {
                 href={X_URL}
                 target="_blank"
                 rel="noopener noreferrer me"
-                className="text-white/50 transition-colors hover:text-accent"
+                className="text-ink-muted transition-colors hover:text-accent"
               >
                 X
               </a>
@@ -140,7 +140,7 @@ export default function Footer() {
                       <li key={link.href}>
                         <Link
                           href={link.href}
-                          className="text-sm text-white/55 transition-colors hover:text-accent"
+                          className="text-sm text-ink-muted transition-colors hover:text-accent"
                         >
                           {link.label}
                         </Link>
@@ -154,8 +154,8 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-white/[0.06]">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-1.5 px-6 py-6 text-center text-xs tracking-wide text-white/55 md:px-8">
+      <div className="border-t border-line">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-1.5 px-6 py-6 text-center text-xs tracking-wide text-ink-muted md:px-8">
           <p>
             © {year}{" "}
             <Link

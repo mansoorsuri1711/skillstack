@@ -38,7 +38,18 @@ export type ExtractedPage = {
   imagesMissingAlt: number;
   links: string[];
   robotsMeta: string | null;
+  canonicalUrl: string | null;
 };
+
+function resolveAbsoluteUrl(href: string, pageUrl: string) {
+  try {
+    const absolute = new URL(href, pageUrl);
+    absolute.hash = "";
+    return absolute.toString();
+  } catch {
+    return null;
+  }
+}
 
 export function extractFromHtml(html: string, pageUrl: string): ExtractedPage {
   const titleMatch = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
@@ -63,6 +74,17 @@ export function extractFromHtml(html: string, pageUrl: string): ExtractedPage {
       /<meta[^>]+content=["']([^"']*)["'][^>]+name=["']robots["'][^>]*>/i,
     );
   const robotsMeta = robotsMatch ? robotsMatch[1].trim().toLowerCase() : null;
+
+  const canonicalMatch =
+    html.match(
+      /<link[^>]+rel=["']canonical["'][^>]+href=["']([^"']+)["'][^>]*>/i,
+    ) ||
+    html.match(
+      /<link[^>]+href=["']([^"']+)["'][^>]+rel=["']canonical["'][^>]*>/i,
+    );
+  const canonicalUrl = canonicalMatch
+    ? resolveAbsoluteUrl(decodeEntities(canonicalMatch[1].trim()), pageUrl)
+    : null;
 
   const h1Tags: string[] = [];
   for (const match of html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)) {
@@ -115,5 +137,6 @@ export function extractFromHtml(html: string, pageUrl: string): ExtractedPage {
     imagesMissingAlt,
     links: [...new Set(links)],
     robotsMeta,
+    canonicalUrl,
   };
 }

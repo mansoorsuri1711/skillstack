@@ -115,6 +115,7 @@ export async function crawlSite(
             outboundLinkCount: extracted?.links.length ?? 0,
             isIndexable: !(extracted?.robotsMeta ?? "").includes("noindex"),
             robotsMeta: extracted?.robotsMeta ?? null,
+            canonicalUrl: extracted?.canonicalUrl ?? null,
             crawlDepth: depth,
           };
 
@@ -153,6 +154,7 @@ export async function crawlSite(
               outboundLinkCount: 0,
               isIndexable: true,
               robotsMeta: null,
+              canonicalUrl: null,
               crawlDepth: depth,
             } satisfies CrawledPage,
             nextLinks: [] as Array<{ url: string; depth: number }>,

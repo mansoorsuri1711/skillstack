@@ -10,7 +10,7 @@ export default function PageShell({
   return (
     <>
       <Header />
-      <main className={`min-h-[100svh] bg-[#010409] ${HEADER_OFFSET_CLASS}`}>
+      <main className={`min-h-[100svh] bg-bg ${HEADER_OFFSET_CLASS}`}>
         {children}
       </main>
       <Footer />

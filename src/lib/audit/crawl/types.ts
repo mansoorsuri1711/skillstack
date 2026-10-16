@@ -16,6 +16,7 @@ export type CrawledPage = {
   outboundLinkCount: number;
   isIndexable: boolean;
   robotsMeta: string | null;
+  canonicalUrl: string | null;
   crawlDepth: number;
 };
 

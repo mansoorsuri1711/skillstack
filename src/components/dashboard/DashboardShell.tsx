@@ -2,6 +2,7 @@
 
 import { type ReactNode } from "react";
 import { DashboardMobileToggle } from "@/components/dashboard/DashboardSidebar";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function DashboardShell({
   title,
@@ -28,7 +29,10 @@ export default function DashboardShell({
             ) : null}
           </div>
         </div>
-        {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
+        <div className="flex shrink-0 items-center gap-2">
+          <ThemeToggle compact />
+          {actions ? <div className="flex shrink-0 items-center gap-2">{actions}</div> : null}
+        </div>
       </header>
       <main
         className={
