@@ -39,12 +39,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const priceId = process.env.STRIPE_PRICE_ID?.trim();
-    if (!priceId) {
+    const priceId = process.env.STRIPE_PRICE_ID?.trim() || "";
+    if (priceId.startsWith("prod_")) {
       return NextResponse.json(
         {
           error:
-            "STRIPE_PRICE_ID is missing. Create a Product/Price in the Stripe Dashboard and set STRIPE_PRICE_ID in your environment.",
+            "STRIPE_PRICE_ID is a Product ID (prod_...). Use the Price ID instead (starts with price_). Product catalog → open product → copy Price ID.",
         },
         { status: 503 },
       );
@@ -55,18 +55,31 @@ export async function POST(request: Request) {
     const email = session.user.email;
     const userId = session.user.id || "";
 
-    // Hosted Checkout — matches Checkout Studio (hosted_web_0001 / payment / Stripe catalog)
+    // Prefer Stripe catalog Price ID; fall back to plan amount so checkout still works in sandbox.
+    const lineItems = priceId.startsWith("price_")
+      ? [{ price: priceId, quantity: 1 }]
+      : [
+          {
+            quantity: 1,
+            price_data: {
+              currency: "usd",
+              unit_amount: Math.round(plan.priceUsd * 100),
+              product_data: {
+                name: `SkillStack · ${plan.name}`,
+                description: plan.tagline,
+                images: [`${baseUrl}/og-image.jpg`],
+              },
+            },
+          },
+        ];
+
+    // Hosted Checkout — Checkout Studio params (hosted_web_0001)
     const checkoutSession = await stripe.checkout.sessions.create({
       ui_mode: "hosted_page",
       mode: "payment",
       customer_email: email,
       client_reference_id: userId || undefined,
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
+      line_items: lineItems,
       metadata: {
         userId,
         planId: plan.id,

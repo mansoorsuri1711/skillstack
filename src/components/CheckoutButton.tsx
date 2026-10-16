@@ -109,14 +109,14 @@ export default function CheckoutButton({
       </button>
 
       {error ? (
-        <div className="rounded-xl border border-accent/30 bg-accent/10 px-4 py-3 text-center text-xs leading-relaxed text-snow">
-          <p className="font-semibold text-accent mb-1">Testing Mode Active</p>
-          <p className="text-ink-muted">{error}</p>
+        <div className="rounded-xl border border-danger-border bg-danger-bg px-4 py-3 text-center text-xs leading-relaxed text-danger">
+          <p className="font-semibold mb-1">Checkout could not start</p>
+          <p className="opacity-90">{error}</p>
           <Link
             href="/dashboard"
-            className="mt-2 inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-xs font-bold text-[#010409] hover:bg-accent-deep transition"
+            className="mt-2 inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-xs font-bold text-accent-fg hover:bg-accent-deep transition"
           >
-            Go to Dashboard (Free) →
+            Go to Dashboard →
           </Link>
         </div>
       ) : null}
