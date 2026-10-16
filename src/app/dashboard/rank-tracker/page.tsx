@@ -6,6 +6,7 @@ import {
   ChevronRight,
   Plus,
   RefreshCw,
+  Settings2,
   Trash2,
   TrendingUp,
 } from "lucide-react";
@@ -57,6 +58,10 @@ export default function RankTrackingPage() {
   const [addOpen, setAddOpen] = useState(false);
   const [addSubmitting, setAddSubmitting] = useState(false);
   const [addError, setAddError] = useState("");
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [editSubmitting, setEditSubmitting] = useState(false);
+  const [editError, setEditError] = useState("");
 
   const [chooseOpen, setChooseOpen] = useState(false);
   const [chooseDomain, setChooseDomain] = useState("");
@@ -148,6 +153,38 @@ export default function RankTrackingPage() {
       setAddError(err instanceof Error ? err.message : "Could not add domain");
     } finally {
       setAddSubmitting(false);
+    }
+  }
+
+  async function handleEditSettings(input: AddTrackedDomainInput) {
+    if (!selectedId) return;
+    setEditSubmitting(true);
+    setEditError("");
+    try {
+      const res = await fetch(`/api/dashboard/rank-tracking/${selectedId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          locationCode: input.locationCode,
+          languageCode: input.languageCode,
+          searchTargeting: input.searchTargeting,
+          device: input.device,
+          schedule: input.schedule,
+          searchDepth: input.searchDepth,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      setEditOpen(false);
+      if (data.domain) setDetail(data.domain);
+      await loadDomains();
+    } catch (err) {
+      setEditError(
+        err instanceof Error ? err.message : "Could not update settings",
+      );
+    } finally {
+      setEditSubmitting(false);
     }
   }
 
@@ -364,15 +401,27 @@ export default function RankTrackingPage() {
                       </h2>
                       <p className="mt-1 text-sm text-ink-muted">{activeDetail.summary}</p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        void openKeywordDiscovery(activeDetail.id, activeDetail.domain)
-                      }
-                      className={buttonGhostClass}
-                    >
-                      <Plus className="h-4 w-4" /> Add keywords
-                    </button>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditError("");
+                          setEditOpen(true);
+                        }}
+                        className={buttonGhostClass}
+                      >
+                        <Settings2 className="h-4 w-4" /> Edit settings
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          void openKeywordDiscovery(activeDetail.id, activeDetail.domain)
+                        }
+                        className={buttonGhostClass}
+                      >
+                        <Plus className="h-4 w-4" /> Add keywords
+                      </button>
+                    </div>
                   </div>
                 </DashboardCard>
 
@@ -494,8 +543,9 @@ export default function RankTrackingPage() {
       </PageStack>
 
       <AddTrackedDomainModal
-        key={`${addOpen}-${project?.domain ?? ""}`}
+        key={`add-${addOpen}-${project?.domain ?? ""}`}
         open={addOpen}
+        mode="add"
         onClose={() => {
           if (addSubmitting) return;
           setAddOpen(false);
@@ -509,6 +559,29 @@ export default function RankTrackingPage() {
         defaultLanguageCode={project?.languageCode ?? "en"}
         submitting={addSubmitting}
         error={addError}
+      />
+
+      <AddTrackedDomainModal
+        key={`edit-${editOpen}-${activeDetail?.id ?? ""}`}
+        open={editOpen}
+        mode="edit"
+        onClose={() => {
+          if (editSubmitting) return;
+          setEditOpen(false);
+          setEditError("");
+        }}
+        onSubmit={handleEditSettings}
+        defaultDomain={activeDetail?.domain ?? ""}
+        defaultLocationCode={resolveLabsLocationCode(
+          activeDetail?.locationCode ?? DEFAULT_COUNTRY_LOCATION_CODE,
+        )}
+        defaultLanguageCode={activeDetail?.languageCode ?? "en"}
+        defaultSearchTargeting={activeDetail?.searchTargeting ?? "national"}
+        defaultDevice={activeDetail?.device ?? "mobile"}
+        defaultSchedule={activeDetail?.schedule ?? "weekly"}
+        defaultSearchDepth={activeDetail?.searchDepth ?? 40}
+        submitting={editSubmitting}
+        error={editError}
       />
 
       <ChooseKeywordsModal

@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
+  Bookmark,
   BookmarkPlus,
   Check,
   ChevronDown,
@@ -435,6 +436,9 @@ export function KeywordResearchPanel({
   message,
   onResearch,
   onSaveKeyword,
+  onSaveKeywords,
+  savedKeywords,
+  savingKeywords = false,
 }: {
   seed: string;
   onSeedChange: (s: string) => void;
@@ -454,6 +458,9 @@ export function KeywordResearchPanel({
   message: string;
   onResearch: (seed?: string) => void;
   onSaveKeyword?: (row: KeywordResearchRow) => void;
+  onSaveKeywords?: (rows: KeywordResearchRow[]) => void;
+  savedKeywords?: Set<string>;
+  savingKeywords?: boolean;
 }) {
   const activeInsights = summary ?? seedInsights ?? null;
   const displayVolume =
@@ -1158,6 +1165,25 @@ export function KeywordResearchPanel({
                     ) : null}
                   </div>
 
+                  {onSaveKeywords && selected.size > 0 ? (
+                    <button
+                      type="button"
+                      className={buttonPrimaryClass}
+                      disabled={savingKeywords}
+                      onClick={() => {
+                        const rows = filteredResults.filter((row) =>
+                          selected.has(row.keyword),
+                        );
+                        onSaveKeywords(rows);
+                      }}
+                    >
+                      <BookmarkPlus className="h-4 w-4" />
+                      {savingKeywords
+                        ? "Saving…"
+                        : `Save selected (${selected.size})`}
+                    </button>
+                  ) : null}
+
                   <button
                     type="button"
                     className={buttonGhostClass}
@@ -1302,14 +1328,38 @@ export function KeywordResearchPanel({
                             </td>
                             {onSaveKeyword ? (
                               <td className="px-4 py-3">
-                                <button
-                                  type="button"
-                                  onClick={() => onSaveKeyword(row)}
-                                  className="text-ink-muted hover:text-accent p-1"
-                                  title="Save keyword"
-                                >
-                                  <BookmarkPlus className="h-4 w-4" />
-                                </button>
+                                {(() => {
+                                  const isSaved = savedKeywords?.has(
+                                    row.keyword.toLowerCase(),
+                                  );
+                                  return (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (isSaved || savingKeywords) return;
+                                        onSaveKeyword(row);
+                                      }}
+                                      disabled={savingKeywords || isSaved}
+                                      className={`p-1 transition ${
+                                        isSaved
+                                          ? "text-accent"
+                                          : "text-ink-muted hover:text-accent"
+                                      } disabled:opacity-60`}
+                                      title={
+                                        isSaved
+                                          ? "Already saved"
+                                          : "Save keyword"
+                                      }
+                                    >
+                                      {isSaved ? (
+                                        <Bookmark className="h-4 w-4 fill-current" />
+                                      ) : (
+                                        <BookmarkPlus className="h-4 w-4" />
+                                      )}
+                                    </button>
+                                  );
+                                })()}
                               </td>
                             ) : null}
                           </tr>

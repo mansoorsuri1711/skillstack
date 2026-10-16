@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { DashboardModal } from "@/components/dashboard/DashboardModal";
 import { ToolbarSelect } from "@/components/dashboard/SearchToolbar";
 import {
@@ -38,22 +38,34 @@ export type AddTrackedDomainInput = {
   searchDepth: number;
 };
 
+export type TrackedDomainSettingsInput = Omit<AddTrackedDomainInput, "domain">;
+
 export function AddTrackedDomainModal({
   open,
   onClose,
   onSubmit,
+  mode = "add",
   defaultDomain = "",
   defaultLocationCode = DEFAULT_COUNTRY_LOCATION_CODE,
   defaultLanguageCode = "en",
+  defaultSearchTargeting = "national",
+  defaultDevice = "mobile",
+  defaultSchedule = "weekly",
+  defaultSearchDepth = 40,
   submitting = false,
   error = "",
 }: {
   open: boolean;
   onClose: () => void;
   onSubmit: (input: AddTrackedDomainInput) => Promise<void>;
+  mode?: "add" | "edit";
   defaultDomain?: string;
   defaultLocationCode?: number;
   defaultLanguageCode?: string;
+  defaultSearchTargeting?: SearchTargeting;
+  defaultDevice?: TrackingDevice;
+  defaultSchedule?: TrackingSchedule;
+  defaultSearchDepth?: number;
   submitting?: boolean;
   error?: string;
 }) {
@@ -62,14 +74,36 @@ export function AddTrackedDomainModal({
     resolveLabsLocationCode(defaultLocationCode),
   );
   const [languageCode, setLanguageCode] = useState(defaultLanguageCode);
-  const [searchTargeting, setSearchTargeting] = useState<SearchTargeting>("national");
-  const [device, setDevice] = useState<TrackingDevice>("mobile");
-  const [schedule, setSchedule] = useState<TrackingSchedule>("weekly");
-  const [searchDepth, setSearchDepth] = useState(40);
+  const [searchTargeting, setSearchTargeting] =
+    useState<SearchTargeting>(defaultSearchTargeting);
+  const [device, setDevice] = useState<TrackingDevice>(defaultDevice);
+  const [schedule, setSchedule] = useState<TrackingSchedule>(defaultSchedule);
+  const [searchDepth, setSearchDepth] = useState(defaultSearchDepth);
+
+  useEffect(() => {
+    if (!open) return;
+    setDomain(defaultDomain);
+    setLocationCode(resolveLabsLocationCode(defaultLocationCode));
+    setLanguageCode(defaultLanguageCode);
+    setSearchTargeting(defaultSearchTargeting);
+    setDevice(defaultDevice);
+    setSchedule(defaultSchedule);
+    setSearchDepth(defaultSearchDepth);
+  }, [
+    open,
+    defaultDomain,
+    defaultLocationCode,
+    defaultLanguageCode,
+    defaultSearchTargeting,
+    defaultDevice,
+    defaultSchedule,
+    defaultSearchDepth,
+  ]);
 
   const pages = searchDepthPages(searchDepth);
   const perCheckCost = estimateCheckCost(pages, device);
   const monthlyEstimate = estimateMonthlyCost(50, pages, device, schedule);
+  const isEdit = mode === "edit";
 
   const fieldClass = "flex flex-col gap-1.5 text-xs font-medium text-ink-muted";
 
@@ -96,7 +130,7 @@ export function AddTrackedDomainModal({
     <DashboardModal
       open={open}
       onClose={onClose}
-      title="Add Domain"
+      title={isEdit ? "Edit tracking settings" : "Add Domain"}
       size="lg"
       footer={
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
@@ -109,7 +143,13 @@ export function AddTrackedDomainModal({
             disabled={submitting}
             className={buttonPrimaryClass}
           >
-            {submitting ? "Adding..." : "Add Domain"}
+            {submitting
+              ? isEdit
+                ? "Saving..."
+                : "Adding..."
+              : isEdit
+                ? "Save settings"
+                : "Add Domain"}
           </button>
         </div>
       }
@@ -125,8 +165,13 @@ export function AddTrackedDomainModal({
             onChange={(e) => setDomain(e.target.value)}
             placeholder="example.com"
             required
-            disabled={submitting}
+            disabled={submitting || isEdit}
           />
+          {isEdit ? (
+            <span className="text-[11px] font-normal text-ink-muted">
+              Domain cannot be changed. Update location, device, schedule, or depth below.
+            </span>
+          ) : null}
         </label>
 
         <ToolbarSelect

@@ -56,6 +56,24 @@ export default function KeywordsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [savedKeywords, setSavedKeywords] = useState<Set<string>>(new Set());
+  const [savingKeywords, setSavingKeywords] = useState(false);
+
+  async function loadSavedKeywords() {
+    try {
+      const res = await fetch("/api/dashboard/keywords/saved");
+      const data = await res.json();
+      if (!res.ok) return;
+      const next = new Set<string>(
+        (data.keywords ?? []).map((k: { keyword: string }) =>
+          String(k.keyword).toLowerCase(),
+        ),
+      );
+      setSavedKeywords(next);
+    } catch {
+      // Ignore — save UI still works without preloaded state
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -80,6 +98,10 @@ export default function KeywordsPage() {
       const server = await loadKeywordResearchSession();
       if (server && !cancelled) {
         applySession(server, setters);
+      }
+
+      if (!cancelled) {
+        await loadSavedKeywords();
       }
     })();
 
@@ -158,19 +180,48 @@ export default function KeywordsPage() {
     }
   }
 
-  async function saveKeyword(row: KeywordResearchRow) {
+  async function saveKeywords(rows: KeywordResearchRow[]) {
+    if (rows.length === 0) return;
+    setError("");
     setMessage("");
-    const res = await fetch("/api/dashboard/keywords/saved", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ keywords: [row] }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.message || "Save failed");
-      return;
+    setSavingKeywords(true);
+    try {
+      const payload = rows.map((row) => ({
+        keyword: row.keyword,
+        searchVolume: row.searchVolume,
+        cpc: row.cpc,
+        difficulty: row.difficulty,
+      }));
+      const res = await fetch("/api/dashboard/keywords/saved", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keywords: payload }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || "Save failed");
+        return;
+      }
+      const saved = (data.saved ?? []) as Array<{ keyword: string }>;
+      setSavedKeywords((prev) => {
+        const next = new Set(prev);
+        for (const item of saved) next.add(String(item.keyword).toLowerCase());
+        return next;
+      });
+      setMessage(
+        saved.length === 1
+          ? `Saved "${saved[0].keyword}"`
+          : `Saved ${saved.length} keywords`,
+      );
+    } catch {
+      setError("Save failed. Please try again.");
+    } finally {
+      setSavingKeywords(false);
     }
-    setMessage(`Saved "${row.keyword}"`);
+  }
+
+  async function saveKeyword(row: KeywordResearchRow) {
+    await saveKeywords([row]);
   }
 
   return (
@@ -200,6 +251,9 @@ export default function KeywordsPage() {
           message={message}
           onResearch={(nextSeed) => void onResearch(nextSeed)}
           onSaveKeyword={(row) => void saveKeyword(row)}
+          onSaveKeywords={(rows) => void saveKeywords(rows)}
+          savedKeywords={savedKeywords}
+          savingKeywords={savingKeywords}
         />
       </PageStack>
     </DashboardShell>
