@@ -31,7 +31,22 @@ export const metadata: Metadata = {
   }),
 };
 
-export default function LoginPage() {
+function safeCallbackPath(raw: string | undefined) {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return null;
+  return raw;
+}
+
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}) {
+  const params = await searchParams;
+  const callback = safeCallbackPath(params.callbackUrl);
+  const registerHref = callback
+    ? `/register?callbackUrl=${encodeURIComponent(callback)}`
+    : "/register";
+
   return (
     <AuthShell
       title="Sign in to SkillStack"
@@ -39,7 +54,7 @@ export default function LoginPage() {
         <>
           New to SkillStack?{" "}
           <Link
-            href="/register?callbackUrl=/contact"
+            href={registerHref}
             className="font-medium text-accent hover:underline"
           >
             Create an account

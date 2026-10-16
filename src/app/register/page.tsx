@@ -33,11 +33,26 @@ export const metadata: Metadata = {
   }),
 };
 
-export default async function RegisterPage() {
+function safeCallbackPath(raw: string | undefined) {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return null;
+  return raw;
+}
+
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}) {
   const session = await auth();
   if (session?.user) {
     redirect("/dashboard");
   }
+
+  const params = await searchParams;
+  const callback = safeCallbackPath(params.callbackUrl);
+  const loginHref = callback
+    ? `/login?callbackUrl=${encodeURIComponent(callback)}`
+    : "/login";
 
   return (
     <AuthShell
@@ -45,7 +60,10 @@ export default async function RegisterPage() {
       footer={
         <>
           Already have an account?{" "}
-          <Link href="/login" className="font-medium text-accent hover:underline">
+          <Link
+            href={loginHref}
+            className="font-medium text-accent hover:underline"
+          >
             Sign in
           </Link>
         </>
