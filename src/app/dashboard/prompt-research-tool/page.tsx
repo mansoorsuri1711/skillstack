@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ExternalLink, Plus } from "lucide-react";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { AiToolLimitNotice } from "@/components/dashboard/AiToolLimitNotice";
@@ -42,13 +42,18 @@ export default function PromptResearchPage() {
     }
   }, []);
 
+  const seededKeyword = useRef(false);
+
   useEffect(() => {
     if (!projectLoading) void loadUsage();
   }, [projectLoading, loadUsage]);
 
+  // Seed once from project domain — do not refill when the user clears the field.
   useEffect(() => {
-    if (project?.domain && !keyword) setKeyword(project.domain.split(".")[0] ?? "");
-  }, [project?.domain, keyword]);
+    if (seededKeyword.current || !project?.domain) return;
+    seededKeyword.current = true;
+    setKeyword((prev) => prev || project.domain.split(".")[0] || "");
+  }, [project?.domain]);
 
   async function onSubmit() {
     if (!keyword.trim() || usage?.remaining === 0) return;
