@@ -18,8 +18,8 @@ const layers = [
   {
     label: "Web Dev · WP & Next.js",
     tone: "from-[#1c2433] to-[#111820]",
-    border: "border-line",
-    text: "text-snow",
+    border: "border-slate-500/30",
+    text: "text-slate-100",
   },
   {
     label: "SEO · AEO · AIO · GEO",
@@ -30,8 +30,8 @@ const layers = [
   {
     label: "Backlinks & Authority",
     tone: "from-[#222833] to-[#141820]",
-    border: "border-line",
-    text: "text-ink",
+    border: "border-violet-500/25",
+    text: "text-violet-100/90",
   },
   {
     label: "Ad Monetization",
@@ -128,7 +128,7 @@ export default function SkillAmalgamation() {
                 >
                   {layer.label}
                 </span>
-                <span className="shrink-0 font-display text-[10px] tabular-nums text-ink-muted sm:text-[10px]">
+                <span className="shrink-0 font-display text-[10px] tabular-nums text-white/45 sm:text-[10px]">
                   {String(i + 1).padStart(2, "0")}
                 </span>
               </div>

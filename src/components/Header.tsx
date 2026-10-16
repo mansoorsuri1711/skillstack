@@ -66,7 +66,7 @@ export default function Header() {
         </nav>
 
         <div className="relative z-10 flex shrink-0 items-center gap-2">
-          <ThemeToggle compact className="hidden sm:inline-flex" />
+          <ThemeToggle compact />
 
           {isLoading ? (
             <div className="hidden h-9 w-36 rounded-md sm:block" />
@@ -116,8 +116,6 @@ export default function Header() {
               </Link>
             </>
           ) : null}
-
-          <ThemeToggle compact className="sm:hidden" />
 
           <button
             type="button"
