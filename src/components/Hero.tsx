@@ -38,7 +38,7 @@ export default function Hero() {
           <div className="hero-item hero-item-4 mt-5 grid w-full grid-cols-2 gap-2.5 sm:mt-9 sm:flex sm:w-auto sm:flex-wrap sm:items-center sm:gap-4">
             <a
               href="/contact"
-              className="inline-flex items-center justify-center rounded-md bg-accent px-3 py-2.5 text-center text-sm font-semibold text-[#010409] transition-colors hover:bg-accent-deep sm:px-6 sm:py-3"
+              className="inline-flex items-center justify-center rounded-md bg-accent px-3 py-2.5 text-center text-sm font-semibold text-accent-fg transition-colors hover:bg-accent-deep sm:px-6 sm:py-3"
             >
               Let&apos;s talk
             </a>

@@ -36,7 +36,7 @@ const SETUP_STEPS: Array<{
       "Anchor crawls, backlinks, and keyword rankings to your primary target domain.",
     icon: Globe,
     cta: "Set Domain",
-    accent: "text-sky-400",
+    accent: "text-ink",
     glow: "group-hover:shadow-sky-500/10",
   },
   {
@@ -48,7 +48,7 @@ const SETUP_STEPS: Array<{
     icon: BarChart3,
     cta: "Connect GSC",
     href: "/dashboard/gsc-insights-tool",
-    accent: "text-violet-400",
+    accent: "text-ink",
     glow: "group-hover:shadow-violet-500/10",
   },
   {
@@ -60,7 +60,7 @@ const SETUP_STEPS: Array<{
     icon: FileCode2,
     cta: "Run Diagnostic",
     href: "/dashboard/site-audit-tool",
-    accent: "text-amber-400",
+    accent: "text-ink",
     glow: "group-hover:shadow-amber-500/10",
   },
   {
@@ -72,7 +72,7 @@ const SETUP_STEPS: Array<{
     icon: MessageSquare,
     cta: "Open Suri",
     href: "/dashboard/chat",
-    accent: "text-accent",
+    accent: "text-ink",
     glow: "group-hover:shadow-teal-500/15",
   },
 ];
@@ -155,7 +155,9 @@ export default function DashboardOnboarding({
               {hasCustomDomain ? (
                 <>
                   Project Overview:{" "}
-                  <span className="font-mono text-accent">{project.domain}</span>
+                  <span className="font-mono text-snow underline decoration-accent decoration-2 underline-offset-4">
+                    {project.domain}
+                  </span>
                 </>
               ) : (
                 "Finish setup to unlock live SEO data"
@@ -200,7 +202,13 @@ export default function DashboardOnboarding({
               className="flex w-full items-center justify-between gap-2 rounded-lg px-1.5 py-1.5 text-left transition hover:bg-white/5"
             >
               <span className="text-ink-muted">GSC LINK</span>
-              <span className={gscConnected ? "text-emerald-400 font-semibold" : "text-amber-400"}>
+              <span
+                className={
+                  gscConnected
+                    ? "text-success font-semibold"
+                    : "text-warn font-semibold"
+                }
+              >
                 {gscConnected ? "CONNECTED" : "UNLINKED →"}
               </span>
             </button>
@@ -210,7 +218,7 @@ export default function DashboardOnboarding({
               className="flex w-full items-center justify-between gap-2 rounded-lg px-1.5 py-1.5 text-left transition hover:bg-white/5"
             >
               <span className="text-ink-muted">SURI</span>
-              <span className="text-accent font-medium">READY →</span>
+              <span className="text-success font-semibold">READY →</span>
             </button>
           </div>
         </div>
@@ -284,23 +292,23 @@ export default function DashboardOnboarding({
                     <div
                       className={`flex h-9 w-9 items-center justify-center rounded-lg border transition ${
                         isDone
-                          ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                          : `border-line bg-bg ${step.accent}`
+                          ? "border-success-border bg-success-bg text-success"
+                          : `border-line bg-bg-soft ${step.accent}`
                       }`}
                     >
-                      <Icon className="h-4 w-4" />
+                      <Icon className="h-4 w-4" strokeWidth={2.25} />
                     </div>
                     {isDone ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-mono font-semibold text-emerald-400">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-success-border bg-success-bg px-2 py-0.5 text-[10px] font-mono font-semibold text-success">
                         <CheckCircle2 className="h-3 w-3" />
                         DONE
                       </span>
                     ) : isNext ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/10 px-2 py-0.5 text-[10px] font-mono font-semibold text-accent animate-pulse">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-accent/50 bg-mist px-2 py-0.5 text-[10px] font-mono font-semibold text-accent-deep animate-pulse">
                         NEXT
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-mono text-ink-muted">
+                      <span className="inline-flex items-center rounded-full border border-line bg-bg-soft px-2 py-0.5 text-[10px] font-mono text-ink-muted">
                         PENDING
                       </span>
                     )}
@@ -333,7 +341,7 @@ export default function DashboardOnboarding({
                       <button
                         type="submit"
                         disabled={saving || !domainInput.trim()}
-                        className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent py-1.5 text-xs font-semibold text-[#010409] transition hover:bg-accent-deep disabled:opacity-50"
+                        className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent py-1.5 text-xs font-semibold text-accent-fg transition hover:bg-accent-deep disabled:opacity-50"
                       >
                         {saving ? "Saving…" : step.cta}
                         <ArrowRight className="h-3.5 w-3.5" />
@@ -341,7 +349,7 @@ export default function DashboardOnboarding({
                     </form>
                   ) : step.id === "domain" && isDone ? (
                     <div className="space-y-2">
-                      <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-1.5 text-[11px] font-mono text-emerald-400 truncate">
+                      <div className="rounded-lg border border-line bg-bg-soft px-2.5 py-1.5 text-[11px] font-mono font-semibold text-snow truncate">
                         {project.domain}
                       </div>
                       <DomainEditRow
@@ -359,8 +367,8 @@ export default function DashboardOnboarding({
                       onTouchStart={() => step.href && router.prefetch(step.href)}
                       className={`w-full inline-flex items-center justify-between rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
                         isDone
-                          ? "border border-line bg-white/5 text-snow hover:border-accent/40 hover:bg-accent/10 hover:text-accent"
-                          : "bg-accent text-[#010409] hover:bg-accent-deep shadow-md shadow-accent/20"
+                          ? "border border-line bg-bg-soft text-snow hover:border-accent/50 hover:bg-mist hover:text-accent-deep"
+                          : "bg-accent text-accent-fg hover:bg-accent-deep shadow-md shadow-accent/20"
                       }`}
                     >
                       <span>{step.cta}</span>
@@ -424,7 +432,7 @@ function DomainEditRow({
         <button
           type="submit"
           disabled={saving || !domainInput.trim()}
-          className="flex-1 rounded-xl bg-accent py-2 text-xs font-semibold text-[#010409] disabled:opacity-50"
+          className="flex-1 rounded-xl bg-accent py-2 text-xs font-semibold text-accent-fg disabled:opacity-50"
         >
           {saving ? "Saving…" : "Save"}
         </button>

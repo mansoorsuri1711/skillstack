@@ -77,7 +77,7 @@ export default function Header() {
               <Link
                 href="/dashboard"
                 prefetch={true}
-                className="hidden rounded-md bg-accent px-3 py-1.5 text-xs font-semibold text-white hover:bg-accent-deep sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
+                className="hidden rounded-md bg-accent px-3 py-1.5 text-xs font-semibold text-accent-fg hover:bg-accent-deep sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
               >
                 Dashboard
               </Link>
@@ -168,7 +168,7 @@ export default function Header() {
                 <Link
                   href="/dashboard"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full rounded-md bg-accent px-4 py-3 text-center text-sm font-semibold text-white"
+                  className="w-full rounded-md bg-accent px-4 py-3 text-center text-sm font-semibold text-accent-fg"
                 >
                   Dashboard
                 </Link>

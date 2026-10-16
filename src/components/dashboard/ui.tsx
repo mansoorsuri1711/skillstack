@@ -304,10 +304,10 @@ export const inputClass =
   "w-full rounded-lg border border-line bg-bg px-3 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-muted focus:border-accent focus:ring-1 focus:ring-accent/20";
 
 export const buttonPrimaryClass =
-  "inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-deep disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-accent-fg transition hover:bg-accent-deep disabled:opacity-50";
 
 export const buttonAccentTabClass =
-  "inline-flex items-center gap-2 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-white transition";
+  "inline-flex items-center gap-2 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-accent-fg transition";
 
 export const buttonGhostClass =
   "inline-flex items-center justify-center gap-2 rounded-lg border border-line px-4 py-2.5 text-sm font-medium text-ink transition hover:border-accent/30 hover:bg-white/5 disabled:opacity-50";
