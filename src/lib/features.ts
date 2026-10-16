@@ -133,28 +133,81 @@ export const productFeatures: ProductFeature[] = [
     ],
   },
   {
-    slug: "brand-lookup-tool",
-    title: "Brand Lookup Tool",
-    shortTitle: "Brand",
-    group: "Research",
+    slug: "prompt-research-tool",
+    title: "Prompt Research Tool",
+    shortTitle: "Prompt Research",
+    group: "AI Visibility",
     summary:
-      "Look up brand presence and related signals to understand how a name shows up online.",
+      "Find questions people ask about your market and see how ChatGPT answers them — plus which sites it cites.",
     description:
-      "The Brand Lookup Tool helps you explore how a brand appears across search-related signals so you can plan content, reputation, and competitive positioning with clearer context.",
-    dashboardHref: "/dashboard/brand-lookup-tool",
+      "Prompt Research surfaces People Also Ask–style questions for a keyword, loads ChatGPT answers, and shows cited sources so you can plan AEO content and track AI visibility.",
+    dashboardHref: "/dashboard/prompt-research-tool",
     highlights: [
-      "Fast brand-focused lookup workflow",
-      "Useful for competitive and reputation checks",
-      "Works alongside domain and keyword research",
+      "Market questions ranked by SERP relevance",
+      "ChatGPT answers with citation lists",
+      "Add winners to Prompt Tracking in one step",
     ],
     outcomes: [
-      "Understand brand search footprint",
-      "Support content and PR planning",
+      "Discover AI-answer opportunities",
+      "See who ChatGPT cites for your topics",
     ],
     keywords: [
-      "brand lookup tool",
-      "brand search analysis",
-      "SkillStack brand lookup tool",
+      "prompt research tool",
+      "ChatGPT questions research",
+      "AI visibility research",
+      "SkillStack prompt research",
+    ],
+  },
+  {
+    slug: "prompt-explorer-tool",
+    title: "Prompt Explorer Tool",
+    shortTitle: "Prompt Explorer",
+    group: "AI Visibility",
+    summary:
+      "Run one prompt across ChatGPT, Claude, Gemini, and Perplexity — compare answers and citations side by side.",
+    description:
+      "Prompt Explorer sends the same question to multiple AI engines so you can compare answers, audit citations, and check whether your brand is mentioned.",
+    dashboardHref: "/dashboard/prompt-explorer-tool",
+    highlights: [
+      "Four models in one view",
+      "Citation and brand-mention highlighting",
+      "Ideal for competitive AI visibility checks",
+    ],
+    outcomes: [
+      "Compare AI engines for the same prompt",
+      "Spot citation gaps for your domain",
+    ],
+    keywords: [
+      "prompt explorer",
+      "multi-model AI SEO",
+      "ChatGPT Claude Gemini comparison",
+      "SkillStack prompt explorer",
+    ],
+  },
+  {
+    slug: "prompt-tracking-tool",
+    title: "Prompt Tracking Tool",
+    shortTitle: "Prompt Tracking",
+    group: "AI Visibility",
+    summary:
+      "Track prompts your customers use with AI and inspect where your business is mentioned or cited.",
+    description:
+      "Prompt Tracking stores the questions that matter for your brand, runs them on a schedule across AI engines, and charts brand mentions and owned citations over time.",
+    dashboardHref: "/dashboard/prompt-tracking-tool",
+    highlights: [
+      "Weekly tracking with manual Run now",
+      "Brand mentions and owned citations",
+      "Topic-grouped prompt lists and exports",
+    ],
+    outcomes: [
+      "Monitor AI visibility like you monitor rankings",
+      "Prioritize prompts where competitors get cited",
+    ],
+    keywords: [
+      "prompt tracking",
+      "AI brand mention tracking",
+      "ChatGPT citation tracking",
+      "SkillStack prompt tracking",
     ],
   },
   {

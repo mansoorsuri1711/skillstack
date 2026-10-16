@@ -74,7 +74,7 @@ export default async function PublicProfilePage({ params }: Props) {
 
   return (
     <PageShell>
-      <div className="relative overflow-hidden border-b border-white/10 bg-[#0d1117]">
+      <div className="relative overflow-hidden border-b border-line bg-bg-soft">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_0%,rgba(45,212,191,0.12),transparent_55%)]"
@@ -85,12 +85,12 @@ export default async function PublicProfilePage({ params }: Props) {
               <Link href="/" className="hover:text-accent">
                 Home
               </Link>
-              <span className="mx-2 text-white/25">/</span>
+              <span className="mx-2 text-ink-muted">/</span>
               <span className="text-snow/80">@{p.username}</span>
             </nav>
 
             <div className="flex flex-wrap items-start gap-5">
-              <div className="relative h-20 w-20 overflow-hidden rounded-full border border-white/15 bg-[#161b22]">
+              <div className="relative h-20 w-20 overflow-hidden rounded-full border border-line bg-bg-elevated">
                 {p.image ? (
                   <Image
                     src={p.image}
@@ -122,7 +122,7 @@ export default async function PublicProfilePage({ params }: Props) {
                     {p.headline}
                   </p>
                 ) : null}
-                <p className="mt-2 text-sm text-white/40">@{p.username}</p>
+                <p className="mt-2 text-sm text-ink-muted">@{p.username}</p>
               </div>
             </div>
           </FadeIn>
@@ -150,7 +150,7 @@ export default async function PublicProfilePage({ params }: Props) {
               {p.skills.map((skill) => (
                 <li
                   key={skill}
-                  className="rounded-md border border-white/10 bg-[#0d1117] px-3 py-1.5 text-sm text-snow"
+                  className="rounded-md border border-line bg-bg-soft px-3 py-1.5 text-sm text-snow"
                 >
                   {skill}
                 </li>
@@ -164,7 +164,7 @@ export default async function PublicProfilePage({ params }: Props) {
             <h2 className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
               Details
             </h2>
-            <dl className="mt-4 divide-y divide-white/10 border-y border-white/10">
+            <dl className="mt-4 divide-y divide-line border-y border-line">
               {details.map((r) => (
                 <div key={r.label} className="flex justify-between gap-4 py-4">
                   <dt className="text-sm text-ink-muted">{r.label}</dt>

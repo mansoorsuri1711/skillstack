@@ -68,6 +68,14 @@ export function resolveLanguageForLocation(
   return match?.lang ?? fallback;
 }
 
+export function getLocationLabel(locationCode: number) {
+  if (isAllLocations(locationCode)) return "All locations";
+  return (
+    RESEARCH_LOCATIONS.find((l) => l.code === locationCode)?.label ??
+    `Location ${locationCode}`
+  );
+}
+
 /** Lower default limits — each extra row costs Labs/Ads enrichment. */
 export const KEYWORD_LIMITS = [25, 50, 75, 100] as const;
 

@@ -99,7 +99,7 @@ export default async function FeaturesPage() {
           </Link>
           <Link
             href="/pricing"
-            className="inline-flex rounded-md border border-white/20 px-5 py-2.5 text-sm font-medium text-snow hover:bg-white/5"
+            className="inline-flex rounded-md border border-line px-5 py-2.5 text-sm font-medium text-snow hover:bg-bg-soft"
           >
             See pricing
           </Link>

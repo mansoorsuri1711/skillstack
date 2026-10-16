@@ -5,10 +5,10 @@ import {
   ClipboardCheck,
   Globe,
   LayoutDashboard,
+  LineChart,
   Link2,
-  MessageSquare,
+  MessageSquareText,
   Search,
-  Sparkles,
   TrendingUp,
   BarChart3,
 } from "lucide-react";
@@ -63,14 +63,29 @@ export const dashboardNavGroups: DashboardNavGroup[] = [
         icon: Link2,
       },
       {
-        href: "/dashboard/brand-lookup-tool",
-        label: "Brand Lookup",
-        icon: Sparkles,
-      },
-      {
         href: "/dashboard/keyword-difficulty-checker",
         label: "Keyword Difficulty",
         icon: BarChart3,
+      },
+    ],
+  },
+  {
+    label: "AI Visibility",
+    items: [
+      {
+        href: "/dashboard/prompt-research-tool",
+        label: "Prompt Research",
+        icon: Search,
+      },
+      {
+        href: "/dashboard/prompt-explorer-tool",
+        label: "Prompt Explorer",
+        icon: MessageSquareText,
+      },
+      {
+        href: "/dashboard/prompt-tracking-tool",
+        label: "Prompt Tracking",
+        icon: LineChart,
       },
     ],
   },

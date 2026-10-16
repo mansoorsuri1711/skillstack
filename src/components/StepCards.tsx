@@ -9,7 +9,7 @@ type Step = {
 const accentMap: Record<string, { border: string; num: string; title: string; bar: string }> = {
   emerald: { border: "border-emerald-500/30", num: "border-emerald-500/40 bg-emerald-500/10 text-emerald-400", title: "text-snow", bar: "from-emerald-500/40" },
   sky: { border: "border-sky-500/30", num: "border-sky-500/40 bg-sky-500/10 text-sky-400", title: "text-snow", bar: "from-sky-500/40" },
-  slate: { border: "border-white/15", num: "border-white/20 bg-white/5 text-white/60", title: "text-snow", bar: "from-white/20" },
+  slate: { border: "border-line", num: "border-line bg-mist text-ink-muted", title: "text-snow", bar: "from-ink-muted/30" },
   teal: { border: "border-teal-500/30", num: "border-teal-500/40 bg-teal-500/10 text-teal-400", title: "text-snow", bar: "from-teal-500/40" },
   violet: { border: "border-violet-500/30", num: "border-violet-500/40 bg-violet-500/10 text-violet-400", title: "text-snow", bar: "from-violet-500/40" },
   amber: { border: "border-amber-500/30", num: "border-amber-500/40 bg-amber-500/10 text-amber-400", title: "text-snow", bar: "from-amber-500/40" },
@@ -25,7 +25,7 @@ export default function StepCards({ steps }: { steps: Step[] }) {
         return (
           <div
             key={step.n}
-            className={`rounded-xl border bg-white/[0.025] p-6 sm:p-8 ${c.border} ${step.final ? "ring-1 ring-accent/25" : ""}`}
+            className={`rounded-xl border bg-bg-elevated p-6 sm:p-8 ${c.border} ${step.final ? "ring-1 ring-accent/25" : ""}`}
           >
             <div className="flex items-center gap-3">
               <span

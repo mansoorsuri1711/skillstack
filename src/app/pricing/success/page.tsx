@@ -69,7 +69,7 @@ export default async function PricingSuccessPage({
           </Link>
           <Link
             href="/dashboard/keyword-research-tool"
-            className="inline-flex items-center rounded-xl border border-white/20 bg-white/5 px-5 py-3 text-sm font-medium text-snow hover:bg-white/10 transition"
+            className="inline-flex items-center rounded-xl border border-line bg-mist px-5 py-3 text-sm font-medium text-snow hover:bg-bg-elevated transition"
           >
             Start Keyword Research
           </Link>

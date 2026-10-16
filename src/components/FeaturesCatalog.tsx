@@ -6,7 +6,7 @@ function FeatureCard({ feature }: { feature: ProductFeature }) {
   return (
     <Link
       href={`/features/${feature.slug}`}
-      className="group block border-b border-white/10 py-6 transition-colors last:border-b-0 hover:border-accent/40 md:py-7"
+      className="group block border-b border-line py-6 transition-colors last:border-b-0 hover:border-accent/40 md:py-7"
     >
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
         <div className="min-w-0">
@@ -37,7 +37,7 @@ export default function FeaturesCatalog() {
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
                 {group}
               </p>
-              <div className="mt-4 border-t border-white/10">
+              <div className="mt-4 border-t border-line">
                 {items.map((feature) => (
                   <FeatureCard key={feature.slug} feature={feature} />
                 ))}

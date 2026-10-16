@@ -60,11 +60,11 @@ export default function CheckoutButton({
     "flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-sm font-semibold transition shadow-lg disabled:opacity-60 cursor-pointer";
   const primary = featured
     ? "bg-accent text-[#010409] hover:bg-accent-deep active:scale-[0.99] font-bold"
-    : "border border-white/20 bg-white/5 text-snow hover:border-white/40 hover:bg-white/10";
+    : "border border-line bg-mist text-snow hover:border-line hover:bg-bg-elevated";
 
   if (status === "loading") {
     return (
-      <div className="w-full rounded-xl border border-white/10 px-5 py-3.5 text-center text-sm text-ink-muted">
+      <div className="w-full rounded-xl border border-line px-5 py-3.5 text-center text-sm text-ink-muted">
         Checking session…
       </div>
     );

@@ -15,13 +15,13 @@ export default function PageCTA({
 }) {
   const bg =
     tone === "elevated"
-      ? "bg-[#161b22]"
+      ? "bg-bg-elevated"
       : tone === "deep"
-        ? "bg-[#010409]"
-        : "bg-[#0d1117]";
+        ? "bg-bg"
+        : "bg-bg-soft";
 
   return (
-    <div className={`border-t border-white/10 ${bg} py-14 md:py-16`}>
+    <div className={`border-t border-line ${bg} py-14 md:py-16`}>
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 sm:flex-row sm:items-center sm:justify-between md:px-8">
         <FadeIn className="max-w-lg text-lg text-snow md:text-xl">{children}</FadeIn>
         <FadeIn
@@ -31,7 +31,7 @@ export default function PageCTA({
           {secondary ? (
             <Link
               href={secondary.href}
-              className="inline-flex rounded-md border border-white/20 px-5 py-3 text-sm font-medium text-snow hover:bg-white/5"
+              className="inline-flex rounded-md border border-line px-5 py-3 text-sm font-medium text-snow hover:bg-bg-soft"
             >
               {secondary.label}
             </Link>

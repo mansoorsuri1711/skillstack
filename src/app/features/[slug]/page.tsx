@@ -121,14 +121,14 @@ export default async function FeatureDetailPage({ params }: Props) {
           {feature.relatedServiceSlug ? (
             <Link
               href={`/services/${feature.relatedServiceSlug}`}
-              className="inline-flex rounded-md border border-white/20 px-5 py-2.5 text-sm font-medium text-snow hover:bg-white/5"
+              className="inline-flex rounded-md border border-line px-5 py-2.5 text-sm font-medium text-snow hover:bg-bg-soft"
             >
               Prefer our {feature.relatedServiceLabel ?? "service"}?
             </Link>
           ) : (
             <Link
               href="/features"
-              className="inline-flex rounded-md border border-white/20 px-5 py-2.5 text-sm font-medium text-snow hover:bg-white/5"
+              className="inline-flex rounded-md border border-line px-5 py-2.5 text-sm font-medium text-snow hover:bg-bg-soft"
             >
               All features
             </Link>
@@ -175,7 +175,7 @@ export default async function FeatureDetailPage({ params }: Props) {
           </FadeIn>
 
           <FadeIn delay={0.06}>
-            <aside className="border border-white/10 bg-[#0d1117] p-6 md:p-7">
+            <aside className="border border-line bg-bg-soft p-6 md:p-7">
               <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
                 Product tool
               </p>
@@ -195,7 +195,7 @@ export default async function FeatureDetailPage({ params }: Props) {
                 </Link>
                 <Link
                   href={accountHref}
-                  className="inline-flex justify-center rounded-md border border-white/20 px-5 py-2.5 text-sm font-medium text-snow hover:bg-white/5"
+                  className="inline-flex justify-center rounded-md border border-line px-5 py-2.5 text-sm font-medium text-snow hover:bg-bg-soft"
                 >
                   {accountLabel}
                 </Link>
@@ -203,7 +203,7 @@ export default async function FeatureDetailPage({ params }: Props) {
             </aside>
 
             {feature.relatedServiceSlug ? (
-              <aside className="mt-6 border border-white/10 bg-[#161b22] p-6 md:p-7">
+              <aside className="mt-6 border border-line bg-bg-elevated p-6 md:p-7">
                 <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
                   Or hire us
                 </p>

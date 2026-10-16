@@ -3,13 +3,21 @@ import { User } from "@/models/User";
 
 export const FREE_AI_TOOL_LIMIT = 3;
 
-export type AiToolFeature = "brandLookup" | "promptExplorer";
+export type AiToolFeature = "promptResearch" | "promptExplorer";
 
-const USAGE_FIELDS: Record<AiToolFeature, "brandLookupUsageCount" | "promptExplorerUsageCount"> =
-  {
-    brandLookup: "brandLookupUsageCount",
-    promptExplorer: "promptExplorerUsageCount",
-  };
+/** Reuse legacy brandLookupUsageCount field for Prompt Research. */
+const USAGE_FIELDS: Record<
+  AiToolFeature,
+  "brandLookupUsageCount" | "promptExplorerUsageCount"
+> = {
+  promptResearch: "brandLookupUsageCount",
+  promptExplorer: "promptExplorerUsageCount",
+};
+
+const FEATURE_LABELS: Record<AiToolFeature, string> = {
+  promptResearch: "Prompt Research",
+  promptExplorer: "Prompt Explorer",
+};
 
 export type AiToolUsage = {
   feature: AiToolFeature;
@@ -25,9 +33,8 @@ export class AiToolLimitError extends Error {
   readonly usage: AiToolUsage;
 
   constructor(feature: AiToolFeature, usage: AiToolUsage) {
-    const label = feature === "brandLookup" ? "Brand Lookup" : "Prompt Explorer";
     super(
-      `You've used all ${FREE_AI_TOOL_LIMIT} free ${label} searches. Upgrade your plan to continue.`,
+      `You've used all ${FREE_AI_TOOL_LIMIT} free ${FEATURE_LABELS[feature]} searches. Upgrade your plan to continue.`,
     );
     this.name = "AiToolLimitError";
     this.usage = usage;
@@ -77,14 +84,14 @@ export async function getAiToolUsage(
 }
 
 export async function getAllAiToolUsage(userId: string): Promise<{
-  brandLookup: AiToolUsage;
+  promptResearch: AiToolUsage;
   promptExplorer: AiToolUsage;
 }> {
-  const [brandLookup, promptExplorer] = await Promise.all([
-    getAiToolUsage(userId, "brandLookup"),
+  const [promptResearch, promptExplorer] = await Promise.all([
+    getAiToolUsage(userId, "promptResearch"),
     getAiToolUsage(userId, "promptExplorer"),
   ]);
-  return { brandLookup, promptExplorer };
+  return { promptResearch, promptExplorer };
 }
 
 export async function assertAiToolAvailable(

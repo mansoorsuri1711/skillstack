@@ -53,7 +53,7 @@ function MobileServicesList() {
       </FadeIn>
       <ul className="mt-8 space-y-0">
         {services.map((s, i) => (
-          <li key={s.n} className="border-t border-white/10 py-5">
+          <li key={s.n} className="border-t border-line py-5">
             <FadeIn delay={i * 0.05}>
               <span className="font-display text-xs tabular-nums text-accent">
                 {s.n}
@@ -226,7 +226,7 @@ function ServicesStackDesktop() {
                 <li
                   key={s.n}
                   className={`h-1.5 w-11 rounded-full transition-colors duration-300 ${
-                    i === active ? "bg-accent" : "bg-white/12"
+                    i === active ? "bg-accent" : "bg-line"
                   }`}
                   aria-current={i === active ? "step" : undefined}
                 />

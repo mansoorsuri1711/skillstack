@@ -40,7 +40,7 @@ export default function ServicesCatalog() {
       <aside className="hidden md:block">
         <nav
           aria-label="Services"
-                className="sticky top-[5.5rem] space-y-1 border-l border-white/10"
+                className="sticky top-[5.5rem] space-y-1 border-l border-line"
         >
           {services.map((service, i) => {
             const on = i === active;
@@ -82,8 +82,8 @@ export default function ServicesCatalog() {
               }}
               className={`relative overflow-hidden rounded-lg border px-6 py-7 transition-[border-color,box-shadow] duration-500 sm:px-8 sm:py-9 ${
                 active === i
-                  ? "border-accent/40 bg-[#0d1117] shadow-[0_24px_60px_rgba(0,0,0,0.35)]"
-                  : "border-white/10 bg-[#0d1117]/55"
+                  ? "border-accent/40 bg-bg-elevated shadow-[0_16px_40px_color-mix(in_srgb,var(--ink)_12%,transparent)]"
+                  : "border-line bg-bg-elevated/70"
               }`}
             >
               <div
@@ -115,7 +115,7 @@ export default function ServicesCatalog() {
                 {service.details.map((line) => (
                   <li
                     key={line}
-                    className="flex gap-3 border-t border-white/10 pt-3 text-sm leading-relaxed text-snow/80"
+                    className="flex gap-3 border-t border-line pt-3 text-sm leading-relaxed text-snow/80"
                   >
                     <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                     <span>{line}</span>

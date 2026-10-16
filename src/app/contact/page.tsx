@@ -133,7 +133,7 @@ export default function ContactPage() {
           </FadeIn>
 
           <FadeIn delay={0.08}>
-            <div className="h-full border border-white/10 bg-[#0d1117] p-6 sm:p-8">
+            <div className="h-full border border-line bg-bg-soft p-6 sm:p-8">
               <div className="h-px w-10 bg-accent" aria-hidden />
               <p className="mt-5 text-xs font-medium uppercase tracking-[0.18em] text-accent">
                 Direct
@@ -151,7 +151,7 @@ export default function ContactPage() {
                 you already have them.
               </p>
 
-              <dl className="mt-10 space-y-0 divide-y divide-white/10 border-t border-white/10">
+              <dl className="mt-10 space-y-0 divide-y divide-line border-t border-line">
                 {details.map((row) => (
                   <div key={row.label} className="py-5">
                     <dt className="text-xs uppercase tracking-[0.16em] text-ink-muted">
@@ -189,8 +189,8 @@ export default function ContactPage() {
 
         <div className="relative mx-auto max-w-6xl px-6 pb-14 md:px-8 md:pb-20">
           <FadeIn>
-            <div className="overflow-hidden rounded-lg border border-white/10 bg-[#0d1117]">
-              <div className="flex flex-wrap items-end justify-between gap-3 border-b border-white/10 px-5 py-4 sm:px-6">
+            <div className="overflow-hidden rounded-lg border border-line bg-bg-soft">
+              <div className="flex flex-wrap items-end justify-between gap-3 border-b border-line px-5 py-4 sm:px-6">
                 <div>
                   <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
                     Office map

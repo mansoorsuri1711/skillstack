@@ -76,7 +76,7 @@ function VerifyContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <main className="flex min-h-[100svh] items-center justify-center bg-[#010409] px-6 py-24">
+    <main className="flex min-h-[100svh] items-center justify-center bg-bg px-6 py-24">
       <Suspense
         fallback={
           <p className="text-sm text-ink-muted">Verifying your email...</p>

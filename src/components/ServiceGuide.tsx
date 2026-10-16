@@ -34,7 +34,7 @@ export default function ServiceGuide({ service }: { service: Service }) {
                   {section.bullets.map((line) => (
                     <li
                       key={line}
-                      className="flex gap-3 border-t border-white/10 pt-3 text-sm leading-relaxed text-snow/85 sm:text-base"
+                      className="flex gap-3 border-t border-line pt-3 text-sm leading-relaxed text-snow/85 sm:text-base"
                     >
                       <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
                       <span>{line}</span>
@@ -48,7 +48,7 @@ export default function ServiceGuide({ service }: { service: Service }) {
       </div>
 
       <FadeIn>
-        <div className="mt-14 rounded-lg border border-white/10 bg-[#0d1117] p-6 sm:p-8">
+        <div className="mt-14 rounded-lg border border-line bg-bg-soft p-6 sm:p-8">
           <div className="h-px w-10 bg-accent" aria-hidden />
           <p className="mt-5 text-base leading-relaxed text-snow/90">
             {service.guide.closing}
@@ -61,7 +61,7 @@ export default function ServiceGuide({ service }: { service: Service }) {
 
       <nav
         aria-label="Other services"
-        className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between"
+        className="mt-14 flex flex-col gap-4 border-t border-line pt-8 sm:flex-row sm:items-center sm:justify-between"
       >
         {prev ? (
           <Link

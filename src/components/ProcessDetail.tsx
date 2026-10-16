@@ -17,7 +17,7 @@ export default function ProcessDetail() {
           >
             <div className="md:sticky md:top-[5.5rem] md:self-start">
               <motion.span
-                className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-accent/40 bg-[#0d1117] font-display text-sm font-semibold tabular-nums text-accent"
+                className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-accent/40 bg-bg-soft font-display text-sm font-semibold tabular-nums text-accent"
                 initial={reduceMotion ? false : { scale: 0.75, opacity: 0 }}
                 whileInView={{ scale: 1, opacity: 1 }}
                 viewport={{ once: true }}
@@ -41,9 +41,9 @@ export default function ProcessDetail() {
                 <li key={line} className="relative pb-6 last:pb-0">
                   <span
                     aria-hidden
-                    className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-accent bg-[#010409] md:-left-[39px]"
+                    className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-accent bg-bg md:-left-[39px]"
                   />
-                  <p className="rounded-md border border-white/10 bg-[#0d1117] px-4 py-3.5 text-sm leading-relaxed text-snow/85">
+                  <p className="rounded-md border border-line bg-bg-soft px-4 py-3.5 text-sm leading-relaxed text-snow/85">
                     <span className="mr-2 font-display text-xs tabular-nums text-ink-muted">
                       {String(di + 1).padStart(2, "0")}
                     </span>

@@ -14,7 +14,7 @@ import { useSession } from "next-auth/react";
 import type { PublicProfile } from "@/models/User";
 
 const inputClass =
-  "mt-2 w-full rounded-md border border-white/10 bg-[#010409] px-3 py-2.5 text-snow outline-none transition-colors focus:border-accent";
+  "mt-2 w-full rounded-md border border-line bg-bg px-3 py-2.5 text-snow outline-none transition-colors focus:border-accent";
 
 /** Resize / compress a file to a JPEG data URL for storage. */
 function fileToAvatarDataUrl(file: File): Promise<string> {
@@ -389,9 +389,9 @@ export default function ProfileEditor() {
 
   return (
     <form onSubmit={onSubmit} className="space-y-8">
-      <div className="flex flex-wrap items-center gap-4 border-b border-white/10 pb-8">
+      <div className="flex flex-wrap items-center gap-4 border-b border-line pb-8">
         <div className="flex items-center gap-4">
-          <div className="relative h-16 w-16 overflow-hidden rounded-full border border-white/15 bg-[#161b22]">
+          <div className="relative h-16 w-16 overflow-hidden rounded-full border border-line bg-bg-elevated">
             {form.image ? (
               <Image
                 src={form.image}
@@ -422,7 +422,7 @@ export default function ProfileEditor() {
               type="button"
               disabled={photoBusy}
               onClick={() => fileRef.current?.click()}
-              className="rounded-md border border-white/20 px-3 py-1.5 text-xs font-medium text-snow hover:bg-white/5 disabled:opacity-60"
+              className="rounded-md border border-line px-3 py-1.5 text-xs font-medium text-snow hover:bg-bg-soft disabled:opacity-60"
             >
               {photoBusy ? "Updating…" : "Change photo"}
             </button>
@@ -470,7 +470,7 @@ export default function ProfileEditor() {
         </label>
         <label className="block">
           <span className="text-sm text-ink-muted">Username</span>
-          <div className="mt-2 flex items-center rounded-md border border-white/10 bg-[#010409] focus-within:border-accent">
+          <div className="mt-2 flex items-center rounded-md border border-line bg-bg focus-within:border-accent">
             <span className="pl-3 text-sm text-ink-muted">/u/</span>
             <input
               value={form.username}
@@ -581,12 +581,12 @@ export default function ProfileEditor() {
             onChange={(e) => setSkillDraft(e.target.value)}
             onKeyDown={onSkillKey}
             placeholder="Add a skill and press Enter"
-            className="flex-1 rounded-md border border-white/10 bg-[#010409] px-3 py-2.5 text-snow outline-none focus:border-accent"
+            className="flex-1 rounded-md border border-line bg-bg px-3 py-2.5 text-snow outline-none focus:border-accent"
           />
           <button
             type="button"
             onClick={() => addSkill()}
-            className="rounded-md border border-white/20 px-4 py-2 text-sm text-snow hover:bg-white/5"
+            className="rounded-md border border-line px-4 py-2 text-sm text-snow hover:bg-bg-soft"
           >
             Add
           </button>
@@ -600,7 +600,7 @@ export default function ProfileEditor() {
           onChange={(e) =>
             setForm({ ...form, availableForWork: e.target.checked })
           }
-          className="h-4 w-4 rounded border-white/20 bg-[#010409] accent-[#2cd4bf]"
+          className="h-4 w-4 rounded border-line bg-bg accent-[#2cd4bf]"
         />
         <span className="text-sm text-snow">
           Available for projects / open to work

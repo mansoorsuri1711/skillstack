@@ -30,7 +30,7 @@ export const plans: Plan[] = [
       "Competitive Content Gap analysis to find missing keyword opportunities",
       "Internal Links & Anchors Analyzer (most-linked pages & anchor distribution)",
       "Google Search Console (GSC) direct integration for live search analytics",
-      "AI Prompt Explorer & Brand Authority Lookup intelligence tools",
+      "AI Visibility suite — Prompt Research, Explorer & Tracking across ChatGPT and more",
       "AI Agent & MCP integration for Claude, Cursor, and Codex workflows",
       "Multi-project workspace with project switching, renaming & management",
     ],

@@ -27,7 +27,7 @@ export default function Testimonials() {
   ).toFixed(1);
 
   return (
-    <section className="border-t border-white/10 bg-[#161b22] py-16 sm:py-24 md:py-32">
+    <section className="border-t border-line bg-bg-elevated py-16 sm:py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
         <FadeIn>
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent sm:text-sm">
@@ -50,7 +50,7 @@ export default function Testimonials() {
               <article
                 itemScope
                 itemType="https://schema.org/Review"
-                className="flex h-full flex-col rounded-xl border border-white/8 bg-[#0d1117] p-6"
+                className="flex h-full flex-col rounded-xl border border-line bg-bg-soft p-6"
               >
                 <StarRating value={review.ratingValue} />
                 <blockquote
@@ -59,7 +59,7 @@ export default function Testimonials() {
                 >
                   &ldquo;{review.reviewBody}&rdquo;
                 </blockquote>
-                <footer className="mt-5 border-t border-white/8 pt-4">
+                <footer className="mt-5 border-t border-line pt-4">
                   <p
                     itemProp="author"
                     itemScope

@@ -16,7 +16,7 @@ export default function ProcessPath() {
           <li key={step.n} className="relative">
             {/* Node on the path */}
             <div className="mb-5 flex items-center gap-3 md:mb-6 md:flex-col md:items-start md:gap-0">
-              <span className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-[#161b22] font-display text-sm font-semibold tabular-nums text-accent shadow-[0_0_0_4px_#161b22]">
+              <span className="relative z-10 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-bg-elevated font-display text-sm font-semibold tabular-nums text-accent shadow-[0_0_0_4px_var(--bg-elevated)]">
                 {i + 1}
               </span>
 
@@ -24,7 +24,7 @@ export default function ProcessPath() {
               {i < processSteps.length - 1 ? (
                 <span
                   aria-hidden
-                  className="h-px flex-1 bg-gradient-to-r from-accent/50 to-white/10 md:hidden"
+                  className="h-px flex-1 bg-gradient-to-r from-accent/50 to-line md:hidden"
                 />
               ) : null}
             </div>

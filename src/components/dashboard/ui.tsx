@@ -301,10 +301,13 @@ export function PageStack({
 }
 
 export const inputClass =
-  "w-full rounded-lg border border-line bg-bg px-3 py-2.5 text-sm text-snow outline-none transition placeholder:text-ink-muted/50 focus:border-accent focus:ring-1 focus:ring-accent/20";
+  "w-full rounded-lg border border-line bg-bg px-3 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-muted focus:border-accent focus:ring-1 focus:ring-accent/20";
 
 export const buttonPrimaryClass =
-  "inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-bg transition hover:bg-accent-deep disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-accent-deep disabled:opacity-50";
+
+export const buttonAccentTabClass =
+  "inline-flex items-center gap-2 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-white transition";
 
 export const buttonGhostClass =
   "inline-flex items-center justify-center gap-2 rounded-lg border border-line px-4 py-2.5 text-sm font-medium text-ink transition hover:border-accent/30 hover:bg-white/5 disabled:opacity-50";
@@ -312,20 +315,30 @@ export const buttonGhostClass =
 /** Native select with a centered custom chevron (browser arrows misalign across widths). */
 export function CompactSelect({
   className = "",
+  fieldSize = "sm",
   children,
   ...props
-}: SelectHTMLAttributes<HTMLSelectElement>) {
+}: Omit<SelectHTMLAttributes<HTMLSelectElement>, "size"> & {
+  fieldSize?: "sm" | "md";
+}) {
+  const sm = fieldSize === "sm";
   return (
-    <div className={`relative inline-flex max-w-full ${className}`}>
+    <div className={`relative inline-flex w-full max-w-full ${className}`}>
       <select
         {...props}
-        className="w-full appearance-none rounded-lg border border-line bg-bg py-1.5 pl-2.5 pr-7 text-xs leading-5 text-snow outline-none transition focus:border-accent disabled:cursor-not-allowed disabled:opacity-50"
+        className={`w-full appearance-none rounded-lg border border-line bg-bg text-ink outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-50 ${
+          sm
+            ? "py-1.5 pl-2.5 pr-8 text-xs leading-5"
+            : "px-3 py-2.5 pr-10 text-sm leading-5"
+        }`}
       >
         {children}
       </select>
       <ChevronDown
         aria-hidden
-        className="pointer-events-none absolute right-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-ink-muted"
+        className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-ink-muted ${
+          sm ? "right-2 h-3.5 w-3.5" : "right-3 h-4 w-4"
+        }`}
       />
     </div>
   );

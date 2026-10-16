@@ -187,8 +187,9 @@ export default function ConnectPage() {
                 <li><code className="text-accent">POST /keywords/research</code> — keyword ideas</li>
                 <li><code className="text-accent">POST /domain</code> — domain overview</li>
                 <li><code className="text-accent">POST /backlinks</code> — backlink profile</li>
-                <li><code className="text-accent">POST /brand-lookup</code> — AI brand visibility</li>
-                <li><code className="text-accent">POST /prompt-explorer</code> — run AI prompts</li>
+                <li><code className="text-accent">POST /prompt-research</code> — market questions + ChatGPT answers</li>
+                <li><code className="text-accent">POST /prompt-explorer</code> — multi-model prompt comparison</li>
+                <li><code className="text-accent">POST /prompt-tracking</code> — track prompts &amp; citations</li>
                 <li><code className="text-accent">GET/POST /rank-tracking</code> — SERP positions</li>
                 <li><code className="text-accent">POST /audit</code> — Lighthouse site audit</li>
                 <li><code className="text-accent">GET /gsc?tab=queries</code> — Search Console data</li>

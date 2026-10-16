@@ -61,11 +61,11 @@ function LoginFormInner() {
       <GoogleSignInButton callbackUrl={callbackUrl} />
 
       <div className="flex items-center gap-3">
-        <div className="h-px flex-1 bg-white/10" />
+        <div className="h-px flex-1 bg-mist" />
         <span className="text-[11px] uppercase tracking-wide text-ink-muted">
           or
         </span>
-        <div className="h-px flex-1 bg-white/10" />
+        <div className="h-px flex-1 bg-mist" />
       </div>
 
       <form onSubmit={onSubmit} className="space-y-3">

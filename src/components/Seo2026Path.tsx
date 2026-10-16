@@ -72,30 +72,28 @@ function CardStack({
           const restRot = rank * 1.1 - 4;
 
           const cardBg = card.accent
-            ? "from-[#0f2a20] to-[#071a12]"
-            : card.top && !isNew
-              ? "from-[#1a1a1a] to-[#111111]"
-              : isNew
-                ? "from-[#163040] to-[#0d1f2c]"
-                : "from-[#1a1a1a] to-[#111111]";
+            ? "from-accent/20 to-bg-soft"
+            : isNew
+              ? "from-sky-500/15 to-bg-soft"
+              : "from-bg-elevated to-bg-soft";
           const cardBorder = isOut
             ? card.accent
               ? "border-accent/70"
               : isNew
                 ? "border-sky-400/50"
-                : "border-white/30"
+                : "border-line"
             : card.accent
               ? "border-accent/40"
               : isNew
                 ? "border-sky-500/20"
-                : "border-white/10";
+                : "border-line";
           const labelColor = card.accent
             ? "text-accent"
             : isOut
               ? "text-snow"
               : isNew
-                ? "text-sky-100/85"
-                : "text-white/70";
+                ? "text-sky-700"
+                : "text-ink-muted";
 
           return (
             <motion.button
@@ -105,7 +103,7 @@ function CardStack({
               onClick={() =>
                 setOrder((prev) => [i, ...prev.filter((idx) => idx !== i)])
               }
-              className={`absolute left-1/2 w-[92%] -translate-x-1/2 cursor-pointer rounded-xl border bg-gradient-to-br px-4 py-2.5 text-left shadow-[0_18px_40px_rgba(0,0,0,0.55)] ${cardBg} ${cardBorder}`}
+              className={`absolute left-1/2 w-[92%] -translate-x-1/2 cursor-pointer rounded-xl border bg-gradient-to-br px-4 py-2.5 text-left shadow-[0_16px_40px_color-mix(in_srgb,var(--ink)_12%,transparent)] ${cardBg} ${cardBorder}`}
               style={{
                 transformStyle: "preserve-3d",
                 transformOrigin: "center bottom",
@@ -158,7 +156,7 @@ function CardStack({
                 >
                   {card.label}
                 </span>
-                <span className="shrink-0 text-[10px] text-white/30">{card.sub}</span>
+                <span className="shrink-0 text-[10px] text-ink-muted">{card.sub}</span>
               </div>
               <div
                 className={`relative mt-2 h-px w-full bg-gradient-to-r ${
@@ -166,7 +164,7 @@ function CardStack({
                     ? "from-accent/50"
                     : isNew
                       ? "from-sky-500/25"
-                      : "from-white/10"
+                      : "from-line"
                 } to-transparent`}
               />
             </motion.button>
@@ -182,7 +180,7 @@ export default function Seo2026Path() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <section className="border-t border-white/10 bg-[#010409] py-16 sm:py-24 md:py-32">
+    <section className="border-t border-line bg-bg py-16 sm:py-24 md:py-32">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, y: 22 }}
@@ -211,7 +209,7 @@ export default function Seo2026Path() {
             transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="mb-8 text-center">
-              <span className="inline-block rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/40">
+              <span className="inline-block rounded-full border border-line bg-mist px-3 py-1 text-xs font-medium text-ink-muted">
                 How Traditional SEO Works
               </span>
             </div>

@@ -120,14 +120,14 @@ export default async function ServiceDetailPage({ params }: Props) {
           {service.relatedFeatureSlug ? (
             <Link
               href={`/features/${service.relatedFeatureSlug}`}
-              className="inline-flex rounded-md border border-white/20 px-5 py-2.5 text-sm font-medium text-snow hover:bg-white/5"
+              className="inline-flex rounded-md border border-line px-5 py-2.5 text-sm font-medium text-snow hover:bg-bg-soft"
             >
               Prefer the {service.relatedFeatureLabel ?? "dashboard tool"}?
             </Link>
           ) : (
             <Link
               href="/services"
-              className="inline-flex rounded-md border border-white/20 px-5 py-2.5 text-sm font-medium text-snow hover:bg-white/5"
+              className="inline-flex rounded-md border border-line px-5 py-2.5 text-sm font-medium text-snow hover:bg-bg-soft"
             >
               All services
             </Link>
@@ -138,7 +138,7 @@ export default async function ServiceDetailPage({ params }: Props) {
       <ServiceGuide service={service} />
 
       {service.relatedFeatureSlug ? (
-        <div className="border-t border-white/10 bg-[#161b22] py-10">
+        <div className="border-t border-line bg-bg-elevated py-10">
           <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 sm:flex-row sm:items-center sm:justify-between md:px-8">
             <p className="max-w-xl text-sm leading-relaxed text-ink-muted sm:text-base">
               Want to run this yourself in the SkillStack dashboard instead of

@@ -184,7 +184,7 @@ export default function Seo2026Page() {
         breadcrumbs={[{ label: "SEO in 2026" }]}
       />
 
-      <article className="bg-[#010409] py-16 sm:py-24 md:py-32">
+      <article className="bg-bg py-16 sm:py-24 md:py-32">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 md:px-8">
 
           {/* Intro — left-aligned */}
@@ -216,12 +216,12 @@ export default function Seo2026Page() {
             </div>
           </FadeIn>
 
-          <div className="my-12 h-px w-full bg-white/10" />
+          <div className="my-12 h-px w-full bg-mist" />
 
           {/* 8 Steps — 01-04 slide from left, 05-08 slide from right, one after another */}
           <StepCards steps={steps} />
 
-          <div className="my-12 h-px w-full bg-white/10" />
+          <div className="my-12 h-px w-full bg-mist" />
 
           {/* FAQ */}
           <FadeIn>
@@ -236,7 +236,7 @@ export default function Seo2026Page() {
           <div className="mt-8 space-y-4">
             {faqJsonLd.mainEntity.map((item, i) => (
               <FadeIn key={i}>
-                <div className="rounded-xl border border-white/10 bg-white/[0.025] p-5 sm:p-6">
+                <div className="rounded-xl border border-line bg-white/[0.025] p-5 sm:p-6">
                   <h3 className="font-display text-sm font-semibold text-snow sm:text-base">
                     {item.name}
                   </h3>
@@ -248,7 +248,7 @@ export default function Seo2026Page() {
             ))}
           </div>
 
-          <div className="my-12 h-px w-full bg-white/10" />
+          <div className="my-12 h-px w-full bg-mist" />
 
           {/* Closing */}
           <FadeIn>
@@ -273,7 +273,7 @@ export default function Seo2026Page() {
                 </Link>
                 <Link
                   href="/contact"
-                  className="rounded-md border border-white/15 px-5 py-2.5 text-sm font-semibold text-snow hover:border-accent/50 hover:text-accent"
+                  className="rounded-md border border-line px-5 py-2.5 text-sm font-semibold text-snow hover:border-accent/50 hover:text-accent"
                 >
                   Talk to us
                 </Link>
@@ -284,7 +284,7 @@ export default function Seo2026Page() {
         </div>
       </article>
 
-      <div className="border-t border-white/10 bg-[#0d1117] py-14 md:py-16">
+      <div className="border-t border-line bg-bg-soft py-14 md:py-16">
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 sm:flex-row sm:items-center sm:justify-between md:px-8">
           <FadeIn className="max-w-lg text-lg text-snow md:text-xl">
             Every SkillStack package is built for the 2026 SEO path — from foundations to AI citations.
@@ -292,7 +292,7 @@ export default function Seo2026Page() {
           <FadeIn delay={0.08} className="flex flex-wrap items-center gap-3">
             <Link
               href="/contact"
-              className="inline-flex rounded-md border border-white/20 px-5 py-3 text-sm font-medium text-snow hover:bg-white/5"
+              className="inline-flex rounded-md border border-line px-5 py-3 text-sm font-medium text-snow hover:bg-bg-soft"
             >
               Talk to us
             </Link>

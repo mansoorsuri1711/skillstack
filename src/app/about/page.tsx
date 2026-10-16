@@ -65,7 +65,7 @@ export default function AboutPage() {
         breadcrumbs={[{ label: "About" }]}
       />
 
-      <div className="relative overflow-hidden border-b border-white/10 bg-[#010409]">
+      <div className="relative overflow-hidden border-b border-line bg-bg">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_10%_20%,rgba(45,212,191,0.08),transparent_55%)]"
@@ -95,7 +95,7 @@ export default function AboutPage() {
 
           <FadeIn delay={0.1}>
             {/* Studio-style founder portrait */}
-            <div className="relative h-full min-h-[420px] overflow-hidden rounded-xl border border-white/10 shadow-2xl shadow-black/60 md:min-h-[520px]">
+            <div className="relative h-full min-h-[420px] overflow-hidden rounded-xl border border-line shadow-2xl shadow-black/60 md:min-h-[520px]">
               {/* Photo */}
               <Image
                 src="/mansoor-khan.webp"
@@ -150,7 +150,7 @@ export default function AboutPage() {
         </div>
       </div>
 
-      <div className="bg-[#0d1117] py-14 md:py-20">
+      <div className="bg-bg-soft py-14 md:py-20">
         <div className="mx-auto max-w-6xl px-6 md:px-8">
           <FadeIn>
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
@@ -163,7 +163,7 @@ export default function AboutPage() {
           <div className="mt-10 grid gap-4 sm:grid-cols-2">
             {aboutHighlights.map((item, i) => (
               <FadeIn key={item.title} delay={i * 0.05}>
-                <div className="h-full border border-white/10 bg-[#010409]/50 px-6 py-6 transition-colors hover:border-accent/30">
+                <div className="h-full border border-line bg-bg/50 px-6 py-6 transition-colors hover:border-accent/30">
                   <div className="h-px w-10 bg-accent" aria-hidden />
                   <h3 className="mt-4 text-lg font-semibold tracking-tight text-snow">
                     {item.title}
@@ -176,7 +176,7 @@ export default function AboutPage() {
             ))}
           </div>
 
-          <FadeIn className="mt-14 grid gap-6 border-t border-white/10 pt-10 sm:grid-cols-2 lg:grid-cols-4">
+          <FadeIn className="mt-14 grid gap-6 border-t border-line pt-10 sm:grid-cols-2 lg:grid-cols-4">
             {facts.map((row) => (
               <div key={row.label}>
                 <p className="text-xs uppercase tracking-[0.16em] text-ink-muted">

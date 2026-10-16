@@ -27,13 +27,13 @@ export default function NotFound() {
           </Link>
           <Link
             href="/services"
-            className="inline-flex rounded-md border border-white/20 px-5 py-2.5 text-sm font-medium text-snow hover:bg-white/5"
+            className="inline-flex rounded-md border border-line px-5 py-2.5 text-sm font-medium text-snow hover:bg-bg-soft"
           >
             Services
           </Link>
           <Link
             href="/contact"
-            className="inline-flex rounded-md border border-white/20 px-5 py-2.5 text-sm font-medium text-snow hover:bg-white/5"
+            className="inline-flex rounded-md border border-line px-5 py-2.5 text-sm font-medium text-snow hover:bg-bg-soft"
           >
             Contact
           </Link>

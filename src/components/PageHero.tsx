@@ -20,14 +20,14 @@ export default function PageHero({
 }) {
   const bg =
     tone === "elevated"
-      ? "bg-[#161b22]"
+      ? "bg-bg-elevated"
       : tone === "deep"
-        ? "bg-[#010409]"
-        : "bg-[#0d1117]";
+        ? "bg-bg"
+        : "bg-bg-soft";
 
   return (
     <div
-      className={`relative overflow-hidden border-b border-white/10 ${bg} pb-14 pt-10 md:pb-20 md:pt-14`}
+      className={`relative overflow-hidden border-b border-line ${bg} pb-14 pt-10 md:pb-20 md:pt-14`}
     >
       <div
         aria-hidden

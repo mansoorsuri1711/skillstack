@@ -68,13 +68,9 @@ function ReasonFace({
 }) {
   return (
     <article
-      className="h-full w-full rounded-lg border bg-gradient-to-br from-[#161b22] to-[#0d1117] px-7 py-8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] md:px-8 md:py-9"
-      style={{
-        borderColor:
-          depth === 0
-            ? "rgba(45, 212, 191, 0.45)"
-            : "rgba(255, 255, 255, 0.1)",
-      }}
+      className={`h-full w-full rounded-lg border bg-gradient-to-br from-bg-elevated to-bg-soft px-7 py-8 shadow-[0_16px_40px_color-mix(in_srgb,var(--ink)_10%,transparent)] md:px-8 md:py-9 ${
+        depth === 0 ? "border-accent/45" : "border-line"
+      }`}
     >
       <div className="flex items-start justify-between gap-4">
         <span className="font-display text-sm tabular-nums text-accent">
@@ -82,7 +78,7 @@ function ReasonFace({
         </span>
         <span
           className={`mt-1 h-2 w-2 rounded-full ${
-            depth === 0 ? "bg-accent" : "bg-white/20"
+            depth === 0 ? "bg-accent" : "bg-line"
           }`}
           aria-hidden
         />
@@ -99,14 +95,14 @@ function ReasonFace({
 
 function MobileReasonsList() {
   return (
-    <div className="border-t border-white/10 px-4 py-10 sm:px-6 sm:py-12">
+    <div className="border-t border-line px-4 py-10 sm:px-6 sm:py-12">
       <div className="mx-auto max-w-6xl">
         <FadeIn>
           <SectionIntro />
         </FadeIn>
         <ul className="mt-6 space-y-0">
           {reasons.map((reason, i) => (
-            <li key={reason.n} className="border-t border-white/10 py-5">
+            <li key={reason.n} className="border-t border-line py-5">
               <FadeIn delay={i * 0.05}>
                 <span className="font-display text-xs tabular-nums text-accent">
                   {reason.n}
@@ -162,10 +158,10 @@ function ReasonsStackDesktop() {
   return (
     <div
       ref={containerRef}
-      className="relative border-t border-white/10"
+      className="relative border-t border-line"
       style={{ height: `${100 + (reasons.length - 1) * 55}vh` }}
     >
-      <div className="sticky top-16 bg-[#0d1117] py-12 sm:top-[4.5rem] md:py-16">
+      <div className="sticky top-16 bg-bg-soft py-12 sm:top-[4.5rem] md:py-16">
         <div className="mx-auto max-w-6xl px-6 md:px-8">
           <SectionIntro />
 
@@ -238,7 +234,7 @@ function ReasonsStackDesktop() {
                 <li
                   key={r.n}
                   className={`h-1.5 w-10 rounded-full transition-colors duration-300 ${
-                    i === active ? "bg-accent" : "bg-white/15"
+                    i === active ? "bg-accent" : "bg-line"
                   }`}
                 />
               ))}

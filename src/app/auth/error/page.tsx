@@ -26,13 +26,13 @@ function AuthErrorContent() {
   const message = MESSAGES[code] || MESSAGES.Default;
 
   return (
-    <main className="flex min-h-[100svh] items-center justify-center bg-[#010409] px-4">
-      <div className="w-full max-w-md rounded-lg border border-white/10 bg-[#0d1117] px-6 py-8 text-center">
+    <main className="flex min-h-[100svh] items-center justify-center bg-bg px-4">
+      <div className="w-full max-w-md rounded-lg border border-line bg-bg-soft px-6 py-8 text-center">
         <h1 className="font-display text-2xl font-bold text-snow">
           Sign-in issue
         </h1>
         <p className="mt-3 text-sm leading-relaxed text-ink-muted">{message}</p>
-        <p className="mt-2 font-display text-xs tabular-nums text-white/30">
+        <p className="mt-2 font-display text-xs tabular-nums text-ink-muted">
           {code}
         </p>
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
@@ -44,7 +44,7 @@ function AuthErrorContent() {
           </Link>
           <Link
             href="/"
-            className="inline-flex rounded-md border border-white/20 px-5 py-2.5 text-sm font-medium text-snow hover:bg-white/5"
+            className="inline-flex rounded-md border border-line px-5 py-2.5 text-sm font-medium text-snow hover:bg-bg-soft"
           >
             Home
           </Link>
@@ -58,7 +58,7 @@ export default function AuthErrorPage() {
   return (
     <Suspense
       fallback={
-        <main className="flex min-h-[100svh] items-center justify-center bg-[#010409] text-ink-muted">
+        <main className="flex min-h-[100svh] items-center justify-center bg-bg text-ink-muted">
           Loading…
         </main>
       }

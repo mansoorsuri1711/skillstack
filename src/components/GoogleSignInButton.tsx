@@ -22,7 +22,7 @@ export default function GoogleSignInButton({
         setLoading(true);
         void signIn("google", { callbackUrl });
       }}
-      className="flex w-full items-center justify-center gap-3 rounded-md border border-white/15 bg-white px-4 py-2.5 text-sm font-semibold text-[#1f1f1f] transition hover:bg-white/90 disabled:opacity-60"
+      className="flex w-full items-center justify-center gap-3 rounded-md border border-line bg-white px-4 py-2.5 text-sm font-semibold text-[#1f1f1f] transition hover:bg-white/90 disabled:opacity-60"
     >
       <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5">
         <path

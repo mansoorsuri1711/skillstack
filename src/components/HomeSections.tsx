@@ -24,14 +24,14 @@ const FaqSection = dynamic(() => import("./FaqSection"), {
 export default function HomeSections() {
   return (
     <>
-      <section className="border-t border-white/10 bg-[#0d1117]">
+      <section className="border-t border-line bg-bg-soft">
         <ServicesScrollStack />
         <ReasonsMarquee />
       </section>
 
       <Seo2026Path />
 
-      <section className="border-t border-white/10 bg-[#161b22] py-16 sm:py-24 md:py-32">
+      <section className="border-t border-line bg-bg-elevated py-16 sm:py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
           <FadeIn>
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent sm:text-sm">
@@ -51,7 +51,7 @@ export default function HomeSections() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 bg-[#0d1117] py-16 sm:py-24 md:py-32">
+      <section className="border-t border-line bg-bg-soft py-16 sm:py-24 md:py-32">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 sm:gap-12 sm:px-6 md:grid-cols-[1.1fr_0.9fr] md:gap-16 md:px-8">
           <FadeIn>
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent sm:text-sm">
@@ -74,7 +74,7 @@ export default function HomeSections() {
             </Link>
           </FadeIn>
           <FadeIn delay={0.12}>
-            <aside className="flex h-full flex-col justify-end md:border-l md:border-white/10 md:pl-10">
+            <aside className="flex h-full flex-col justify-end md:border-l md:border-line md:pl-10">
               <blockquote className="font-display text-2xl font-medium leading-snug tracking-tight text-snow sm:text-3xl">
                 “Rank honestly. Share what you learn. Build people who can stand on
                 their own.”
@@ -91,7 +91,7 @@ export default function HomeSections() {
 
       <FaqSection />
 
-      <section className="border-t border-white/10 bg-[#010409] py-16 sm:py-24 md:py-32">
+      <section className="border-t border-line bg-bg py-16 sm:py-24 md:py-32">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 md:px-8">
           <FadeIn>
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent sm:text-sm">

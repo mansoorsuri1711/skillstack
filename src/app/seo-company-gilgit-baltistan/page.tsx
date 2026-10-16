@@ -197,7 +197,7 @@ export default function SeoCompanyGilgitBaltistanPage() {
           </Link>
           <Link
             href="/services"
-            className="inline-flex rounded-md border border-white/20 px-5 py-2.5 text-sm font-medium text-snow hover:bg-white/5"
+            className="inline-flex rounded-md border border-line px-5 py-2.5 text-sm font-medium text-snow hover:bg-bg-soft"
           >
             See all services
           </Link>
@@ -205,7 +205,7 @@ export default function SeoCompanyGilgitBaltistanPage() {
       </PageHero>
 
       {/* Intro */}
-      <section className="border-b border-white/10 bg-[#010409] py-14 md:py-20">
+      <section className="border-b border-line bg-bg py-14 md:py-20">
         <div className="mx-auto max-w-4xl px-6 md:px-8">
           <FadeIn>
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
@@ -258,7 +258,7 @@ export default function SeoCompanyGilgitBaltistanPage() {
       </section>
 
       {/* Services */}
-      <section className="border-b border-white/10 bg-[#0d1117] py-14 md:py-20">
+      <section className="border-b border-line bg-bg-soft py-14 md:py-20">
         <div className="mx-auto max-w-6xl px-6 md:px-8">
           <FadeIn>
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
@@ -271,7 +271,7 @@ export default function SeoCompanyGilgitBaltistanPage() {
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((s, i) => (
               <FadeIn key={s.title} delay={i * 0.06}>
-                <div className="h-full border border-white/10 bg-[#010409]/50 px-6 py-6 transition-colors hover:border-accent/30">
+                <div className="h-full border border-line bg-bg/50 px-6 py-6 transition-colors hover:border-accent/30">
                   <div className="h-px w-10 bg-accent" aria-hidden />
                   <h3 className="mt-4 text-lg font-semibold tracking-tight text-snow">
                     {s.title}
@@ -295,7 +295,7 @@ export default function SeoCompanyGilgitBaltistanPage() {
       </section>
 
       {/* Why SkillStack */}
-      <section className="border-b border-white/10 bg-[#010409] py-14 md:py-20">
+      <section className="border-b border-line bg-bg py-14 md:py-20">
         <div className="mx-auto max-w-6xl px-6 md:px-8">
           <FadeIn>
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
@@ -324,7 +324,7 @@ export default function SeoCompanyGilgitBaltistanPage() {
       </section>
 
       {/* About the Founder */}
-      <section className="border-b border-white/10 bg-[#0d1117] py-14 md:py-20">
+      <section className="border-b border-line bg-bg-soft py-14 md:py-20">
         <div className="mx-auto max-w-4xl px-6 md:px-8">
           <FadeIn>
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">
@@ -359,7 +359,7 @@ export default function SeoCompanyGilgitBaltistanPage() {
       </section>
 
       {/* FAQ */}
-      <section className="border-b border-white/10 bg-[#010409] py-14 md:py-20">
+      <section className="border-b border-line bg-bg py-14 md:py-20">
         <div className="mx-auto max-w-3xl px-6 md:px-8">
           <FadeIn>
             <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent">

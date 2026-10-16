@@ -16,7 +16,7 @@ export default function FaqSection({
   const [open, setOpen] = useState(0);
 
   return (
-    <section className="border-t border-white/10 bg-[#0d1117] py-14 md:py-20">
+    <section className="border-t border-line bg-bg-soft py-14 md:py-20">
       <div className="mx-auto max-w-6xl px-6 md:px-8">
         <FadeIn>
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent sm:text-sm">
@@ -31,7 +31,7 @@ export default function FaqSection({
           </p>
         </FadeIn>
 
-        <div className="mt-8 divide-y divide-white/10 border-y border-white/10 md:mt-10">
+        <div className="mt-8 divide-y divide-line border-y border-line md:mt-10">
           {faqs.map((faq, i) => {
             const isOpen = open === i;
             return (

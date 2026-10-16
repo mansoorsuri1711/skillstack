@@ -77,7 +77,7 @@ const UserSchema = new Schema(
       select: false,
     },
 
-    /** Unlimited Brand Lookup & Prompt Explorer (set after plan purchase). */
+    /** Unlimited AI Visibility tools (Prompt Research / Explorer) after plan purchase. */
     dashboardPro: { type: Boolean, default: false },
     brandLookupUsageCount: { type: Number, default: 0, min: 0 },
     promptExplorerUsageCount: { type: Number, default: 0, min: 0 },

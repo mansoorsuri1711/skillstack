@@ -20,8 +20,10 @@ import { DataForSeoBanner } from "@/components/dashboard/ProjectDomainBanner";
 import { AiDiagnosticReportView } from "@/components/dashboard/site-audit/AiDiagnosticReportView";
 import { ClassicSiteAuditReportView } from "@/components/dashboard/site-audit/ClassicSiteAuditReportView";
 import {
+  buttonAccentTabClass,
   buttonGhostClass,
   buttonPrimaryClass,
+  CompactSelect,
   DashboardAlert,
   DashboardCard,
   EmptyBlock,
@@ -55,9 +57,9 @@ const severityStyles: Record<IssueSeverity, string> = {
 };
 
 const severityBadge: Record<IssueSeverity, string> = {
-  critical: "bg-red-500/15 text-red-300 border-red-500/30",
-  warning: "bg-amber-500/15 text-amber-200 border-amber-500/30",
-  info: "bg-sky-500/15 text-sky-200 border-sky-500/30",
+  critical: "bg-red-600/15 text-red-700 border-red-600/35",
+  warning: "bg-amber-500/20 text-amber-800 border-amber-600/40",
+  info: "bg-sky-500/15 text-sky-800 border-sky-600/35",
 };
 
 type IssueGroup = {
@@ -374,33 +376,33 @@ export default function SiteAuditPage() {
           <button
             type="button"
             onClick={() => setMode("crawl")}
-            className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+            className={
               mode === "crawl"
-                ? "bg-accent text-[#010409]"
-                : "border border-line text-ink-muted hover:text-snow"
-            }`}
+                ? buttonAccentTabClass
+                : "inline-flex items-center gap-2 rounded-lg border border-line px-3 py-1.5 text-xs font-semibold text-ink-muted transition hover:text-snow"
+            }
           >
             <Radar className="h-3.5 w-3.5" /> Crawl audit
           </button>
           <button
             type="button"
             onClick={() => setMode("ai")}
-            className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+            className={
               mode === "ai"
-                ? "bg-accent text-[#010409]"
-                : "border border-line text-ink-muted hover:text-snow"
-            }`}
+                ? buttonAccentTabClass
+                : "inline-flex items-center gap-2 rounded-lg border border-line px-3 py-1.5 text-xs font-semibold text-ink-muted transition hover:text-snow"
+            }
           >
             <Bot className="h-3.5 w-3.5" /> AI diagnosis
           </button>
           <button
             type="button"
             onClick={() => setMode("classic")}
-            className={`inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+            className={
               mode === "classic"
-                ? "bg-accent text-[#010409]"
-                : "border border-line text-ink-muted hover:text-snow"
-            }`}
+                ? buttonAccentTabClass
+                : "inline-flex items-center gap-2 rounded-lg border border-line px-3 py-1.5 text-xs font-semibold text-ink-muted transition hover:text-snow"
+            }
           >
             <Gauge className="h-3.5 w-3.5" /> Technical report
           </button>
@@ -424,8 +426,9 @@ export default function SiteAuditPage() {
             {mode === "crawl" ? (
               <label className="w-full text-xs font-medium text-ink-muted sm:w-36">
                 Max pages
-                <select
-                  className={`${inputClass} mt-1.5`}
+                <CompactSelect
+                  fieldSize="md"
+                  className="mt-1.5"
                   value={maxPages}
                   onChange={(e) => setMaxPages(Number(e.target.value))}
                   disabled={loading}
@@ -435,7 +438,7 @@ export default function SiteAuditPage() {
                       {n}
                     </option>
                   ))}
-                </select>
+                </CompactSelect>
               </label>
             ) : null}
             <button
@@ -504,22 +507,22 @@ export default function SiteAuditPage() {
                 <button
                   type="button"
                   onClick={() => setResultTab("issues")}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  className={
                     resultTab === "issues"
-                      ? "bg-accent text-[#010409]"
-                      : "text-ink-muted hover:text-snow"
-                  }`}
+                      ? buttonAccentTabClass
+                      : "rounded-lg px-3 py-1.5 text-xs font-semibold text-ink-muted transition hover:text-snow"
+                  }
                 >
                   Issues ({crawlReport.issuesFound})
                 </button>
                 <button
                   type="button"
                   onClick={() => setResultTab("pages")}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                  className={
                     resultTab === "pages"
-                      ? "bg-accent text-[#010409]"
-                      : "text-ink-muted hover:text-snow"
-                  }`}
+                      ? buttonAccentTabClass
+                      : "rounded-lg px-3 py-1.5 text-xs font-semibold text-ink-muted transition hover:text-snow"
+                  }
                 >
                   Pages ({crawlReport.pagesCrawled})
                 </button>

@@ -16,7 +16,7 @@ export default function ContactForm() {
 
   if (status === "loading") {
     return (
-      <div className="rounded-lg border border-white/10 bg-[#0d1117] px-6 py-10 text-center text-sm text-ink-muted md:px-8">
+      <div className="rounded-lg border border-line bg-bg-soft px-6 py-10 text-center text-sm text-ink-muted md:px-8">
         Checking your session…
       </div>
     );
@@ -24,7 +24,7 @@ export default function ContactForm() {
 
   if (!session?.user) {
     return (
-      <div className="relative overflow-hidden rounded-lg border border-white/10 bg-[#0d1117] p-6 md:p-8">
+      <div className="relative overflow-hidden rounded-lg border border-line bg-bg-soft p-6 md:p-8">
         <div
           aria-hidden
           className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-accent via-accent/40 to-transparent"
@@ -48,7 +48,7 @@ export default function ContactForm() {
           </Link>
           <Link
             href="/register?callbackUrl=/contact"
-            className="inline-flex rounded-md border border-white/20 px-5 py-2.5 text-sm font-medium text-snow hover:bg-white/5"
+            className="inline-flex rounded-md border border-line px-5 py-2.5 text-sm font-medium text-snow hover:bg-bg-soft"
           >
             Create account
           </Link>
@@ -84,7 +84,7 @@ export default function ContactForm() {
   return (
     <form
       onSubmit={onSubmit}
-      className="relative space-y-5 overflow-hidden rounded-lg border border-white/10 bg-[#0d1117] p-6 md:p-8"
+      className="relative space-y-5 overflow-hidden rounded-lg border border-line bg-bg-soft p-6 md:p-8"
     >
       <div
         aria-hidden
@@ -107,7 +107,7 @@ export default function ContactForm() {
           required
           value={resolvedName}
           onChange={(e) => setName(e.target.value)}
-          className="mt-2 w-full rounded-md border border-white/10 bg-[#010409] px-3 py-2.5 text-snow outline-none transition-colors focus:border-accent"
+          className="mt-2 w-full rounded-md border border-line bg-bg px-3 py-2.5 text-snow outline-none transition-colors focus:border-accent"
         />
       </label>
       <label className="block">
@@ -117,7 +117,7 @@ export default function ContactForm() {
           type="email"
           value={session.user.email ?? ""}
           readOnly
-          className="mt-2 w-full rounded-md border border-white/10 bg-[#010409]/80 px-3 py-2.5 text-ink-muted outline-none"
+          className="mt-2 w-full rounded-md border border-line bg-bg/80 px-3 py-2.5 text-ink-muted outline-none"
         />
       </label>
       <label className="block">
@@ -127,7 +127,7 @@ export default function ContactForm() {
             name="topic"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            className="w-full appearance-none rounded-md border border-white/10 bg-[#010409] py-2.5 pl-3 pr-11 text-snow outline-none transition-colors focus:border-[#2cd4bf]"
+            className="w-full appearance-none rounded-md border border-line bg-bg py-2.5 pl-3 pr-11 text-snow outline-none transition-colors focus:border-[#2cd4bf]"
           >
             <option>Full stack project</option>
             <option>Website build</option>
@@ -167,7 +167,7 @@ export default function ContactForm() {
           rows={5}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="mt-2 w-full resize-y rounded-md border border-white/10 bg-[#010409] px-3 py-2.5 text-snow outline-none transition-colors focus:border-accent"
+          className="mt-2 w-full resize-y rounded-md border border-line bg-bg px-3 py-2.5 text-snow outline-none transition-colors focus:border-accent"
           placeholder="Niche, market, timeline, and goals…"
         />
       </label>

@@ -7,9 +7,16 @@ export function isThemeMode(value: unknown): value is ThemeMode {
 
 export function applyTheme(theme: ThemeMode) {
   if (typeof document === "undefined") return;
-  document.documentElement.setAttribute("data-theme", theme);
-  document.documentElement.style.colorScheme = theme;
+  const root = document.documentElement;
+  root.setAttribute("data-theme", theme);
+  root.style.colorScheme = theme;
+  // Ensure body/html paint from tokens even if a utility class lagged
+  root.style.backgroundColor = "var(--bg)";
+  if (document.body) {
+    document.body.style.backgroundColor = "var(--bg)";
+    document.body.style.color = "var(--ink)";
+  }
 }
 
 /** Inline script — run before paint to avoid theme flash */
-export const THEME_BOOTSTRAP_SCRIPT = `(function(){try{var k=${JSON.stringify(THEME_STORAGE_KEY)};var t=localStorage.getItem(k);if(t!=="light"&&t!=="dark"){t="dark";}document.documentElement.setAttribute("data-theme",t);document.documentElement.style.colorScheme=t;}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();`;
+export const THEME_BOOTSTRAP_SCRIPT = `(function(){try{var k=${JSON.stringify(THEME_STORAGE_KEY)};var t=localStorage.getItem(k);if(t!=="light"&&t!=="dark"){t="dark";}var r=document.documentElement;r.setAttribute("data-theme",t);r.style.colorScheme=t;r.style.backgroundColor="var(--bg)";}catch(e){document.documentElement.setAttribute("data-theme","dark");}})();`;

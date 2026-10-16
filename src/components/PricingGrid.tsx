@@ -19,13 +19,13 @@ export default function PricingGrid() {
       />
       <div className="relative mx-auto max-w-4xl">
         <FadeIn delay={0}>
-          <article className="relative overflow-hidden rounded-2xl border border-accent/40 bg-[#0d1117] p-6 shadow-[0_24px_80px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:-translate-y-1 md:p-10">
+          <article className="relative overflow-hidden rounded-2xl border border-accent/40 bg-bg-soft p-6 shadow-[0_24px_80px_rgba(0,0,0,0.5)] transition-transform duration-300 hover:-translate-y-1 md:p-10">
             <div
               aria-hidden
               className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-accent to-transparent"
             />
 
-            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between border-b border-white/10 pb-8">
+            <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between border-b border-line pb-8">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-accent mb-3">
                   <Sparkles className="h-3.5 w-3.5" />
