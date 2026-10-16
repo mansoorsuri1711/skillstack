@@ -335,7 +335,7 @@ export default function DashboardOnboarding({
                         value={domainInput}
                         onChange={(e) => setDomainInput(e.target.value)}
                         placeholder="yourdomain.com"
-                        className="w-full rounded-lg border border-line bg-bg px-2.5 py-1.5 text-xs text-snow outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/30"
+                        className="w-full rounded-lg border border-line bg-bg-input px-2.5 py-1.5 text-xs text-snow outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/30"
                         disabled={saving}
                       />
                       <button
@@ -417,7 +417,7 @@ function DomainEditRow({
         type="text"
         value={domainInput}
         onChange={(e) => setDomainInput(e.target.value)}
-        className="w-full rounded-xl border border-line bg-bg px-3 py-2 text-sm text-snow outline-none focus:border-accent"
+        className="w-full rounded-xl border border-line bg-bg-input px-3 py-2 text-sm text-snow outline-none focus:border-accent"
         disabled={saving}
         autoFocus
       />

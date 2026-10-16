@@ -225,7 +225,7 @@ export function ToolbarMenu({
         aria-haspopup="listbox"
         aria-controls={listId}
         onClick={() => setOpen((prev) => !prev)}
-        className={`flex w-full items-center justify-between gap-2 rounded-lg border border-line bg-bg text-left text-snow transition hover:border-line disabled:cursor-not-allowed disabled:opacity-70 ${
+        className={`flex w-full items-center justify-between gap-2 rounded-lg border border-line bg-bg-input text-left text-snow transition hover:border-line disabled:cursor-not-allowed disabled:opacity-70 ${
           size === "sm"
             ? "px-2.5 py-1.5 text-xs"
             : "px-3 py-2.5 text-sm"

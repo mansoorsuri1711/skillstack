@@ -301,7 +301,7 @@ export function PageStack({
 }
 
 export const inputClass =
-  "w-full rounded-lg border border-line bg-bg px-3 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-muted focus:border-accent focus:ring-1 focus:ring-accent/20";
+  "w-full rounded-lg border border-line bg-bg-input px-3 py-2.5 text-sm text-ink outline-none transition placeholder:text-ink-muted focus:border-accent focus:ring-1 focus:ring-accent/20";
 
 export const buttonPrimaryClass =
   "inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-accent-fg transition hover:bg-accent-deep disabled:opacity-50";
@@ -326,7 +326,7 @@ export function CompactSelect({
     <div className={`relative inline-flex w-full max-w-full ${className}`}>
       <select
         {...props}
-        className={`w-full appearance-none rounded-lg border border-line bg-bg text-ink outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-50 ${
+        className={`w-full appearance-none rounded-lg border border-line bg-bg-input text-ink outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/20 disabled:cursor-not-allowed disabled:opacity-50 ${
           sm
             ? "py-1.5 pl-2.5 pr-8 text-xs leading-5"
             : "px-3 py-2.5 pr-10 text-sm leading-5"
