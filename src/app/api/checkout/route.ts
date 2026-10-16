@@ -39,28 +39,32 @@ export async function POST(request: Request) {
       );
     }
 
+    const priceId = process.env.STRIPE_PRICE_ID?.trim();
+    if (!priceId) {
+      return NextResponse.json(
+        {
+          error:
+            "STRIPE_PRICE_ID is missing. Create a Product/Price in the Stripe Dashboard and set STRIPE_PRICE_ID in your environment.",
+        },
+        { status: 503 },
+      );
+    }
+
     const stripe = getStripe();
     const baseUrl = siteBaseUrl();
     const email = session.user.email;
     const userId = session.user.id || "";
 
+    // Hosted Checkout — matches Checkout Studio (hosted_web_0001 / payment / Stripe catalog)
     const checkoutSession = await stripe.checkout.sessions.create({
+      ui_mode: "hosted_page",
       mode: "payment",
-      payment_method_types: ["card"],
       customer_email: email,
       client_reference_id: userId || undefined,
       line_items: [
         {
+          price: priceId,
           quantity: 1,
-          price_data: {
-            currency: "usd",
-            unit_amount: Math.round(plan.priceUsd * 100),
-            product_data: {
-              name: `SkillStack · ${plan.name}`,
-              description: plan.tagline,
-              images: [`${baseUrl}/og-image.jpg`],
-            },
-          },
         },
       ],
       metadata: {
@@ -69,8 +73,13 @@ export async function POST(request: Request) {
         planName: plan.name,
         userEmail: email,
       },
-      allow_promotion_codes: true,
       billing_address_collection: "auto",
+      phone_number_collection: { enabled: false },
+      automatic_tax: { enabled: false },
+      allow_promotion_codes: false,
+      submit_type: "auto",
+      integration_identifier: "hosted_web_0001",
+      origin_context: "web",
       success_url: `${baseUrl}/pricing/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/pricing/cancel`,
     });

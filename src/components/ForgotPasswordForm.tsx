@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 
 const inputClass =
-  "mt-1.5 w-full rounded-md border border-line bg-bg px-3 py-2 text-sm text-snow outline-none transition placeholder:text-ink-muted/50 focus:border-accent";
+  "mt-1.5 w-full rounded-md border border-line bg-bg-input px-3 py-2 text-sm text-snow outline-none transition placeholder:text-ink-muted/50 focus:border-accent";
 
 export default function ForgotPasswordForm() {
   const [error, setError] = useState("");
