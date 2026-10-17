@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { BarChart3, ExternalLink, RefreshCw, Unplug } from "lucide-react";
+import { BarChart3, ExternalLink, Loader2, RefreshCw, Unplug } from "lucide-react";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { connectWithGoogleClass, GoogleIcon } from "@/components/dashboard/GoogleIcon";
+import { NewProjectModal } from "@/components/dashboard/NewProjectModal";
 import { TabBar } from "@/components/dashboard/SearchToolbar";
 import {
   buttonGhostClass,
@@ -17,7 +18,19 @@ import {
   PageStack,
   ResultsPanel,
 } from "@/components/dashboard/ui";
-import { useDashboardProject } from "@/components/dashboard/useDashboardProject";
+import {
+  useDashboardProject,
+  type DashboardProject,
+} from "@/components/dashboard/useDashboardProject";
+
+function isUsableProject(p: DashboardProject | null | undefined) {
+  return Boolean(
+    p?.id &&
+      p.id !== "default" &&
+      p.domain &&
+      p.domain !== "example.com",
+  );
+}
 
 type GscTab = "queries" | "pages" | "countries" | "devices";
 
@@ -39,8 +52,12 @@ function formatOAuthError(raw: string) {
 
 export default function GscInsightsClient() {
   const searchParams = useSearchParams();
-  const { project, loading: projectLoading, refresh: refreshProject } =
-    useDashboardProject();
+  const {
+    project,
+    projects,
+    loading: projectLoading,
+    refresh: refreshProject,
+  } = useDashboardProject();
   const [tab, setTab] = useState<GscTab>("queries");
   const [rows, setRows] = useState<GscRow[]>([]);
   const [summary, setSummary] = useState<{
@@ -55,8 +72,34 @@ export default function GscInsightsClient() {
   const [selectedSite, setSelectedSite] = useState("");
   const [oauthConfigured, setOauthConfigured] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [connecting, setConnecting] = useState(false);
+  const [showNewProject, setShowNewProject] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+
+  const hasProject =
+    isUsableProject(project) || projects.some((p) => isUsableProject(p));
+
+  function startGscConnect() {
+    setConnecting(true);
+    setError("");
+    window.location.assign("/api/dashboard/gsc/connect");
+  }
+
+  function handleConnectClick() {
+    if (!oauthConfigured || connecting) return;
+    if (!hasProject) {
+      setShowNewProject(true);
+      return;
+    }
+    startGscConnect();
+  }
+
+  function handleProjectCreated() {
+    setShowNewProject(false);
+    setMessage("Project created. Connecting Google Search Console…");
+    startGscConnect();
+  }
 
   useEffect(() => {
     const err = searchParams.get("error");
@@ -233,14 +276,23 @@ export default function GscInsightsClient() {
         {showConnect ? (
           <ResultsPanel title="Connect Google Search Console">
             <p className="text-sm text-ink-muted">
-              Sign in with the Google account that has access to Search Console for{" "}
-              <strong className="text-snow">{project?.domain}</strong>. Each SkillStack
-              user connects their own Google account — your data stays private to your
-              project.
+              {hasProject ? (
+                <>
+                  Sign in with the Google account that has access to Search Console for{" "}
+                  <strong className="text-snow">{project?.domain}</strong>. Each
+                  SkillStack user connects their own Google account — your data stays
+                  private to your project.
+                </>
+              ) : (
+                <>
+                  Create a project with your website domain first, then connect the
+                  Google account that has Search Console access for that site.
+                </>
+              )}
             </p>
             <ul className="mt-3 space-y-1 text-xs text-ink-muted">
-              <li>1. Verify your site in Google Search Console first</li>
-              <li>2. Set your project domain in dashboard settings to match that property</li>
+              <li>1. Create a SkillStack project with your domain (if you have not yet)</li>
+              <li>2. Verify your site in Google Search Console</li>
               <li>3. Click connect and approve read-only access</li>
             </ul>
             {!oauthConfigured ? (
@@ -249,10 +301,23 @@ export default function GscInsightsClient() {
               </DashboardAlert>
             ) : null}
             <div className="mt-6 flex flex-wrap gap-3">
-              <a href="/api/dashboard/gsc/connect" className={connectWithGoogleClass}>
-                <GoogleIcon className="h-[18px] w-[18px]" />
-                Connect with Google
-              </a>
+              <button
+                type="button"
+                onClick={handleConnectClick}
+                disabled={!oauthConfigured || connecting}
+                className={`${connectWithGoogleClass} disabled:cursor-not-allowed disabled:opacity-60`}
+              >
+                {connecting ? (
+                  <Loader2 className="h-[18px] w-[18px] animate-spin" aria-hidden />
+                ) : (
+                  <GoogleIcon className="h-[18px] w-[18px]" />
+                )}
+                {connecting
+                  ? "Connecting…"
+                  : hasProject
+                    ? "Connect with Google"
+                    : "Create project & connect"}
+              </button>
               <a
                 href="https://search.google.com/search-console"
                 target="_blank"
@@ -264,6 +329,12 @@ export default function GscInsightsClient() {
             </div>
           </ResultsPanel>
         ) : null}
+
+        <NewProjectModal
+          open={showNewProject}
+          onClose={() => setShowNewProject(false)}
+          onCreated={handleProjectCreated}
+        />
 
         {connected && summary ? (
           <MetricGrid className="lg:grid-cols-4">

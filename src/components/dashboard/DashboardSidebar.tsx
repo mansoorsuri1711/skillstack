@@ -330,7 +330,7 @@ function ProjectsSidebarSection({
 
   return (
     <div className="mb-4">
-      <div className="mb-1.5 flex items-center justify-between px-3">
+      <div className="mb-1.5 px-3">
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
@@ -346,15 +346,6 @@ function ProjectsSidebarSection({
           <ChevronDown
             className={`dash-icon-muted h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`}
           />
-        </button>
-
-        <button
-          type="button"
-          onClick={onOpenNewModal}
-          className="rounded p-1 text-ink-muted hover:bg-mist hover:text-snow"
-          title="Create new project"
-        >
-          <Plus className="dash-icon h-3.5 w-3.5" />
         </button>
       </div>
 
