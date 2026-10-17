@@ -252,7 +252,6 @@ export default function DashboardOnboarding({
           {SETUP_STEPS.map((step) => {
             const isDone = completedMap[step.id];
             const isNext = nextStep?.id === step.id;
-            const isFocused = focusedStep === step.id || isNext;
             const Icon = step.icon;
 
             return (
@@ -261,11 +260,7 @@ export default function DashboardOnboarding({
                 key={step.id}
                 onMouseEnter={() => setFocusedStep(step.id)}
                 onFocus={() => setFocusedStep(step.id)}
-                className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border p-4 transition-all duration-300 sm:p-4 ${
-                  isFocused
-                    ? "border-accent/45 bg-bg-elevated shadow-[0_12px_32px_rgba(0,0,0,0.18)] ring-1 ring-accent/20"
-                    : "border-line bg-bg-elevated shadow-sm hover:-translate-y-0.5 hover:border-accent/25 hover:shadow-md"
-                }`}
+                className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-line bg-bg-elevated p-4 shadow-sm transition-colors duration-200 sm:p-4 hover:border-line"
               >
                 <div className="relative space-y-3">
                   <div className="flex items-start justify-between gap-2">
@@ -339,11 +334,7 @@ export default function DashboardOnboarding({
                       prefetch
                       onMouseEnter={() => step.href && router.prefetch(step.href)}
                       onTouchStart={() => step.href && router.prefetch(step.href)}
-                      className={`inline-flex w-full items-center justify-between rounded-xl px-3.5 py-2 text-[13px] font-semibold transition ${
-                        isDone
-                          ? "border border-line bg-bg-soft text-snow hover:border-accent/40 hover:bg-mist"
-                          : "bg-accent text-accent-fg shadow-sm shadow-accent/20 hover:bg-accent-deep"
-                      }`}
+                      className="inline-flex w-full items-center justify-between rounded-xl border border-line bg-bg-soft px-3.5 py-2 text-[13px] font-semibold text-snow transition hover:border-line"
                     >
                       <span>{step.cta}</span>
                       <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />

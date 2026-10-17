@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ExternalLink, Plus } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import DashboardShell from "@/components/dashboard/DashboardShell";
 import { AiToolLimitNotice } from "@/components/dashboard/AiToolLimitNotice";
 import { PromptResearchUnlock } from "@/components/dashboard/ai-visibility/AiVisibilityUnlock";
@@ -9,8 +9,6 @@ import { TopUpgradeBanner } from "@/components/dashboard/PaidFeatureUnlockCard";
 import { DataForSeoBanner } from "@/components/dashboard/ProjectDomainBanner";
 import { SearchToolbar } from "@/components/dashboard/SearchToolbar";
 import {
-  buttonGhostClass,
-  buttonPrimaryClass,
   DashboardAlert,
   DashboardCard,
   LoadingBlock,
@@ -28,7 +26,6 @@ export default function PromptResearchPage() {
   const [usage, setUsage] = useState<AiToolUsage | null>(null);
   const [prompts, setPrompts] = useState<PromptResearchItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
@@ -81,35 +78,6 @@ export default function PromptResearchPage() {
     }
   }
 
-  async function addToTracking(questions: string[]) {
-    if (!questions.length) return;
-    setSaving(true);
-    setError("");
-    setNotice("");
-    try {
-      const res = await fetch("/api/dashboard/prompt-tracking", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "add",
-          prompts: questions.map((prompt) => ({
-            prompt,
-            topic: keyword.trim() || "General",
-          })),
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message);
-      setNotice(
-        `Added ${questions.length} prompt${questions.length === 1 ? "" : "s"} to Prompt Tracking.`,
-      );
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not add prompts");
-    } finally {
-      setSaving(false);
-    }
-  }
-
   const limitReached = Boolean(usage && !usage.unlimited && usage.remaining === 0);
   const ready = dataForSeoConfigured && !limitReached;
 
@@ -149,43 +117,21 @@ export default function PromptResearchPage() {
         {prompts.length > 0 ? (
           <ResultsPanel
             title={`${prompts.length} prompts for “${keyword}”`}
-            description="ChatGPT answers load for the top questions. Add any to Prompt Tracking."
+            description="ChatGPT answers load for the top questions."
           >
-            <div className="mb-4">
-              <button
-                type="button"
-                className={buttonPrimaryClass}
-                disabled={saving}
-                onClick={() =>
-                  void addToTracking(prompts.map((p) => p.question))
-                }
-              >
-                <Plus className="h-4 w-4" /> Add all to tracking
-              </button>
-            </div>
             <div className="space-y-3">
               {prompts.map((row) => (
                 <DashboardCard key={row.question} className="space-y-3">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="text-sm font-semibold text-snow">
-                        {row.question}
-                      </h3>
-                      <p className="mt-1 text-[11px] text-ink-muted">
-                        {row.brandMentioned ? "Brand mentioned · " : ""}
-                        {row.ownedCited
-                          ? "Your domain cited"
-                          : "Your domain not cited"}
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      className={buttonGhostClass}
-                      disabled={saving}
-                      onClick={() => void addToTracking([row.question])}
-                    >
-                      <Plus className="h-3.5 w-3.5" /> Track
-                    </button>
+                  <div className="min-w-0">
+                    <h3 className="text-sm font-semibold text-snow">
+                      {row.question}
+                    </h3>
+                    <p className="mt-1 text-[11px] text-ink-muted">
+                      {row.brandMentioned ? "Brand mentioned · " : ""}
+                      {row.ownedCited
+                        ? "Your domain cited"
+                        : "Your domain not cited"}
+                    </p>
                   </div>
                   {row.answer ? (
                     <div className="whitespace-pre-wrap rounded-lg border border-line bg-bg px-3 py-2.5 text-xs leading-relaxed text-ink">

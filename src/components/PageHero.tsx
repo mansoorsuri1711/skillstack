@@ -36,10 +36,17 @@ export default function PageHero({
       <div className="relative z-10 mx-auto max-w-6xl px-6 md:px-8">
         <FadeIn>
           {breadcrumbs?.length ? <Breadcrumbs items={breadcrumbs} /> : null}
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent sm:text-sm">
-            {eyebrow}
-          </p>
-          <h1 className="font-display mt-3 max-w-3xl text-3xl font-bold tracking-tight text-snow sm:text-5xl">
+          {/* Skip eyebrow when breadcrumbs already name the page (e.g. Home / Services). */}
+          {!breadcrumbs?.length ? (
+            <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent sm:text-sm">
+              {eyebrow}
+            </p>
+          ) : null}
+          <h1
+            className={`font-display max-w-3xl text-3xl font-bold tracking-tight text-snow sm:text-5xl ${
+              breadcrumbs?.length ? "mt-0" : "mt-3"
+            }`}
+          >
             {title}
           </h1>
           <div className="mt-5 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
