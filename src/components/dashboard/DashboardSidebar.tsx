@@ -15,6 +15,8 @@ import {
   Menu,
   MessageSquare,
   MoreHorizontal,
+  PanelLeftClose,
+  PanelLeftOpen,
   Pencil,
   Plus,
   Trash2,
@@ -47,18 +49,36 @@ import { NewProjectModal } from "@/components/dashboard/NewProjectModal";
 import { RenameProjectModal } from "@/components/dashboard/RenameProjectModal";
 import { DeleteProjectModal } from "@/components/dashboard/DeleteProjectModal";
 
+const SIDEBAR_COLLAPSED_KEY = "skillstack-sidebar-collapsed";
+
 type MobileMenuContextValue = {
   open: boolean;
   openMenu: () => void;
   closeMenu: () => void;
 };
 
+type SidebarCollapseContextValue = {
+  collapsed: boolean;
+  toggleCollapsed: () => void;
+};
+
 const MobileMenuContext = createContext<MobileMenuContextValue | null>(null);
+const SidebarCollapseContext = createContext<SidebarCollapseContextValue | null>(
+  null,
+);
 
 function useMobileMenu() {
   const ctx = useContext(MobileMenuContext);
   if (!ctx) {
     throw new Error("useMobileMenu must be used within DashboardAppShell");
+  }
+  return ctx;
+}
+
+function useSidebarCollapse() {
+  const ctx = useContext(SidebarCollapseContext);
+  if (!ctx) {
+    throw new Error("useSidebarCollapse must be used within DashboardAppShell");
   }
   return ctx;
 }
@@ -70,13 +90,15 @@ function NavLink({
   exact,
   nested,
   onNavigate,
+  collapsed,
 }: {
   href: string;
   label: string;
-  icon?: React.ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<{ className?: string; strokeWidth?: number }>;
   exact?: boolean;
   nested?: boolean;
   onNavigate?: () => void;
+  collapsed?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -86,23 +108,35 @@ function NavLink({
     <Link
       href={href}
       prefetch={true}
+      title={collapsed ? label : undefined}
       onMouseEnter={() => router.prefetch(href)}
       onTouchStart={() => router.prefetch(href)}
       data-nav-active={active ? "true" : undefined}
       onClick={onNavigate}
-      className={`relative flex items-center gap-2.5 rounded-md py-1.5 text-sm transition-colors ${
-        nested ? "px-3 pl-6" : "px-3"
+      className={`relative flex items-center rounded-md py-1.5 text-sm font-sans transition-colors ${
+        collapsed
+          ? "justify-center px-0"
+          : nested
+            ? "gap-2.5 px-3 pl-6"
+            : "gap-2.5 px-3"
       } ${
         active
-          ? "bg-white/10 font-medium text-snow"
-          : "text-ink-muted hover:bg-white/5 hover:text-ink"
+          ? "bg-mist font-medium text-snow"
+          : "text-ink-muted hover:bg-mist hover:text-snow"
       }`}
     >
-      {active ? (
+      {active && !collapsed ? (
         <span className="absolute bottom-1 left-0 top-1 w-[3px] rounded-r-full bg-accent" />
       ) : null}
-      {Icon ? <Icon className="h-4 w-4 shrink-0" /> : null}
-      <span className="truncate">{label}</span>
+      {Icon ? (
+        <Icon
+          className={`dash-icon h-4 w-4 shrink-0 ${
+            active ? "" : "dash-icon-muted"
+          }`}
+          strokeWidth={active ? 2.25 : 2}
+        />
+      ) : null}
+      {!collapsed ? <span className="truncate font-sans">{label}</span> : null}
     </Link>
   );
 }
@@ -174,8 +208,8 @@ function ProjectRowItem({
         className="flex min-w-0 flex-1 items-center gap-2 pr-1 text-left"
       >
         <Globe
-          className={`h-3.5 w-3.5 shrink-0 transition-colors ${
-            isActive ? "text-accent" : "text-ink-muted/70 group-hover:text-ink"
+          className={`dash-icon h-3.5 w-3.5 shrink-0 transition-colors ${
+            isActive ? "" : "dash-icon-muted"
           }`}
         />
         <div className="min-w-0 flex-1">
@@ -248,14 +282,41 @@ function ProjectsSidebarSection({
   onOpenNewModal,
   onOpenRenameModal,
   onOpenDeleteModal,
+  collapsed,
 }: {
   onNavigate?: () => void;
   onOpenNewModal: () => void;
   onOpenRenameModal: (project: DashboardProject) => void;
   onOpenDeleteModal: (project: DashboardProject) => void;
+  collapsed?: boolean;
 }) {
   const { project: activeProject, projects, selectProject } = useDashboardProject();
   const [open, setOpen] = useState(true);
+
+  if (collapsed) {
+    return (
+      <div className="mb-3 flex flex-col items-center gap-1 px-1">
+        <button
+          type="button"
+          onClick={onOpenNewModal}
+          className="flex h-9 w-9 items-center justify-center rounded-md border border-line text-snow transition hover:bg-mist"
+          title="New project"
+        >
+          <Plus className="dash-icon h-4 w-4" />
+        </button>
+        {activeProject ? (
+          <button
+            type="button"
+            title={activeProject.name || activeProject.domain}
+            onClick={onNavigate}
+            className="flex h-9 w-9 items-center justify-center rounded-md bg-mist text-snow"
+          >
+            <Globe className="dash-icon h-4 w-4" />
+          </button>
+        ) : null}
+      </div>
+    );
+  }
 
   return (
     <div className="mb-4">
@@ -263,27 +324,27 @@ function ProjectsSidebarSection({
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-ink-muted/70 hover:text-ink"
+          className="flex items-center gap-1.5 font-sans text-[11px] font-semibold uppercase tracking-wider text-ink-muted/70 hover:text-ink"
         >
           <span>Projects</span>
           <span
             suppressHydrationWarning
-            className="rounded-full bg-white/5 px-1.5 py-0.2 text-[10px] tabular-nums text-ink-muted"
+            className="rounded-full bg-mist px-1.5 py-0.2 text-[10px] tabular-nums text-ink-muted"
           >
             {projects.length}
           </span>
           <ChevronDown
-            className={`h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`}
+            className={`dash-icon-muted h-3 w-3 transition-transform ${open ? "rotate-180" : ""}`}
           />
         </button>
 
         <button
           type="button"
           onClick={onOpenNewModal}
-          className="rounded p-1 text-ink-muted hover:bg-white/5 hover:text-accent"
+          className="rounded p-1 text-ink-muted hover:bg-mist hover:text-snow"
           title="Create new project"
         >
-          <Plus className="h-3.5 w-3.5" />
+          <Plus className="dash-icon h-3.5 w-3.5" />
         </button>
       </div>
 
@@ -317,9 +378,11 @@ function ProjectsSidebarSection({
 function NavGroupSection({
   group,
   onNavigate,
+  collapsed,
 }: {
   group: DashboardNavGroup;
   onNavigate?: () => void;
+  collapsed?: boolean;
 }) {
   const pathname = usePathname();
   const groupActive = group.items.some((item) =>
@@ -331,17 +394,35 @@ function NavGroupSection({
     if (groupActive) setOpen(true);
   }, [groupActive]);
 
+  if (collapsed) {
+    return (
+      <div className="mb-3 space-y-0.5">
+        {group.items.map((item) => (
+          <NavLink
+            key={item.href}
+            href={item.href}
+            label={item.label}
+            icon={item.icon}
+            exact={item.exact}
+            onNavigate={onNavigate}
+            collapsed
+          />
+        ))}
+      </div>
+    );
+  }
+
   if (group.collapsible) {
     return (
       <div className="mb-5">
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
-          className="mb-2 flex w-full items-center justify-between px-3 text-[11px] font-semibold uppercase tracking-wider text-ink-muted/70"
+          className="mb-2 flex w-full items-center justify-between px-3 font-sans text-[11px] font-semibold uppercase tracking-wider text-ink-muted/70"
         >
           <span>{group.label}</span>
           <ChevronDown
-            className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`}
+            className={`dash-icon-muted h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`}
           />
         </button>
         {open ? (
@@ -365,7 +446,7 @@ function NavGroupSection({
 
   return (
     <div className="mb-5">
-      <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-ink-muted/70">
+      <p className="mb-2 px-3 font-sans text-[11px] font-semibold uppercase tracking-wider text-ink-muted/70">
         {group.label}
       </p>
       <div className="space-y-0.5">
@@ -505,11 +586,13 @@ function DashboardSidebarNav({
   onOpenNewModal,
   onOpenRenameModal,
   onOpenDeleteModal,
+  collapsed,
 }: {
   onNavigate?: () => void;
   onOpenNewModal: () => void;
   onOpenRenameModal: (project: DashboardProject) => void;
   onOpenDeleteModal: (project: DashboardProject) => void;
+  collapsed?: boolean;
 }) {
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
@@ -529,71 +612,111 @@ function DashboardSidebarNav({
   const isChat = pathname.startsWith("/dashboard/chat");
 
   return (
-    <nav ref={navRef} className="flex-1 overflow-y-auto overscroll-contain px-3 py-3">
+    <nav
+      ref={navRef}
+      className={`flex-1 overflow-y-auto overscroll-contain py-3 font-sans ${
+        collapsed ? "px-1.5" : "px-3"
+      }`}
+    >
       <ProjectsSidebarSection
         onNavigate={onNavigate}
         onOpenNewModal={onOpenNewModal}
         onOpenRenameModal={onOpenRenameModal}
         onOpenDeleteModal={onOpenDeleteModal}
+        collapsed={collapsed}
       />
 
       {/* Browse / Chat Mode Switcher Tabs */}
-      <div className="mb-4 grid grid-cols-2 gap-1 rounded-lg border border-line bg-bg p-1 text-xs">
+      <div
+        className={`mb-4 gap-1 rounded-lg border border-line bg-bg p-1 text-xs ${
+          collapsed ? "flex flex-col" : "grid grid-cols-2"
+        }`}
+      >
         <Link
           href="/dashboard"
           prefetch={true}
+          title="Browse"
           onClick={onNavigate}
-          className={`flex items-center justify-center gap-1.5 rounded-md py-1.5 font-medium transition ${
+          className={`flex items-center justify-center gap-1.5 rounded-md py-1.5 font-medium font-sans transition ${
             !isChat
-              ? "bg-white/10 text-snow shadow-sm"
+              ? "bg-mist text-snow shadow-sm"
               : "text-ink-muted hover:text-snow"
           }`}
         >
-          <LayoutGrid className="h-3.5 w-3.5" />
-          Browse
+          <LayoutGrid className="dash-icon h-3.5 w-3.5" />
+          {!collapsed ? "Browse" : null}
         </Link>
         <Link
           href="/dashboard/chat"
           prefetch={true}
+          title="Chat"
           onClick={onNavigate}
-          className={`flex items-center justify-center gap-1.5 rounded-md py-1.5 font-medium transition ${
+          className={`flex items-center justify-center gap-1.5 rounded-md py-1.5 font-medium font-sans transition ${
             isChat
-              ? "bg-white/10 text-snow shadow-sm"
+              ? "bg-mist text-snow shadow-sm"
               : "text-ink-muted hover:text-snow"
           }`}
         >
-          <MessageSquare className="h-3.5 w-3.5" />
-          Chat
+          <MessageSquare className="dash-icon h-3.5 w-3.5" />
+          {!collapsed ? "Chat" : null}
         </Link>
       </div>
 
       <div className="my-3 border-t border-line/60" />
 
       {isChat ? (
-        <ChatSidebarList onNavigate={onNavigate} />
+        collapsed ? (
+          <Link
+            href="/dashboard/chat"
+            title="Chats"
+            onClick={onNavigate}
+            className="mx-auto flex h-9 w-9 items-center justify-center rounded-md text-ink-muted hover:bg-mist hover:text-snow"
+          >
+            <MessageSquare className="dash-icon h-4 w-4" />
+          </Link>
+        ) : (
+          <ChatSidebarList onNavigate={onNavigate} />
+        )
       ) : (
         dashboardNavGroups.map((group) => (
-          <NavGroupSection key={group.label} group={group} onNavigate={onNavigate} />
+          <NavGroupSection
+            key={group.label}
+            group={group}
+            onNavigate={onNavigate}
+            collapsed={collapsed}
+          />
         ))
       )}
 
-      <div className="mt-4 pt-3 border-t border-line/60">
+      <div className={`mt-4 border-t border-line/60 pt-3 ${collapsed ? "px-0" : ""}`}>
         <Link
           href="/contact"
+          title="Help & Community"
           onClick={onNavigate}
-          className="flex items-center gap-2.5 rounded-md px-3 py-1.5 text-xs text-ink-muted transition hover:bg-white/5 hover:text-snow"
+          className={`flex items-center rounded-md py-1.5 text-xs text-ink-muted transition hover:bg-mist hover:text-snow ${
+            collapsed ? "justify-center px-0" : "gap-2.5 px-3"
+          }`}
         >
-          <HelpCircle className="h-4 w-4 shrink-0 text-ink-muted" />
-          <span>Help & Community</span>
+          <HelpCircle className="dash-icon-muted h-4 w-4 shrink-0" />
+          {!collapsed ? <span className="font-sans">Help & Community</span> : null}
         </Link>
       </div>
     </nav>
   );
 }
 
-function SidebarPanel({ onNavigate }: { onNavigate?: () => void }) {
+function SidebarPanel({
+  onNavigate,
+  collapsed = false,
+  showCollapseToggle = false,
+}: {
+  onNavigate?: () => void;
+  collapsed?: boolean;
+  showCollapseToggle?: boolean;
+}) {
   const router = useRouter();
   const { data: session } = useSession();
+  const { toggleCollapsed } = useSidebarCollapse();
   const [accountOpen, setAccountOpen] = useState(false);
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
@@ -620,81 +743,127 @@ function SidebarPanel({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <>
-      <aside className="flex h-full w-full shrink-0 flex-col border-r border-line bg-bg-soft md:w-60">
-        <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-4">
-          <Logo size="sm" href="/dashboard" />
-          {onNavigate ? (
-            <button
-              type="button"
-              onClick={onNavigate}
-              className="rounded-md p-1 text-ink-muted hover:bg-white/5 md:hidden"
-              aria-label="Close menu"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          ) : null}
+      <aside
+        className={`dashboard-sidebar flex h-full w-full shrink-0 flex-col border-r border-line bg-bg-soft transition-[width] duration-200 ease-out ${
+          collapsed ? "md:w-[4.5rem]" : "md:w-60"
+        }`}
+      >
+        <div
+          className={`flex items-center border-b border-line py-3.5 ${
+            collapsed ? "flex-col gap-2 px-2" : "justify-between gap-2 px-3"
+          }`}
+        >
+          <Logo
+            size="sm"
+            href="/dashboard"
+            variant={collapsed ? "mark" : "full"}
+            className={collapsed ? "justify-center" : undefined}
+          />
+          <div className="flex items-center gap-1">
+            {showCollapseToggle ? (
+              <button
+                type="button"
+                onClick={toggleCollapsed}
+                className="hidden h-8 w-8 items-center justify-center rounded-md text-ink-muted transition hover:bg-mist hover:text-snow md:inline-flex"
+                aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+                title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                {collapsed ? (
+                  <PanelLeftOpen className="dash-icon h-4 w-4" />
+                ) : (
+                  <PanelLeftClose className="dash-icon h-4 w-4" />
+                )}
+              </button>
+            ) : null}
+            {onNavigate ? (
+              <button
+                type="button"
+                onClick={onNavigate}
+                className="rounded-md p-1 text-ink-muted hover:bg-mist md:hidden"
+                aria-label="Close menu"
+              >
+                <X className="dash-icon h-5 w-5" />
+              </button>
+            ) : null}
+          </div>
         </div>
 
-        <div className="px-3 pt-3 pb-1">
-          <button
-            type="button"
-            onClick={() => setNewProjectOpen(true)}
-            className="flex w-full items-center justify-between rounded-lg border border-line/80 bg-white/5 px-3 py-2 text-sm font-medium text-snow shadow-sm transition-all hover:border-accent/40 hover:bg-white/10 hover:text-white"
-          >
-            <span className="flex items-center gap-2">
-              <Plus className="h-4 w-4 text-accent" />
-              New project
-            </span>
-          </button>
-        </div>
+        {!collapsed ? (
+          <div className="px-3 pt-3 pb-1">
+            <button
+              type="button"
+              onClick={() => setNewProjectOpen(true)}
+              className="flex w-full items-center justify-between rounded-lg border border-line/80 bg-mist px-3 py-2 text-sm font-medium font-sans text-snow shadow-sm transition-all hover:border-snow/25 hover:bg-mist"
+            >
+              <span className="flex items-center gap-2">
+                <Plus className="dash-icon h-4 w-4" />
+                New project
+              </span>
+            </button>
+          </div>
+        ) : null}
 
         <DashboardSidebarNav
           onNavigate={onNavigate}
           onOpenNewModal={() => setNewProjectOpen(true)}
           onOpenRenameModal={(proj) => setRenameTarget(proj)}
           onOpenDeleteModal={(proj) => setDeleteTarget(proj)}
+          collapsed={collapsed}
         />
 
-        <div className="border-t border-line p-3">
+        <div className={`border-t border-line ${collapsed ? "p-2" : "p-3"}`}>
           <div className="relative">
             <button
               type="button"
               onMouseEnter={() => router.prefetch("/profile")}
               onTouchStart={() => router.prefetch("/profile")}
               onClick={() => setAccountOpen((v) => !v)}
-              className="flex w-full items-center gap-2.5 rounded-md px-3 py-2 text-left text-sm text-snow hover:bg-white/5"
+              title={collapsed ? displayName : undefined}
+              className={`flex w-full items-center rounded-md text-left text-sm text-snow hover:bg-mist ${
+                collapsed ? "justify-center p-1.5" : "gap-2.5 px-3 py-2"
+              }`}
             >
               <UserAvatar name={displayName} image={avatarImage} size="md" />
-              <span className="min-w-0 flex-1 truncate font-medium">{displayName}</span>
-              <ChevronDown
-                className={`h-4 w-4 shrink-0 text-ink-muted transition-transform ${
-                  accountOpen ? "rotate-180" : ""
-                }`}
-              />
+              {!collapsed ? (
+                <>
+                  <span className="min-w-0 flex-1 truncate font-medium font-sans">
+                    {displayName}
+                  </span>
+                  <ChevronDown
+                    className={`dash-icon-muted h-4 w-4 shrink-0 transition-transform ${
+                      accountOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </>
+              ) : null}
             </button>
             {accountOpen ? (
-              <div className="absolute bottom-full left-0 right-0 mb-1 rounded-lg border border-line bg-bg-elevated py-1 shadow-xl">
+              <div
+                className={`absolute bottom-full mb-1 rounded-lg border border-line bg-bg-elevated py-1 shadow-xl ${
+                  collapsed ? "left-0 w-44" : "left-0 right-0"
+                }`}
+              >
                 <Link
                   href="/profile"
                   prefetch={true}
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-ink hover:bg-white/5"
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-sans text-ink hover:bg-mist"
                   onClick={() => setAccountOpen(false)}
                 >
-                  <User className="h-4 w-4" /> Profile
+                  <User className="dash-icon h-4 w-4" /> Profile
                 </Link>
                 <Link
                   href="/"
-                  className="flex items-center gap-2 px-3 py-2 text-sm text-ink hover:bg-white/5"
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-sans text-ink hover:bg-mist"
                   onClick={() => setAccountOpen(false)}
                 >
-                  <ExternalLink className="h-4 w-4" /> Marketing site
+                  <ExternalLink className="dash-icon h-4 w-4" /> Marketing site
                 </Link>
                 <button
                   type="button"
                   onClick={() => void signOutToHome()}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-ink hover:bg-white/5"
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm font-sans text-ink hover:bg-mist"
                 >
-                  <LogOut className="h-4 w-4" /> Sign out
+                  <LogOut className="dash-icon h-4 w-4" /> Sign out
                 </button>
               </div>
             ) : null}
@@ -724,11 +893,12 @@ function SidebarPanel({ onNavigate }: { onNavigate?: () => void }) {
 
 export default function DashboardSidebar() {
   const { open, closeMenu } = useMobileMenu();
+  const { collapsed } = useSidebarCollapse();
 
   return (
     <>
       <div className="hidden h-full md:flex">
-        <SidebarPanel />
+        <SidebarPanel collapsed={collapsed} showCollapseToggle />
       </div>
       {open ? (
         <div className="fixed inset-0 z-50 flex md:hidden">
@@ -764,6 +934,28 @@ export function DashboardMobileToggle() {
 
 export function DashboardMobileMenuProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+      if (stored === "1") setCollapsed(true);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const toggleCollapsed = useCallback(() => {
+    setCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(SIDEBAR_COLLAPSED_KEY, next ? "1" : "0");
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }, []);
 
   return (
     <MobileMenuContext.Provider
@@ -773,7 +965,9 @@ export function DashboardMobileMenuProvider({ children }: { children: ReactNode 
         closeMenu: () => setOpen(false),
       }}
     >
-      {children}
+      <SidebarCollapseContext.Provider value={{ collapsed, toggleCollapsed }}>
+        {children}
+      </SidebarCollapseContext.Provider>
     </MobileMenuContext.Provider>
   );
 }
