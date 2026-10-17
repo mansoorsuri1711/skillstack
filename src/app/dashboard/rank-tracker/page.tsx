@@ -42,14 +42,12 @@ import {
 } from "@/lib/dashboard/locations";
 
 export default function RankTrackingPage() {
-  const { project, dataForSeoConfigured, loading: projectLoading } =
-    useDashboardProject();
+  const { project, dataForSeoConfigured } = useDashboardProject();
 
   const [domains, setDomains] = useState<TrackedDomainSummary[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detail, setDetail] = useState<TrackedDomainDetail | null>(null);
 
-  const [loading, setLoading] = useState(true);
   const [detailLoading, setDetailLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [checkingKeyword, setCheckingKeyword] = useState<string | null>(null);
@@ -72,7 +70,6 @@ export default function RankTrackingPage() {
   const [chooseError, setChooseError] = useState("");
 
   async function loadDomains() {
-    setLoading(true);
     try {
       const res = await fetch("/api/dashboard/rank-tracking");
       const data = await res.json();
@@ -80,8 +77,6 @@ export default function RankTrackingPage() {
       setDomains(data.domains ?? []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Load failed");
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -101,6 +96,7 @@ export default function RankTrackingPage() {
   }
 
   useEffect(() => {
+    // Hydrate saved domains quietly — no "Loading…" spinner on page open.
     void loadDomains();
   }, []);
 
@@ -328,11 +324,7 @@ export default function RankTrackingPage() {
                 ) : null}
               </div>
 
-              {loading ? (
-                <div className="p-4 sm:p-6">
-                  <LoadingBlock label="Loading tracked domains..." />
-                </div>
-              ) : domains.length === 0 ? (
+              {domains.length === 0 ? (
                 <div className="p-4 sm:p-6">
                   <EmptyBlock
                     icon={TrendingUp}
