@@ -267,6 +267,15 @@ html[data-theme="light"] .dashboard-sidebar [data-nav-active="true"] .dash-icon-
   opacity: 1;
 }
 
+/* Setup step icons: white on light, brand teal on dark */
+.setup-step-icon {
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .setup-step-icon {
+  color: #2bc1ae;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

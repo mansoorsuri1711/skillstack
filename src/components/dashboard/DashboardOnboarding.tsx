@@ -264,7 +264,7 @@ export default function DashboardOnboarding({
               >
                 <div className="relative space-y-3">
                   <div className="flex items-start justify-between gap-2">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0d1117] text-white">
+                    <div className="setup-step-icon flex h-10 w-10 items-center justify-center rounded-xl bg-[#0d1117]">
                       <Icon className="h-4 w-4" strokeWidth={2.25} />
                     </div>
                     {isDone ? (
