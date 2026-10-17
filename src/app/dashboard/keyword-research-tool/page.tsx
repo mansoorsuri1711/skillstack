@@ -224,6 +224,35 @@ export default function KeywordsPage() {
     await saveKeywords([row]);
   }
 
+  async function unsaveKeyword(keyword: string) {
+    const key = keyword.trim().toLowerCase();
+    if (!key) return;
+    setError("");
+    setMessage("");
+    setSavingKeywords(true);
+    try {
+      const res = await fetch(
+        `/api/dashboard/keywords/saved?keyword=${encodeURIComponent(key)}`,
+        { method: "DELETE" },
+      );
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.message || "Could not remove keyword");
+        return;
+      }
+      setSavedKeywords((prev) => {
+        const next = new Set(prev);
+        next.delete(key);
+        return next;
+      });
+      setMessage(`Removed "${keyword}" from saved`);
+    } catch {
+      setError("Could not remove keyword. Please try again.");
+    } finally {
+      setSavingKeywords(false);
+    }
+  }
+
   return (
     <DashboardShell
       title="Keyword Research"
@@ -251,6 +280,7 @@ export default function KeywordsPage() {
           message={message}
           onResearch={(nextSeed) => void onResearch(nextSeed)}
           onSaveKeyword={(row) => void saveKeyword(row)}
+          onUnsaveKeyword={(keyword) => void unsaveKeyword(keyword)}
           onSaveKeywords={(rows) => void saveKeywords(rows)}
           savedKeywords={savedKeywords}
           savingKeywords={savingKeywords}

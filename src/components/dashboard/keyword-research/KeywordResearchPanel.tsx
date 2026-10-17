@@ -41,7 +41,6 @@ import {
   getDifficultyLevel,
   intentBadgeClass,
   intentShortLabel,
-  scoreBadgeClass,
   type CategorizedKeywordIdeas,
   type GlobalVolumeCountry,
   type KeywordIntent,
@@ -224,49 +223,116 @@ function TablePaginationFooter({
   );
 }
 
+/** Proper semicircle KD gauge — score sits in the open bottom, clear of the arc. */
 function KdGauge({ value }: { value: number | null }) {
   const score = Math.max(0, Math.min(100, value ?? 0));
-  const radius = 55;
-  const stroke = 9;
-  const normalizedRadius = radius - stroke;
-  const circumference = normalizedRadius * Math.PI;
-  const strokeDashoffset = circumference - (score / 100) * circumference;
+  const r = 52;
+  const stroke = 10;
+  const cx = 70;
+  const cy = 68;
+  const arcLen = Math.PI * r;
+  const filled = (score / 100) * arcLen;
   const diff = getDifficultyLevel(value);
+  const d = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
 
   return (
-    <div className="relative flex flex-col items-center justify-center pt-2">
-      <svg height="85" width="150" viewBox="0 0 150 85" className="overflow-visible">
-        {/* Background Arc */}
+    <div className="relative mx-auto flex h-[88px] w-[140px] flex-col items-center justify-end">
+      <svg
+        width="140"
+        height="78"
+        viewBox="0 0 140 78"
+        className="absolute inset-x-0 top-0 overflow-visible"
+        aria-hidden
+      >
         <path
-          d="M 15 75 A 60 60 0 0 1 135 75"
+          d={d}
           fill="none"
           stroke="rgba(255, 255, 255, 0.08)"
-          strokeWidth="10"
+          strokeWidth={stroke}
           strokeLinecap="round"
         />
-        {/* Filled Arc */}
         <path
-          d="M 15 75 A 60 60 0 0 1 135 75"
+          d={d}
           fill="none"
           stroke={diff.color}
-          strokeWidth="10"
-          strokeDasharray={`${circumference} ${circumference}`}
-          strokeDashoffset={strokeDashoffset}
+          strokeWidth={stroke}
+          strokeDasharray={`${filled} ${arcLen}`}
           strokeLinecap="round"
           className="transition-all duration-700 ease-out"
         />
       </svg>
-      <div className="absolute top-6 flex flex-col items-center text-center">
-        <span className="font-display text-3xl font-bold tracking-tight text-snow">
+      <div className="relative z-10 mb-0.5 flex flex-col items-center text-center">
+        <span className="font-display text-3xl font-bold leading-none tracking-tight text-snow">
           {value ?? 0}
         </span>
-        <span className="text-[11px] font-semibold uppercase tracking-wider" style={{ color: diff.color }}>
+        <span
+          className="mt-1 text-[11px] font-semibold uppercase tracking-wider"
+          style={{ color: diff.color }}
+        >
           {diff.label}
         </span>
       </div>
     </div>
   );
 }
+
+/** Compact half-circle KD for table cells. */
+function KdMini({ value }: { value: number | null }) {
+  if (value === null || value === undefined) {
+    return <span className="text-ink-muted">—</span>;
+  }
+  const score = Math.max(0, Math.min(100, value));
+  const r = 13;
+  const stroke = 2.5;
+  const cx = 16;
+  const cy = 16;
+  const arcLen = Math.PI * r;
+  const filled = (score / 100) * arcLen;
+  const color = getDifficultyLevel(value).color;
+  const d = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
+
+  return (
+    <span
+      className="relative inline-flex h-[22px] w-8 items-end justify-center"
+      title={`KD ${value}`}
+    >
+      <svg
+        width="32"
+        height="18"
+        viewBox="0 0 32 18"
+        className="absolute left-0 top-0 overflow-visible"
+        aria-hidden
+      >
+        <path
+          d={d}
+          fill="none"
+          stroke="rgba(255,255,255,0.12)"
+          strokeWidth={stroke}
+          strokeLinecap="round"
+        />
+        <path
+          d={d}
+          fill="none"
+          stroke={color}
+          strokeWidth={stroke}
+          strokeDasharray={`${filled} ${arcLen}`}
+          strokeLinecap="round"
+        />
+      </svg>
+      <span className="relative z-10 pb-px text-[11px] font-semibold leading-none tabular-nums text-snow">
+        {value}
+      </span>
+    </span>
+  );
+}
+
+type TableSortField =
+  | "searchVolume"
+  | "difficulty"
+  | "cpc"
+  | "competition"
+  | "intent";
+type TableSortDir = "asc" | "desc";
 
 function IntentBadge({ intent }: { intent: KeywordIntent | string | null | undefined }) {
   const normalized = (intent ?? null) as KeywordIntent;
@@ -437,6 +503,7 @@ export function KeywordResearchPanel({
   message,
   onResearch,
   onSaveKeyword,
+  onUnsaveKeyword,
   onSaveKeywords,
   savedKeywords,
   savingKeywords = false,
@@ -459,6 +526,7 @@ export function KeywordResearchPanel({
   message: string;
   onResearch: (seed?: string) => void;
   onSaveKeyword?: (row: KeywordResearchRow) => void;
+  onUnsaveKeyword?: (keyword: string) => void;
   onSaveKeywords?: (rows: KeywordResearchRow[]) => void;
   savedKeywords?: Set<string>;
   savingKeywords?: boolean;
@@ -477,9 +545,19 @@ export function KeywordResearchPanel({
 
   const [minVolume, setMinVolume] = useState<string>("");
   const [intentFilter, setIntentFilter] = useState<string>("all");
-  const [volumeSort, setVolumeSort] = useState<"desc" | "asc">("desc");
+  const [sortField, setSortField] = useState<TableSortField>("searchVolume");
+  const [sortDir, setSortDir] = useState<TableSortDir>("desc");
   const [kdFilter, setKdFilter] = useState<string>("all");
   const [showTableFilters, setShowTableFilters] = useState(false);
+
+  function toggleSort(field: TableSortField) {
+    if (sortField === field) {
+      setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+    } else {
+      setSortField(field);
+      setSortDir(field === "intent" ? "asc" : "desc");
+    }
+  }
   const tableFiltersRef = useRef<HTMLDivElement>(null);
 
   const [keywordPage, setKeywordPage] = useState(0);
@@ -561,16 +639,27 @@ export function KeywordResearchPanel({
       return true;
     });
     rows = [...rows].sort((a, b) => {
-      const av = a.searchVolume ?? 0;
-      const bv = b.searchVolume ?? 0;
-      return volumeSort === "desc" ? bv - av : av - bv;
+      if (sortField === "intent") {
+        const ai = (a.intent ?? "").toString();
+        const bi = (b.intent ?? "").toString();
+        return sortDir === "asc" ? ai.localeCompare(bi) : bi.localeCompare(ai);
+      }
+      const num = (row: KeywordResearchRow) => {
+        if (sortField === "searchVolume") return row.searchVolume ?? 0;
+        if (sortField === "difficulty") return row.difficulty ?? 0;
+        if (sortField === "cpc") return row.cpc ?? 0;
+        return row.competition ?? 0;
+      };
+      const av = num(a);
+      const bv = num(b);
+      return sortDir === "desc" ? bv - av : av - bv;
     });
     return rows;
-  }, [results, minVolume, intentFilter, kdFilter, volumeSort]);
+  }, [results, minVolume, intentFilter, kdFilter, sortField, sortDir]);
 
   useEffect(() => {
     setKeywordPage(0);
-  }, [activeSeed, minVolume, intentFilter, kdFilter, volumeSort, results.length]);
+  }, [activeSeed, minVolume, intentFilter, kdFilter, sortField, sortDir, results.length]);
 
   const keywordTotalPages = Math.max(
     1,
@@ -1233,34 +1322,35 @@ export function KeywordResearchPanel({
                         <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-muted">
                           Keyword
                         </th>
-                        <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-muted">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setVolumeSort((prev) =>
-                                prev === "desc" ? "asc" : "desc",
-                              )
-                            }
-                            className="inline-flex items-center gap-1 hover:text-snow"
+                        {(
+                          [
+                            ["searchVolume", "Volume"],
+                            ["difficulty", "KD"],
+                            ["cpc", "CPC"],
+                            ["competition", "Competition"],
+                            ["intent", "Intent"],
+                          ] as const
+                        ).map(([field, label]) => (
+                          <th
+                            key={field}
+                            className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-muted"
                           >
-                            Volume
-                            <span className="text-[10px]">
-                              {volumeSort === "desc" ? "↓" : "↑"}
-                            </span>
-                          </button>
-                        </th>
-                        <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-muted">
-                          KD
-                        </th>
-                        <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-muted">
-                          CPC
-                        </th>
-                        <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-muted">
-                          Competition
-                        </th>
-                        <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-muted">
-                          Intent
-                        </th>
+                            <button
+                              type="button"
+                              onClick={() => toggleSort(field)}
+                              className="inline-flex items-center gap-1 hover:text-snow"
+                            >
+                              {label}
+                              <span className="text-[10px]">
+                                {sortField === field
+                                  ? sortDir === "desc"
+                                    ? "↓"
+                                    : "↑"
+                                  : "↕"}
+                              </span>
+                            </button>
+                          </th>
+                        ))}
                         {onSaveKeyword ? (
                           <th className="w-16 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.1em] text-ink-muted">
                             Save
@@ -1310,13 +1400,7 @@ export function KeywordResearchPanel({
                               {formatVolume(row.searchVolume)}
                             </td>
                             <td className="px-4 py-3">
-                              <span
-                                className={`inline-flex h-6 min-w-6 items-center justify-center rounded-md border px-1.5 text-xs font-semibold tabular-nums ${scoreBadgeClass(
-                                  row.difficulty,
-                                )}`}
-                              >
-                                {row.difficulty ?? "—"}
-                              </span>
+                              <KdMini value={row.difficulty} />
                             </td>
                             <td className="px-4 py-3 tabular-nums text-ink-muted">
                               {row.cpc != null ? formatCpc(row.cpc) : "—"}
@@ -1340,18 +1424,25 @@ export function KeywordResearchPanel({
                                       type="button"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        if (isSaved || savingKeywords) return;
-                                        onSaveKeyword(row);
+                                        if (savingKeywords) return;
+                                        if (isSaved) {
+                                          onUnsaveKeyword?.(row.keyword);
+                                        } else {
+                                          onSaveKeyword(row);
+                                        }
                                       }}
-                                      disabled={savingKeywords || isSaved}
+                                      disabled={
+                                        savingKeywords ||
+                                        (isSaved && !onUnsaveKeyword)
+                                      }
                                       className={`p-1 transition ${
                                         isSaved
-                                          ? "text-accent"
+                                          ? "text-accent hover:text-accent/80"
                                           : "text-ink-muted hover:text-accent"
                                       } disabled:opacity-60`}
                                       title={
                                         isSaved
-                                          ? "Already saved"
+                                          ? "Remove from saved"
                                           : "Save keyword"
                                       }
                                     >

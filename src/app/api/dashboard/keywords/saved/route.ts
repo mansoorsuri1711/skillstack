@@ -132,16 +132,30 @@ export async function DELETE(request: Request) {
     const project = await getProjectForUser(user.id);
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
-    if (!id) {
-      return NextResponse.json({ message: "Missing id" }, { status: 400 });
+    const keywordRaw = searchParams.get("keyword");
+    const keyword = keywordRaw ? keywordRaw.trim().toLowerCase() : "";
+
+    if (!id && !keyword) {
+      return NextResponse.json(
+        { message: "Missing id or keyword" },
+        { status: 400 },
+      );
     }
 
     await connectDB();
-    await SavedKeyword.deleteOne({
-      _id: id,
-      projectId: asObjectId(project.id),
-      userId: asObjectId(user.id),
-    });
+    const filter = id
+      ? {
+          _id: id,
+          projectId: asObjectId(project.id),
+          userId: asObjectId(user.id),
+        }
+      : {
+          keyword,
+          projectId: asObjectId(project.id),
+          userId: asObjectId(user.id),
+        };
+
+    await SavedKeyword.deleteOne(filter);
     return NextResponse.json({ ok: true });
   } catch (error) {
     const message =
