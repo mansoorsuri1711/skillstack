@@ -5,6 +5,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import PasswordInput from "@/components/PasswordInput";
 
 const inputClass =
   "mt-1.5 w-full rounded-md border border-line bg-bg-input px-3 py-2 text-sm text-snow outline-none transition placeholder:text-ink-muted/50 focus:border-accent";
@@ -70,7 +71,7 @@ function LoginFormInner() {
 
       <form onSubmit={onSubmit} className="space-y-3">
         {error ? (
-          <p className="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+          <p className="rounded-md border border-danger-border bg-danger-bg px-3 py-2 text-sm text-danger">
             {error}
           </p>
         ) : null}
@@ -86,16 +87,12 @@ function LoginFormInner() {
           />
         </label>
 
-        <label className="block">
-          <span className="text-sm font-medium text-snow">Password</span>
-          <input
-            name="password"
-            type="password"
-            required
-            autoComplete="current-password"
-            className={inputClass}
-          />
-        </label>
+        <PasswordInput
+          name="password"
+          label="Password"
+          required
+          autoComplete="current-password"
+        />
 
         <div className="flex justify-end">
           <Link

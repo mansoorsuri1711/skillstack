@@ -3,6 +3,7 @@
 import { FormEvent, Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import PasswordInput from "@/components/PasswordInput";
 
 const inputClass =
   "mt-1.5 w-full rounded-md border border-line bg-bg-input px-3 py-2 text-sm text-snow outline-none transition placeholder:text-ink-muted/50 focus:border-accent";
@@ -68,7 +69,7 @@ function RegisterFormInner() {
 
       <form onSubmit={onSubmit} className="space-y-3">
         {error ? (
-          <p className="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200">
+          <p className="rounded-md border border-danger-border bg-danger-bg px-3 py-2 text-sm text-danger">
             {error}
           </p>
         ) : null}
@@ -101,20 +102,18 @@ function RegisterFormInner() {
           />
         </label>
 
-        <label className="block">
-          <span className="text-sm font-medium text-snow">Password</span>
-          <input
+        <div>
+          <PasswordInput
             name="password"
-            type="password"
+            label="Password"
             required
             autoComplete="new-password"
             minLength={8}
-            className={inputClass}
           />
           <span className="mt-1 block text-xs text-ink-muted">
             At least 8 characters
           </span>
-        </label>
+        </div>
 
         <button
           type="submit"
