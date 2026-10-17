@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 
@@ -25,14 +26,20 @@ export async function POST(request: Request) {
       );
     }
 
+    const loginToken = crypto.randomBytes(32).toString("hex");
+
     user.emailVerified = new Date();
     user.verificationToken = null;
     user.verificationTokenExpires = null;
+    user.postVerifyLoginToken = loginToken;
+    user.postVerifyLoginTokenExpires = new Date(Date.now() + 5 * 60 * 1000);
     await user.save();
 
     return NextResponse.json({
       ok: true,
-      message: "Email verified. You can sign in now.",
+      email: user.email,
+      loginToken,
+      message: "Email verified. Signing you in...",
     });
   } catch (error) {
     console.error("Verify error:", error);

@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
+import { withFlash } from "@/lib/flash";
 
 function VerifyContent() {
   const params = useSearchParams();
@@ -19,25 +21,53 @@ function VerifyContent() {
     if (!token || requestedRef.current) return;
     requestedRef.current = true;
 
-    fetch("/api/auth/verify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    })
-      .then(async (res) => {
+    async function verifyAndSignIn() {
+      try {
+        const res = await fetch("/api/auth/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
+        });
         const data = await res.json();
+
         if (!res.ok) {
           setStatus("error");
           setMessage(data.error || "Verification failed.");
           return;
         }
+
+        const email = typeof data.email === "string" ? data.email : "";
+        const loginToken =
+          typeof data.loginToken === "string" ? data.loginToken : "";
+
+        if (!email || !loginToken) {
+          setStatus("ok");
+          setMessage("Email verified. Please sign in.");
+          return;
+        }
+
+        setMessage("Email verified. Signing you in...");
+
+        const result = await signIn("credentials", {
+          email,
+          loginToken,
+          redirect: false,
+        });
+
+        if (result?.ok) {
+          window.location.assign(withFlash("/dashboard", "signedIn"));
+          return;
+        }
+
         setStatus("ok");
-        setMessage(data.message || "Email verified.");
-      })
-      .catch(() => {
+        setMessage("Email verified. Please sign in to continue.");
+      } catch {
         setStatus("error");
         setMessage("Something went wrong. Please try again.");
-      });
+      }
+    }
+
+    void verifyAndSignIn();
   }, [token]);
 
   return (

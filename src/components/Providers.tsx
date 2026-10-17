@@ -2,6 +2,7 @@
 
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
+import FlashToast from "@/components/FlashToast";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
 export default function Providers({
@@ -20,6 +21,7 @@ export default function Providers({
         refetchInterval={24 * 60 * 60}
         refetchOnWindowFocus={true}
       >
+        <FlashToast />
         {children}
       </SessionProvider>
     </ThemeProvider>

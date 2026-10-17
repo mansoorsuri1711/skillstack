@@ -2,6 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { withFlash } from "@/lib/flash";
 
 type GoogleSignInButtonProps = {
   callbackUrl?: string;
@@ -20,7 +21,9 @@ export default function GoogleSignInButton({
       disabled={loading}
       onClick={() => {
         setLoading(true);
-        void signIn("google", { callbackUrl });
+        void signIn("google", {
+          callbackUrl: withFlash(callbackUrl, "signedIn"),
+        });
       }}
       className="flex w-full items-center justify-center gap-3 rounded-md border border-line bg-white px-4 py-2.5 text-sm font-semibold text-[#1f1f1f] transition hover:bg-white/90 disabled:opacity-60"
     >

@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 import PasswordInput from "@/components/PasswordInput";
+import { withFlash } from "@/lib/flash";
 
 const inputClass =
   "mt-1.5 w-full rounded-md border border-line bg-bg-input px-3 py-2 text-sm text-snow outline-none transition placeholder:text-ink-muted/50 focus:border-accent";
@@ -45,11 +46,12 @@ function LoginFormInner() {
         return;
       }
 
+      const next = withFlash(callbackUrl, "signedIn");
       await signIn("credentials", {
         email,
         password,
-        callbackUrl,
-        redirectTo: callbackUrl,
+        callbackUrl: next,
+        redirectTo: next,
       });
     } catch {
       setError("Something went wrong. Please try again.");

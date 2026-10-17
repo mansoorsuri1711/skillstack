@@ -38,24 +38,55 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        loginToken: { label: "Login Token", type: "text" },
       },
       async authorize(credentials) {
-        const email = credentials?.email;
+        const email =
+          typeof credentials?.email === "string"
+            ? credentials.email.toLowerCase().trim()
+            : "";
         const password = credentials?.password;
+        const loginToken =
+          typeof credentials?.loginToken === "string"
+            ? credentials.loginToken.trim()
+            : "";
 
-        if (
-          typeof email !== "string" ||
-          typeof password !== "string" ||
-          !email ||
-          !password
-        ) {
-          return null;
-        }
+        if (!email) return null;
 
         await connectDB();
-        const user = await User.findOne({ email: email.toLowerCase().trim() });
+        const user = await User.findOne({ email });
+        if (!user) return null;
 
-        if (!user || !user.password) return null;
+        // One-time sign-in right after email verification (no password on that page).
+        if (loginToken) {
+          if (
+            !user.postVerifyLoginToken ||
+            user.postVerifyLoginToken !== loginToken ||
+            !user.postVerifyLoginTokenExpires ||
+            user.postVerifyLoginTokenExpires <= new Date()
+          ) {
+            return null;
+          }
+
+          if (!user.emailVerified) {
+            throw new EmailNotVerifiedError();
+          }
+
+          user.postVerifyLoginToken = null;
+          user.postVerifyLoginTokenExpires = null;
+          await user.save();
+
+          return {
+            id: user._id.toString(),
+            name: user.name,
+            email: user.email,
+            image: user.image ?? undefined,
+          };
+        }
+
+        if (typeof password !== "string" || !password || !user.password) {
+          return null;
+        }
 
         if (!user.emailVerified) {
           throw new EmailNotVerifiedError();
