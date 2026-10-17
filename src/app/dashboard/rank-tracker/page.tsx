@@ -106,7 +106,6 @@ export default function RankTrackingPage() {
   }
 
   useEffect(() => {
-    // Hydrate saved domains quietly — no "Loading…" spinner on page open.
     void loadDomains();
   }, []);
 
@@ -293,6 +292,9 @@ export default function RankTrackingPage() {
   }
 
   const activeDetail = detail && selectedId ? detail : null;
+  // Wait for domain list (and first domain detail if auto-opening) before painting UI.
+  const pageBooting =
+    !domainsReady || Boolean(selectedId && detailLoading && !activeDetail);
 
   return (
     <DashboardShell
@@ -316,14 +318,16 @@ export default function RankTrackingPage() {
         <DataForSeoBanner configured={dataForSeoConfigured} />
         {error ? <DashboardAlert variant="error">{error}</DashboardAlert> : null}
 
-        {!selectedId ? (
+        {pageBooting ? (
+          <LoadingBlock label="Loading tracked domains..." />
+        ) : !selectedId ? (
           <>
             <DashboardCard
               title="Tracked Domains"
               flush
               className="overflow-hidden"
               actions={
-                domainsReady && domains.length > 0 ? (
+                domains.length > 0 ? (
                   <button
                     type="button"
                     onClick={() => setAddOpen(true)}
@@ -334,9 +338,7 @@ export default function RankTrackingPage() {
                 ) : null
               }
             >
-              {!domainsReady ? (
-                <div className="min-h-[8rem] p-4 sm:p-6" aria-hidden />
-              ) : domains.length === 0 ? (
+              {domains.length === 0 ? (
                 <div className="p-4 sm:p-6">
                   <EmptyBlock
                     icon={TrendingUp}
