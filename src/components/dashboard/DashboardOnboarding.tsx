@@ -151,9 +151,7 @@ export default function DashboardOnboarding({
               {hasCustomDomain ? (
                 <>
                   Project Overview:{" "}
-                  <span className="underline decoration-accent decoration-2 underline-offset-4">
-                    {project.domain}
-                  </span>
+                  <span className="font-semibold text-snow">{project.domain}</span>
                 </>
               ) : (
                 "Finish setup to unlock live SEO data"
