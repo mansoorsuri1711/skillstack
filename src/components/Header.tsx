@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { signOutToHome } from "@/lib/sign-out";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, LayoutDashboard, LogOut, User } from "lucide-react";
+import { ChevronDown, LayoutDashboard, LogOut, Moon, Sun, User } from "lucide-react";
 import Logo from "@/components/Logo";
 import ThemeToggle from "@/components/ThemeToggle";
+import { useTheme } from "@/components/ThemeProvider";
 import { UserAvatar } from "@/components/UserAvatar";
 import { HEADER_HEIGHT_CLASS } from "@/lib/layout";
 
@@ -31,6 +32,9 @@ function ProfileMenu({
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const { theme, toggleTheme } = useTheme();
+  const isLight = theme === "light";
+  const themeLabel = isLight ? "Dark mode" : "Light mode";
 
   useEffect(() => {
     if (!open) return;
@@ -87,9 +91,19 @@ function ProfileMenu({
             Profile
           </Link>
 
-          <div className="px-2 py-1">
-            <ThemeToggle className="w-full justify-start rounded-lg border-0 bg-mist/50 px-2.5 py-2.5 hover:bg-mist" />
-          </div>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={toggleTheme}
+            className="flex w-full items-center gap-2.5 px-3 py-2.5 text-sm text-ink transition hover:bg-mist"
+          >
+            {isLight ? (
+              <Moon className="h-4 w-4 shrink-0" />
+            ) : (
+              <Sun className="h-4 w-4 shrink-0" />
+            )}
+            {themeLabel}
+          </button>
 
           <button
             type="button"
