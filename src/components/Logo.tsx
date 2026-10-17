@@ -53,7 +53,7 @@ export default function Logo({
         >
           SkillStack
           <span
-            className="ml-[0.15em] inline-block translate-y-[0.12em] align-baseline text-[0.55em] leading-none text-brand"
+            className="ml-[0.12em] inline-block translate-y-[0.1em] align-baseline text-[0.38em] leading-none text-brand"
             aria-hidden
           >
             ●

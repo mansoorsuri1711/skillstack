@@ -140,7 +140,6 @@ export default function DashboardOnboarding({
         <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl space-y-2.5">
             <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-ink-muted">
-              <span className="flex h-2 w-2 rounded-full bg-accent" />
               <span>Project Workspace</span>
               <span className="text-ink-muted/40">•</span>
               <span className="font-medium text-snow">
@@ -178,7 +177,7 @@ export default function DashboardOnboarding({
             <div className="flex items-center justify-between border-b border-line/60 pb-2.5 text-[11px] text-ink-muted">
               <span className="font-semibold text-snow">Workspace Status</span>
               <span className="flex items-center gap-1.5 font-medium text-accent">
-                <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                <span className="h-1.5 w-1.5 rounded-full bg-brand" />
                 ONLINE
               </span>
             </div>
@@ -272,13 +271,7 @@ export default function DashboardOnboarding({
               >
                 <div className="relative space-y-3">
                   <div className="flex items-start justify-between gap-2">
-                    <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-xl border transition ${
-                        isDone || isNext
-                          ? "border-accent/30 bg-accent/10 text-accent"
-                          : "border-line bg-bg-soft text-snow"
-                      }`}
-                    >
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0d1117] text-white">
                       <Icon className="h-4 w-4" strokeWidth={2.25} />
                     </div>
                     {isDone ? (
