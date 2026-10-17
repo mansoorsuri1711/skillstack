@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
-import { withFlash } from "@/lib/flash";
+import { setFlash, withFlash } from "@/lib/flash";
 
 type GoogleSignInButtonProps = {
   callbackUrl?: string;
@@ -21,6 +21,7 @@ export default function GoogleSignInButton({
       disabled={loading}
       onClick={() => {
         setLoading(true);
+        setFlash("signedIn");
         void signIn("google", {
           callbackUrl: withFlash(callbackUrl, "signedIn"),
         });

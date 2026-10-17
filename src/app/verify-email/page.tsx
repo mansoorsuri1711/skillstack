@@ -4,7 +4,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { withFlash } from "@/lib/flash";
+import { setFlash, withFlash } from "@/lib/flash";
 
 function VerifyContent() {
   const params = useSearchParams();
@@ -55,6 +55,7 @@ function VerifyContent() {
         });
 
         if (result?.ok) {
+          setFlash("signedIn");
           window.location.assign(withFlash("/dashboard", "signedIn"));
           return;
         }

@@ -1,19 +1,43 @@
 "use client";
 
-import { X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { consumeFlashMessage } from "@/lib/flash";
+import { clearFlashMessage, readFlashMessage } from "@/lib/flash";
+
+const ENTER_MS = 300;
+const HOLD_MS = 1700;
+const EXIT_MS = 300;
 
 export default function FlashToast() {
   const [message, setMessage] = useState<string | null>(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const text = consumeFlashMessage();
+    const text = readFlashMessage();
     if (!text) return;
-    setMessage(text);
 
-    const timer = window.setTimeout(() => setMessage(null), 4500);
-    return () => window.clearTimeout(timer);
+    setMessage(text);
+    setVisible(false);
+
+    let enterInner = 0;
+    const enterOuter = window.requestAnimationFrame(() => {
+      enterInner = window.requestAnimationFrame(() => setVisible(true));
+    });
+
+    const hideTimer = window.setTimeout(
+      () => setVisible(false),
+      ENTER_MS + HOLD_MS,
+    );
+    const clearTimer = window.setTimeout(() => {
+      clearFlashMessage();
+      setMessage(null);
+    }, ENTER_MS + HOLD_MS + EXIT_MS);
+
+    return () => {
+      window.cancelAnimationFrame(enterOuter);
+      window.cancelAnimationFrame(enterInner);
+      window.clearTimeout(hideTimer);
+      window.clearTimeout(clearTimer);
+    };
   }, []);
 
   if (!message) return null;
@@ -22,18 +46,19 @@ export default function FlashToast() {
     <div
       role="status"
       aria-live="polite"
-      className="pointer-events-none fixed inset-x-0 top-4 z-[100] flex justify-center px-4 sm:top-6"
+      className="pointer-events-none fixed right-4 top-4 z-[200] sm:right-6 sm:top-6"
     >
-      <div className="pointer-events-auto flex max-w-sm items-start gap-3 rounded-xl border border-success-border bg-success-bg px-4 py-3 text-sm text-success shadow-lg backdrop-blur-sm animate-in fade-in slide-in-from-top-2 duration-200">
-        <p className="flex-1 font-medium leading-snug">{message}</p>
-        <button
-          type="button"
-          aria-label="Dismiss"
-          onClick={() => setMessage(null)}
-          className="shrink-0 rounded-md p-0.5 text-success/70 transition hover:bg-success/10 hover:text-success"
-        >
-          <X className="h-4 w-4" />
-        </button>
+      <div
+        className="max-w-sm rounded-xl border border-success-border bg-success-bg px-4 py-3 text-sm font-medium leading-snug text-success shadow-lg backdrop-blur-sm will-change-transform"
+        style={{
+          transitionProperty: "transform, opacity",
+          transitionDuration: `${visible ? ENTER_MS : EXIT_MS}ms`,
+          transitionTimingFunction: "cubic-bezier(0.22, 1, 0.36, 1)",
+          transform: visible ? "translateX(0)" : "translateX(120%)",
+          opacity: visible ? 1 : 0,
+        }}
+      >
+        {message}
       </div>
     </div>
   );
