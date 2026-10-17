@@ -41,6 +41,7 @@ import {
   getDifficultyLevel,
   intentBadgeClass,
   intentShortLabel,
+  resolveKeywordIntent,
   type CategorizedKeywordIdeas,
   type GlobalVolumeCountry,
   type KeywordIntent,
@@ -334,8 +335,17 @@ type TableSortField =
   | "intent";
 type TableSortDir = "asc" | "desc";
 
-function IntentBadge({ intent }: { intent: KeywordIntent | string | null | undefined }) {
-  const normalized = (intent ?? null) as KeywordIntent;
+function IntentBadge({
+  intent,
+  keyword,
+}: {
+  intent: KeywordIntent | string | null | undefined;
+  keyword?: string;
+}) {
+  const normalized = resolveKeywordIntent(
+    keyword ?? "",
+    (intent ?? null) as KeywordIntent,
+  );
   return (
     <span
       className={`inline-flex rounded-md border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide ${intentBadgeClass(normalized)}`}
@@ -629,7 +639,12 @@ export function KeywordResearchPanel({
       if (min != null && !Number.isNaN(min) && (row.searchVolume ?? 0) < min) {
         return false;
       }
-      if (intentFilter !== "all" && row.intent !== intentFilter) return false;
+      if (
+        intentFilter !== "all" &&
+        resolveKeywordIntent(row.keyword, row.intent) !== intentFilter
+      ) {
+        return false;
+      }
       if (kdFilter !== "all") {
         const kd = row.difficulty ?? 0;
         if (kdFilter === "easy" && kd > 10) return false;
@@ -765,7 +780,7 @@ export function KeywordResearchPanel({
                 type="button"
                 onClick={() => handleSearch()}
                 disabled={loading || !query.trim()}
-                className={`${buttonPrimaryClass} px-5 text-sm font-medium`}
+                className="inline-flex h-[42px] items-center justify-center rounded-lg border border-transparent bg-accent px-5 text-sm font-medium leading-5 text-accent-fg transition hover:bg-accent-deep disabled:opacity-50"
               >
                 {loading ? "Searching..." : "Search"}
               </button>
@@ -1221,6 +1236,7 @@ export function KeywordResearchPanel({
                             <option value="navigational">Navigational</option>
                             <option value="commercial">Commercial</option>
                             <option value="transactional">Transactional</option>
+                            <option value="tool">Tool</option>
                           </CompactSelect>
                         </label>
                       </div>
@@ -1381,7 +1397,7 @@ export function KeywordResearchPanel({
                                 : "—"}
                             </td>
                             <td className="px-4 py-3">
-                              <IntentBadge intent={row.intent} />
+                              <IntentBadge intent={row.intent} keyword={row.keyword} />
                             </td>
                             {onSaveKeyword ? (
                               <td className="px-4 py-3">

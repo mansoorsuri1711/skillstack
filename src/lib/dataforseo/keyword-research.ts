@@ -17,7 +17,16 @@ export type KeywordIntent =
   | "navigational"
   | "commercial"
   | "transactional"
+  | "tool"
   | null;
+
+/** Free online utilities — usually tool pages, not pure informational content. */
+const TOOL_INTENT_RE =
+  /\b(calculator|calculators|converter|converters|generator|generators|estimator|estimators|checker|checkers|counter|counters|timer|timers|widget|widgets|online tool|tools?)\b/i;
+
+export function isToolIntentKeyword(keyword: string): boolean {
+  return TOOL_INTENT_RE.test(keyword.trim());
+}
 
 export type KeywordTrendPoint = {
   label: string;
@@ -82,11 +91,24 @@ function normalizeIntent(value?: string | null): KeywordIntent {
     intent === "informational" ||
     intent === "navigational" ||
     intent === "commercial" ||
-    intent === "transactional"
+    intent === "transactional" ||
+    intent === "tool"
   ) {
     return intent;
   }
   return null;
+}
+
+/**
+ * Prefer tool intent for calculator/converter-style queries when APIs
+ * (often) label them informational.
+ */
+export function resolveKeywordIntent(
+  keyword: string,
+  apiIntent?: string | null,
+): KeywordIntent {
+  if (isToolIntentKeyword(keyword)) return "tool";
+  return normalizeIntent(apiIntent);
 }
 
 function formatTrendLabel(year?: number, month?: number) {
@@ -165,7 +187,10 @@ export async function fetchKeywordIntents(
   for (const item of items) {
     const keyword = item.keyword?.toLowerCase();
     if (!keyword) continue;
-    map.set(keyword, normalizeIntent(item.keyword_intent?.label));
+    map.set(
+      keyword,
+      resolveKeywordIntent(item.keyword ?? keyword, item.keyword_intent?.label),
+    );
   }
 
   return map;
@@ -491,7 +516,10 @@ export async function fetchSeedKeywordInsights(
     cpc,
     competition,
     difficulty: kd,
-    intent: normalizeIntent(primaryItem?.search_intent_info?.main_intent),
+    intent: resolveKeywordIntent(
+      seed,
+      primaryItem?.search_intent_info?.main_intent,
+    ),
     trends,
     trendRange,
     globalVolume: totalGlobalVolume > 0 ? totalGlobalVolume : searchVol,
@@ -554,6 +582,8 @@ export function intentShortLabel(intent: KeywordIntent) {
       return "Trans";
     case "commercial":
       return "Comm";
+    case "tool":
+      return "Tool";
     case "informational":
       return "Info";
     default:
@@ -569,6 +599,8 @@ export function intentBadgeClass(intent: KeywordIntent) {
       return "border-emerald-500/30 bg-emerald-500/10 text-emerald-300";
     case "commercial":
       return "border-amber-500/30 bg-amber-500/10 text-amber-300";
+    case "tool":
+      return "border-cyan-500/30 bg-cyan-500/10 text-cyan-300";
     case "informational":
       return "border-purple-500/30 bg-purple-500/10 text-purple-300";
     default:

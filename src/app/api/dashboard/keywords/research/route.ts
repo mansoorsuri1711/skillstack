@@ -3,6 +3,7 @@ import { requireUser } from "@/lib/auth-session";
 import {
   fetchSeedKeywordInsights,
   fetchSerpResults,
+  resolveKeywordIntent,
   type CategorizedKeywordIdeas,
   type KeywordIntent,
   type SerpResultRow,
@@ -133,12 +134,21 @@ export async function POST(request: Request) {
     // Intent from seed overview only — skip a separate Search Intent Labs call (~$0.012+).
     const intentMap = new Map<string, KeywordIntent>();
     if (seedInsights?.intent) {
-      intentMap.set(seed.toLowerCase(), seedInsights.intent);
+      intentMap.set(
+        seed.toLowerCase(),
+        resolveKeywordIntent(seed, seedInsights.intent),
+      );
+    } else {
+      const toolIntent = resolveKeywordIntent(seed, null);
+      if (toolIntent) intentMap.set(seed.toLowerCase(), toolIntent);
     }
 
     const enriched = results.map((row) => ({
       ...row,
-      intent: intentMap.get(row.keyword.toLowerCase()) ?? null,
+      intent: resolveKeywordIntent(
+        row.keyword,
+        intentMap.get(row.keyword.toLowerCase()) ?? null,
+      ),
     }));
 
     const seedRow = enriched.find(
