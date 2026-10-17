@@ -268,12 +268,12 @@ export default function DashboardOnboarding({
                       <Icon className="h-4 w-4" strokeWidth={2.25} />
                     </div>
                     {isDone ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 text-[10px] font-semibold text-accent">
-                        <CheckCircle2 className="h-3 w-3" />
+                      <span className="inline-flex items-center gap-1 rounded-full border border-[#0d1117] bg-[#0d1117] px-2.5 py-0.5 text-[10px] font-semibold text-white">
+                        <CheckCircle2 className="h-3 w-3 text-white" />
                         DONE
                       </span>
                     ) : isNext ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/15 px-2.5 py-0.5 text-[10px] font-semibold text-accent">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-line bg-bg-soft px-2.5 py-0.5 text-[10px] font-semibold text-snow">
                         NEXT
                       </span>
                     ) : (
