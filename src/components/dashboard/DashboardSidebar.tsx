@@ -809,7 +809,7 @@ function SidebarPanel({
     accountOpen && accountMenuPos ? (
       <div
         ref={accountMenuRef}
-        className="fixed z-[80] w-48 border border-line bg-bg-elevated py-1 shadow-2xl"
+        className="fixed z-[80] w-48 overflow-hidden rounded-xl border border-line bg-bg-elevated py-1 shadow-2xl"
         style={{
           bottom: accountMenuPos.bottom,
           left: accountMenuPos.left,
@@ -848,7 +848,7 @@ function SidebarPanel({
         }`}
       >
         <div
-          className={`flex shrink-0 items-center border-b border-line ${
+          className={`flex shrink-0 items-center ${
             collapsed
               ? "h-auto flex-col gap-2 px-2 py-3"
               : "h-14 justify-between gap-2 px-3"

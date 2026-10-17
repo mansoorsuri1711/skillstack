@@ -19,7 +19,7 @@ export default function DashboardShell({
 }) {
   return (
     <div className="dashboard-shell flex min-h-0 flex-1 flex-col overflow-hidden bg-bg-soft md:border-l md:border-line">
-      <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-line px-3.5 sm:px-6">
+      <header className="flex h-14 shrink-0 items-center justify-between gap-3 px-3.5 sm:px-6">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <DashboardMobileToggle />
           <div className="min-w-0 flex-1">

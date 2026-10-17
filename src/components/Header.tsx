@@ -78,28 +78,28 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Right — auth + theme */}
-        <div className="relative z-10 flex min-w-0 flex-1 items-center justify-end gap-2 pointer-events-none sm:gap-2.5">
+        {/* Right — desktop auth + theme + mobile menu. Auth only from md+ to avoid logo overlap. */}
+        <div className="relative z-10 flex shrink-0 items-center justify-end gap-2 pointer-events-none">
           {showAuth ? (
             <>
               <button
                 type="button"
                 onClick={() => void signOutToHome()}
-                className={`pointer-events-auto hidden sm:inline-flex ${btnOutline}`}
+                className={`pointer-events-auto hidden md:inline-flex ${btnOutline}`}
               >
                 Sign out
               </button>
               <Link
                 href="/profile"
                 prefetch={true}
-                className={`pointer-events-auto hidden sm:inline-flex ${btnOutline}`}
+                className={`pointer-events-auto hidden md:inline-flex ${btnOutline}`}
               >
                 Profile
               </Link>
               <Link
                 href="/dashboard"
                 prefetch={true}
-                className={`pointer-events-auto hidden sm:inline-flex ${btnSolid}`}
+                className={`pointer-events-auto hidden md:inline-flex ${btnSolid}`}
               >
                 Dashboard
               </Link>
@@ -111,27 +111,27 @@ export default function Header() {
               <Link
                 href="/login"
                 prefetch={true}
-                className="pointer-events-auto hidden whitespace-nowrap text-sm text-[var(--nav-muted)] transition-colors hover:text-[var(--nav-strong)] sm:inline-flex"
+                className="pointer-events-auto hidden whitespace-nowrap text-sm text-[var(--nav-muted)] transition-colors hover:text-[var(--nav-strong)] md:inline-flex"
               >
                 Log in
               </Link>
               <Link
                 href="/register"
                 prefetch={true}
-                className={`pointer-events-auto hidden sm:inline-flex ${btnSolid}`}
+                className={`pointer-events-auto hidden md:inline-flex ${btnSolid}`}
               >
                 Register
               </Link>
             </>
           ) : null}
 
-          <div className="pointer-events-auto ml-2 sm:ml-3">
+          <div className="pointer-events-auto">
             <ThemeToggle compact />
           </div>
 
           <button
             type="button"
-            className="pointer-events-auto inline-flex h-9 w-9 items-center justify-center rounded-full border border-snow/25 text-snow md:hidden"
+            className="pointer-events-auto inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-snow/25 text-snow md:hidden"
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -155,7 +155,7 @@ export default function Header() {
       {menuOpen ? (
         <nav
           id="mobile-nav"
-          className="absolute inset-x-0 top-full max-h-[calc(100svh-4rem)] overflow-y-auto bg-[var(--header-bg-solid)] px-4 pb-6 pt-2 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-200 sm:max-h-[calc(100svh-4.5rem)] md:hidden"
+          className="absolute inset-x-3 top-full mt-2 max-h-[calc(100svh-5rem)] overflow-y-auto rounded-2xl border border-line bg-[var(--header-bg-solid)] px-4 pb-5 pt-2 shadow-2xl backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-200 md:hidden"
           aria-label="Mobile"
         >
           <ul className="flex flex-col">
@@ -163,7 +163,7 @@ export default function Header() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="block px-1 py-3.5 text-base text-ink"
+                  className="block rounded-xl px-2 py-3 text-base text-ink transition hover:bg-mist"
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.label}
@@ -172,20 +172,20 @@ export default function Header() {
             ))}
           </ul>
 
-          <div className="mt-5 flex flex-col gap-2.5">
+          <div className="mt-3 flex flex-col gap-2.5 border-t border-line pt-4">
             {showAuth ? (
               <>
                 <Link
                   href="/dashboard"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full rounded-full bg-snow px-4 py-3 text-center text-sm font-semibold text-bg"
+                  className="w-full rounded-xl bg-snow px-4 py-3 text-center text-sm font-semibold text-bg"
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/profile"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full rounded-full border border-snow/25 px-4 py-3 text-center text-sm font-medium text-snow"
+                  className="w-full rounded-xl border border-snow/25 px-4 py-3 text-center text-sm font-medium text-snow"
                 >
                   Profile
                 </Link>
@@ -195,7 +195,7 @@ export default function Header() {
                     setMenuOpen(false);
                     void signOutToHome();
                   }}
-                  className="w-full rounded-full border border-snow/25 px-4 py-3 text-center text-sm font-medium text-snow"
+                  className="w-full rounded-xl border border-snow/25 px-4 py-3 text-center text-sm font-medium text-snow"
                 >
                   Sign out
                 </button>
@@ -206,14 +206,14 @@ export default function Header() {
                 <Link
                   href="/register"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full rounded-full bg-snow px-4 py-3 text-center text-sm font-semibold text-bg"
+                  className="w-full rounded-xl bg-snow px-4 py-3 text-center text-sm font-semibold text-bg"
                 >
                   Register
                 </Link>
                 <Link
                   href="/login"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full rounded-full px-4 py-3 text-center text-sm font-medium text-[var(--nav-muted)]"
+                  className="w-full rounded-xl border border-snow/25 px-4 py-3 text-center text-sm font-medium text-snow"
                 >
                   Log in
                 </Link>
