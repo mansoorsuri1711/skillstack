@@ -132,30 +132,23 @@ export default function DashboardOnboarding({
   return (
     <div className="space-y-4 sm:space-y-5">
       {/* Workspace overview — large + interactive */}
-      <div className="group/overview relative overflow-hidden rounded-2xl border border-line bg-bg-elevated/90 p-4 sm:p-5 md:p-6 shadow-sm transition hover:border-accent/25">
-        <div
-          className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-accent/10 blur-3xl transition duration-700 group-hover/overview:bg-accent/20"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute -bottom-24 -left-16 h-48 w-48 rounded-full bg-teal-500/5 blur-3xl opacity-0 transition duration-700 group-hover/overview:opacity-100"
-          aria-hidden
-        />
-
+      <div className="group/overview relative overflow-hidden rounded-none border border-line bg-bg-elevated/90 p-4 sm:p-5 md:p-6 shadow-sm transition hover:border-snow/20">
         <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="space-y-2.5 max-w-2xl">
-            <div className="flex items-center gap-2 text-[11px] font-mono uppercase tracking-wider text-ink-muted">
-              <span className="flex h-2 w-2 rounded-full bg-accent animate-pulse" />
+          <div className="max-w-2xl space-y-2.5">
+            <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-ink-muted">
+              <span className="flex h-2 w-2 rounded-full bg-snow" />
               <span>Project Workspace</span>
-              <span className="text-white/20">•</span>
-              <span className="text-snow font-medium">{project.name || "Default Project"}</span>
+              <span className="text-ink-muted/40">•</span>
+              <span className="font-medium text-snow">
+                {project.name || "Default Project"}
+              </span>
             </div>
 
-            <h1 className="font-display text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-snow">
+            <h1 className="text-lg font-semibold tracking-tight text-snow sm:text-xl md:text-2xl">
               {hasCustomDomain ? (
                 <>
                   Project Overview:{" "}
-                  <span className="font-mono text-snow underline decoration-accent decoration-2 underline-offset-4">
+                  <span className="underline decoration-snow decoration-2 underline-offset-4">
                     {project.domain}
                   </span>
                 </>
@@ -164,12 +157,12 @@ export default function DashboardOnboarding({
               )}
             </h1>
 
-            <p className="text-xs text-ink-muted leading-relaxed">
+            <p className="text-[13px] leading-relaxed text-ink-muted">
               Complete these four steps — domain, Search Console, diagnostics, and Suri.
               {nextStep ? (
                 <>
                   {" "}
-                  Next up: <span className="text-snow font-medium">{nextStep.title}</span>.
+                  Next up: <span className="font-medium text-snow">{nextStep.title}</span>.
                 </>
               ) : (
                 " All steps are ready."
@@ -177,11 +170,11 @@ export default function DashboardOnboarding({
             </p>
           </div>
 
-          <div className="rounded-xl border border-line/80 bg-bg p-3 font-mono text-xs w-full lg:w-64 shrink-0 space-y-0.5">
+          <div className="w-full shrink-0 space-y-0.5 rounded-none border border-line/80 bg-bg p-3 text-[13px] lg:w-64">
             <div className="flex items-center justify-between border-b border-line/60 pb-2 text-[11px] text-ink-muted">
-              <span className="font-sans font-semibold text-snow">Workspace Status</span>
-              <span className="flex items-center gap-1.5 text-accent font-medium">
-                <span className="h-1.5 w-1.5 rounded-full bg-accent animate-pulse" />
+              <span className="font-semibold text-snow">Workspace Status</span>
+              <span className="flex items-center gap-1.5 font-medium text-snow">
+                <span className="h-1.5 w-1.5 rounded-full bg-snow" />
                 ONLINE
               </span>
             </div>
@@ -189,53 +182,50 @@ export default function DashboardOnboarding({
             <button
               type="button"
               onClick={() => focusStep("domain")}
-              className="flex w-full items-center justify-between gap-2 rounded-lg px-1.5 py-1.5 text-left transition hover:bg-white/5"
+              className="flex w-full items-center justify-between gap-2 rounded-none px-1.5 py-1.5 text-left transition hover:bg-mist"
             >
               <span className="text-ink-muted">DOMAIN</span>
-              <span className="text-snow truncate max-w-[140px] font-medium">
+              <span className="max-w-[140px] truncate font-medium text-snow">
                 {hasCustomDomain ? project.domain : "UNASSIGNED"}
               </span>
             </button>
             <button
               type="button"
-              onClick={() => (gscConnected ? router.push("/dashboard/gsc-insights-tool") : focusStep("gsc"))}
-              className="flex w-full items-center justify-between gap-2 rounded-lg px-1.5 py-1.5 text-left transition hover:bg-white/5"
+              onClick={() =>
+                gscConnected
+                  ? router.push("/dashboard/gsc-insights-tool")
+                  : focusStep("gsc")
+              }
+              className="flex w-full items-center justify-between gap-2 rounded-none px-1.5 py-1.5 text-left transition hover:bg-mist"
             >
               <span className="text-ink-muted">GSC LINK</span>
-              <span
-                className={
-                  gscConnected
-                    ? "text-success font-semibold"
-                    : "text-warn font-semibold"
-                }
-              >
+              <span className="font-semibold text-snow">
                 {gscConnected ? "CONNECTED" : "UNLINKED →"}
               </span>
             </button>
             <button
               type="button"
               onClick={() => router.push("/dashboard/chat")}
-              className="flex w-full items-center justify-between gap-2 rounded-lg px-1.5 py-1.5 text-left transition hover:bg-white/5"
+              className="flex w-full items-center justify-between gap-2 rounded-none px-1.5 py-1.5 text-left transition hover:bg-mist"
             >
               <span className="text-ink-muted">SURI</span>
-              <span className="text-success font-semibold">READY →</span>
+              <span className="font-semibold text-snow">READY →</span>
             </button>
           </div>
         </div>
 
-        {/* Slim progress only — no large step buttons */}
         <div className="relative mt-4 flex items-center gap-3 border-t border-line/60 pt-3">
           <span className="flex shrink-0 items-center gap-1.5 text-[11px] font-medium text-ink-muted">
-            <ShieldCheck className="h-3.5 w-3.5 text-accent" />
+            <ShieldCheck className="dash-icon h-3.5 w-3.5" />
             Setup
           </span>
-          <div className="h-1 min-w-0 flex-1 overflow-hidden rounded-full bg-white/5">
+          <div className="h-1 min-w-0 flex-1 overflow-hidden rounded-none bg-mist">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-accent-deep to-accent transition-all duration-700 ease-out"
+              className="h-full bg-snow transition-all duration-700 ease-out"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <span className="shrink-0 font-mono text-[11px] font-semibold tabular-nums text-accent">
+          <span className="shrink-0 text-[11px] font-semibold tabular-nums text-snow">
             {completedCount}/{SETUP_STEPS.length}
           </span>
         </div>
@@ -244,16 +234,16 @@ export default function DashboardOnboarding({
       {/* Four setup cards — slightly tighter so the page fits without scroll */}
       <div className="space-y-2.5">
         <div className="flex items-center justify-between gap-3">
-          <h2 className="text-[11px] font-mono uppercase tracking-wider text-ink-muted flex items-center gap-2">
-            <Sparkles className="h-3 w-3 text-accent" />
+          <h2 className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-ink-muted">
+            <Sparkles className="dash-icon h-3 w-3" />
             Setup & Integration Pipeline
           </h2>
-          <span className="text-[11px] text-ink-muted tabular-nums">
+          <span className="text-[11px] tabular-nums text-ink-muted">
             Tap a card to continue
           </span>
         </div>
 
-        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {SETUP_STEPS.map((step) => {
             const isDone = completedMap[step.id];
             const isNext = nextStep?.id === step.id;
@@ -266,68 +256,47 @@ export default function DashboardOnboarding({
                 key={step.id}
                 onMouseEnter={() => setFocusedStep(step.id)}
                 onFocus={() => setFocusedStep(step.id)}
-                className={`group relative flex flex-col justify-between overflow-hidden rounded-xl border p-3.5 sm:p-4 transition-all duration-300 ${
+                className={`group relative flex flex-col justify-between overflow-hidden rounded-none border p-3.5 transition-colors duration-200 sm:p-4 ${
                   isFocused
-                    ? `border-accent/45 bg-bg-elevated shadow-md ${step.glow}`
-                    : isDone
-                      ? "border-line/80 bg-bg-elevated/50 hover:border-line"
-                      : "border-line bg-bg-elevated hover:border-accent/30"
+                    ? "border-snow/40 bg-bg-elevated shadow-sm"
+                    : "border-line bg-bg-elevated hover:border-snow/25"
                 }`}
               >
-                <div
-                  className={`pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-0 blur-2xl transition duration-500 group-hover:opacity-100 ${
-                    step.id === "domain"
-                      ? "bg-sky-500/20"
-                      : step.id === "gsc"
-                        ? "bg-violet-500/20"
-                        : step.id === "audit"
-                          ? "bg-amber-500/20"
-                          : "bg-accent/25"
-                  }`}
-                  aria-hidden
-                />
-
                 <div className="relative space-y-2.5">
                   <div className="flex items-start justify-between gap-2">
-                    <div
-                      className={`flex h-9 w-9 items-center justify-center rounded-lg border transition ${
-                        isDone
-                          ? "border-success-border bg-success-bg text-success"
-                          : `border-line bg-bg-soft ${step.accent}`
-                      }`}
-                    >
+                    <div className="flex h-9 w-9 items-center justify-center rounded-none border border-line bg-bg-soft text-snow">
                       <Icon className="dash-icon h-4 w-4" strokeWidth={2.25} />
                     </div>
                     {isDone ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-success-border bg-success-bg px-2 py-0.5 text-[10px] font-mono font-semibold text-success">
-                        <CheckCircle2 className="h-3 w-3" />
+                      <span className="inline-flex items-center gap-1 rounded-none border border-line bg-mist px-2 py-0.5 text-[10px] font-semibold text-snow">
+                        <CheckCircle2 className="dash-icon h-3 w-3" />
                         DONE
                       </span>
                     ) : isNext ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-accent/50 bg-mist px-2 py-0.5 text-[10px] font-mono font-semibold text-accent-deep animate-pulse">
+                      <span className="inline-flex items-center gap-1 rounded-none border border-snow/30 bg-mist px-2 py-0.5 text-[10px] font-semibold text-snow">
                         NEXT
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full border border-line bg-bg-soft px-2 py-0.5 text-[10px] font-mono text-ink-muted">
+                      <span className="inline-flex items-center rounded-none border border-line bg-bg-soft px-2 py-0.5 text-[10px] text-ink-muted">
                         PENDING
                       </span>
                     )}
                   </div>
 
                   <div>
-                    <p className="font-mono text-[10px] uppercase tracking-widest text-ink-muted mb-0.5">
+                    <p className="mb-0.5 text-[10px] uppercase tracking-widest text-ink-muted">
                       Step {step.stepNumber}
                     </p>
-                    <h3 className="text-sm font-semibold text-snow tracking-tight">
+                    <h3 className="text-[13px] font-semibold tracking-tight text-snow">
                       {step.title}
                     </h3>
-                    <p className="mt-1 text-[11px] text-ink-muted leading-snug line-clamp-2">
+                    <p className="mt-1 line-clamp-2 text-[12px] leading-snug text-ink-muted">
                       {step.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="relative mt-3 pt-3 border-t border-line/60">
+                <div className="relative mt-3 border-t border-line/60 pt-3">
                   {step.id === "domain" && !isDone ? (
                     <form onSubmit={handleSaveDomain} className="space-y-2">
                       <input
@@ -335,21 +304,21 @@ export default function DashboardOnboarding({
                         value={domainInput}
                         onChange={(e) => setDomainInput(e.target.value)}
                         placeholder="yourdomain.com"
-                        className="w-full rounded-lg border border-line bg-bg-input px-2.5 py-1.5 text-xs text-snow outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/30"
+                        className="w-full rounded-none border border-line bg-bg-input px-2.5 py-1.5 text-[13px] text-snow outline-none transition focus:border-snow"
                         disabled={saving}
                       />
                       <button
                         type="submit"
                         disabled={saving || !domainInput.trim()}
-                        className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent py-1.5 text-xs font-semibold text-accent-fg transition hover:bg-accent-deep disabled:opacity-50"
+                        className="inline-flex w-full items-center justify-center gap-1.5 rounded-none bg-snow py-1.5 text-[13px] font-semibold text-bg transition hover:opacity-90 disabled:opacity-50"
                       >
                         {saving ? "Saving…" : step.cta}
-                        <ArrowRight className="h-3.5 w-3.5" />
+                        <ArrowRight className="dash-icon h-3.5 w-3.5" />
                       </button>
                     </form>
                   ) : step.id === "domain" && isDone ? (
                     <div className="space-y-2">
-                      <div className="rounded-lg border border-line bg-bg-soft px-2.5 py-1.5 text-[11px] font-mono font-semibold text-snow truncate">
+                      <div className="truncate rounded-none border border-line bg-bg-soft px-2.5 py-1.5 text-[12px] font-semibold text-snow">
                         {project.domain}
                       </div>
                       <DomainEditRow
@@ -365,14 +334,14 @@ export default function DashboardOnboarding({
                       prefetch
                       onMouseEnter={() => step.href && router.prefetch(step.href)}
                       onTouchStart={() => step.href && router.prefetch(step.href)}
-                      className={`w-full inline-flex items-center justify-between rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+                      className={`inline-flex w-full items-center justify-between rounded-none px-3 py-1.5 text-[13px] font-semibold transition ${
                         isDone
-                          ? "border border-line bg-bg-soft text-snow hover:border-accent/50 hover:bg-mist hover:text-accent-deep"
-                          : "bg-accent text-accent-fg hover:bg-accent-deep shadow-md shadow-accent/20"
+                          ? "border border-line bg-bg-soft text-snow hover:bg-mist"
+                          : "bg-snow text-bg hover:opacity-90"
                       }`}
                     >
                       <span>{step.cta}</span>
-                      <ArrowRight className="h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
+                      <ArrowRight className="dash-icon h-3.5 w-3.5 transition group-hover:translate-x-0.5" />
                     </Link>
                   ) : null}
                 </div>
@@ -403,10 +372,10 @@ function DomainEditRow({
       <button
         type="button"
         onClick={() => setEditing(true)}
-        className="w-full inline-flex items-center justify-between rounded-lg border border-line bg-white/5 px-3 py-1.5 text-xs font-medium text-snow transition hover:border-accent/40 hover:text-accent"
+        className="inline-flex w-full items-center justify-between rounded-none border border-line bg-mist px-3 py-1.5 text-[13px] font-medium text-snow transition hover:bg-mist"
       >
         <span>Change domain</span>
-        <ArrowRight className="h-3.5 w-3.5" />
+        <ArrowRight className="dash-icon h-3.5 w-3.5" />
       </button>
     );
   }
@@ -417,7 +386,7 @@ function DomainEditRow({
         type="text"
         value={domainInput}
         onChange={(e) => setDomainInput(e.target.value)}
-        className="w-full rounded-xl border border-line bg-bg-input px-3 py-2 text-sm text-snow outline-none focus:border-accent"
+        className="w-full rounded-none border border-line bg-bg-input px-3 py-2 text-[13px] text-snow outline-none focus:border-snow"
         disabled={saving}
         autoFocus
       />
@@ -425,14 +394,14 @@ function DomainEditRow({
         <button
           type="button"
           onClick={() => setEditing(false)}
-          className="flex-1 rounded-xl border border-line px-3 py-2 text-xs text-ink-muted hover:text-snow"
+          className="flex-1 rounded-none border border-line px-3 py-2 text-[13px] text-ink-muted hover:text-snow"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={saving || !domainInput.trim()}
-          className="flex-1 rounded-xl bg-accent py-2 text-xs font-semibold text-accent-fg disabled:opacity-50"
+          className="flex-1 rounded-none bg-snow py-2 text-[13px] font-semibold text-bg disabled:opacity-50"
         >
           {saving ? "Saving…" : "Save"}
         </button>

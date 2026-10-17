@@ -212,13 +212,46 @@ select option {
   font-family: var(--font-display), system-ui, sans-serif;
 }
 
-/* Dashboard chrome — Public Sans + crisp light-theme icons */
+/* Dashboard — San Francisco / system UI stack (SF on Apple, Segoe elsewhere) */
+.dashboard-app,
 .dashboard-sidebar,
 .dashboard-shell {
-  font-family: var(--font-body), "Public Sans", system-ui, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    "SF Pro Display",
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+  font-feature-settings: "kern";
+  -webkit-font-smoothing: antialiased;
 }
 
-html[data-theme="light"] .dashboard-sidebar .dash-icon {
+.dashboard-app .font-mono,
+.dashboard-app .font-display,
+.dashboard-app .font-sans,
+.dashboard-shell .font-mono,
+.dashboard-shell .font-display,
+.dashboard-sidebar .font-mono {
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Text",
+    "SF Pro Display",
+    "Segoe UI",
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+html[data-theme="light"] .dashboard-app .dash-icon,
+html[data-theme="light"] .dashboard-sidebar .dash-icon,
+html[data-theme="light"] .dashboard-shell .dash-icon {
   color: #0d1117 !important;
 }
 
@@ -232,10 +265,6 @@ html[data-theme="light"] .dashboard-sidebar [data-nav-active="true"] .dash-icon,
 html[data-theme="light"] .dashboard-sidebar [data-nav-active="true"] .dash-icon-muted {
   color: #0d1117 !important;
   opacity: 1;
-}
-
-html[data-theme="light"] .dashboard-shell .dash-icon {
-  color: #0d1117 !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -18,16 +18,16 @@ export default function DashboardShell({
   fill?: boolean;
 }) {
   return (
-    <div className="dashboard-shell flex min-h-0 flex-1 flex-col overflow-hidden bg-bg-soft md:rounded-tl-2xl md:border-l md:border-t md:border-line">
+    <div className="dashboard-shell flex min-h-0 flex-1 flex-col overflow-hidden bg-bg-soft md:border-l md:border-t md:border-line">
       <header className="flex shrink-0 items-center justify-between gap-3 border-b border-line px-3.5 py-3 sm:px-6 sm:py-4">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <DashboardMobileToggle />
           <div className="min-w-0 flex-1">
-            <h1 className="font-display text-lg font-semibold text-snow truncate sm:text-xl">
+            <h1 className="truncate text-lg font-semibold tracking-tight text-snow sm:text-xl">
               {title}
             </h1>
             {description ? (
-              <p className="mt-0.5 truncate font-sans text-xs text-ink-muted sm:text-sm">
+              <p className="mt-0.5 truncate text-[13px] text-ink-muted">
                 {description}
               </p>
             ) : null}

@@ -83,6 +83,18 @@ function useSidebarCollapse() {
   return ctx;
 }
 
+/** Instant CSS tooltip — native `title` is too slow (~1s browser delay). */
+function CollapseTip({ label }: { label: string }) {
+  return (
+    <span
+      role="tooltip"
+      className="pointer-events-none absolute left-full top-1/2 z-[60] ml-2 -translate-y-1/2 whitespace-nowrap rounded-md border border-line bg-bg-elevated px-2 py-1 font-sans text-xs font-medium text-snow opacity-0 shadow-lg group-hover/tip:opacity-100"
+    >
+      {label}
+    </span>
+  );
+}
+
 function NavLink({
   href,
   label,
@@ -108,12 +120,12 @@ function NavLink({
     <Link
       href={href}
       prefetch={true}
-      title={collapsed ? label : undefined}
+      aria-label={collapsed ? label : undefined}
       onMouseEnter={() => router.prefetch(href)}
       onTouchStart={() => router.prefetch(href)}
       data-nav-active={active ? "true" : undefined}
       onClick={onNavigate}
-      className={`relative flex items-center rounded-md py-1.5 text-sm font-sans transition-colors ${
+      className={`group/tip relative flex items-center rounded-md py-1.5 text-sm font-sans transition-colors ${
         collapsed
           ? "justify-center px-0"
           : nested
@@ -137,6 +149,7 @@ function NavLink({
         />
       ) : null}
       {!collapsed ? <span className="truncate font-sans">{label}</span> : null}
+      {collapsed ? <CollapseTip label={label} /> : null}
     </Link>
   );
 }
@@ -299,19 +312,21 @@ function ProjectsSidebarSection({
         <button
           type="button"
           onClick={onOpenNewModal}
-          className="flex h-9 w-9 items-center justify-center rounded-md border border-line text-snow transition hover:bg-mist"
-          title="New project"
+          aria-label="New project"
+          className="group/tip relative flex h-9 w-9 items-center justify-center rounded-md border border-line text-snow transition hover:bg-mist"
         >
           <Plus className="dash-icon h-4 w-4" />
+          <CollapseTip label="New project" />
         </button>
         {activeProject ? (
           <button
             type="button"
-            title={activeProject.name || activeProject.domain}
+            aria-label={activeProject.name || activeProject.domain}
             onClick={onNavigate}
-            className="flex h-9 w-9 items-center justify-center rounded-md bg-mist text-snow"
+            className="group/tip relative flex h-9 w-9 items-center justify-center rounded-md bg-mist text-snow"
           >
             <Globe className="dash-icon h-4 w-4" />
+            <CollapseTip label={activeProject.name || activeProject.domain} />
           </button>
         ) : null}
       </div>
@@ -614,8 +629,10 @@ function DashboardSidebarNav({
   return (
     <nav
       ref={navRef}
-      className={`flex-1 overflow-y-auto overscroll-contain py-3 font-sans ${
-        collapsed ? "px-1.5" : "px-3"
+      className={`flex-1 overscroll-contain py-3 font-sans ${
+        collapsed
+          ? "overflow-visible px-1.5"
+          : "overflow-y-auto overflow-x-hidden px-3"
       }`}
     >
       <ProjectsSidebarSection
@@ -635,30 +652,30 @@ function DashboardSidebarNav({
         <Link
           href="/dashboard"
           prefetch={true}
-          title="Browse"
+          aria-label={collapsed ? "Browse" : undefined}
           onClick={onNavigate}
-          className={`flex items-center justify-center gap-1.5 rounded-md py-1.5 font-medium font-sans transition ${
+          className={`group/tip relative flex items-center justify-center gap-1.5 rounded-md py-1.5 font-medium font-sans transition ${
             !isChat
               ? "bg-mist text-snow shadow-sm"
               : "text-ink-muted hover:text-snow"
           }`}
         >
           <LayoutGrid className="dash-icon h-3.5 w-3.5" />
-          {!collapsed ? "Browse" : null}
+          {!collapsed ? "Browse" : <CollapseTip label="Browse" />}
         </Link>
         <Link
           href="/dashboard/chat"
           prefetch={true}
-          title="Chat"
+          aria-label={collapsed ? "Chat" : undefined}
           onClick={onNavigate}
-          className={`flex items-center justify-center gap-1.5 rounded-md py-1.5 font-medium font-sans transition ${
+          className={`group/tip relative flex items-center justify-center gap-1.5 rounded-md py-1.5 font-medium font-sans transition ${
             isChat
               ? "bg-mist text-snow shadow-sm"
               : "text-ink-muted hover:text-snow"
           }`}
         >
           <MessageSquare className="dash-icon h-3.5 w-3.5" />
-          {!collapsed ? "Chat" : null}
+          {!collapsed ? "Chat" : <CollapseTip label="Chat" />}
         </Link>
       </div>
 
@@ -668,11 +685,12 @@ function DashboardSidebarNav({
         collapsed ? (
           <Link
             href="/dashboard/chat"
-            title="Chats"
+            aria-label="Chats"
             onClick={onNavigate}
-            className="mx-auto flex h-9 w-9 items-center justify-center rounded-md text-ink-muted hover:bg-mist hover:text-snow"
+            className="group/tip relative mx-auto flex h-9 w-9 items-center justify-center rounded-md text-ink-muted hover:bg-mist hover:text-snow"
           >
             <MessageSquare className="dash-icon h-4 w-4" />
+            <CollapseTip label="Chats" />
           </Link>
         ) : (
           <ChatSidebarList onNavigate={onNavigate} />
@@ -691,14 +709,18 @@ function DashboardSidebarNav({
       <div className={`mt-4 border-t border-line/60 pt-3 ${collapsed ? "px-0" : ""}`}>
         <Link
           href="/contact"
-          title="Help & Community"
+          aria-label={collapsed ? "Help & Community" : undefined}
           onClick={onNavigate}
-          className={`flex items-center rounded-md py-1.5 text-xs text-ink-muted transition hover:bg-mist hover:text-snow ${
+          className={`group/tip relative flex items-center rounded-md py-1.5 text-xs text-ink-muted transition hover:bg-mist hover:text-snow ${
             collapsed ? "justify-center px-0" : "gap-2.5 px-3"
           }`}
         >
           <HelpCircle className="dash-icon-muted h-4 w-4 shrink-0" />
-          {!collapsed ? <span className="font-sans">Help & Community</span> : null}
+          {!collapsed ? (
+            <span className="font-sans">Help & Community</span>
+          ) : (
+            <CollapseTip label="Help & Community" />
+          )}
         </Link>
       </div>
     </nav>
@@ -745,7 +767,9 @@ function SidebarPanel({
     <>
       <aside
         className={`dashboard-sidebar flex h-full w-full shrink-0 flex-col border-r border-line bg-bg-soft transition-[width] duration-200 ease-out ${
-          collapsed ? "md:w-[4.5rem]" : "md:w-60"
+          collapsed
+            ? "overflow-y-auto overflow-x-visible md:w-[4.5rem]"
+            : "md:w-60"
         }`}
       >
         <div
@@ -764,15 +788,17 @@ function SidebarPanel({
               <button
                 type="button"
                 onClick={toggleCollapsed}
-                className="hidden h-8 w-8 items-center justify-center rounded-md text-ink-muted transition hover:bg-mist hover:text-snow md:inline-flex"
+                className="group/tip relative hidden h-8 w-8 items-center justify-center rounded-md text-ink-muted transition hover:bg-mist hover:text-snow md:inline-flex"
                 aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-                title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
               >
                 {collapsed ? (
                   <PanelLeftOpen className="dash-icon h-4 w-4" />
                 ) : (
                   <PanelLeftClose className="dash-icon h-4 w-4" />
                 )}
+                <CollapseTip
+                  label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+                />
               </button>
             ) : null}
             {onNavigate ? (
@@ -818,11 +844,12 @@ function SidebarPanel({
               onMouseEnter={() => router.prefetch("/profile")}
               onTouchStart={() => router.prefetch("/profile")}
               onClick={() => setAccountOpen((v) => !v)}
-              title={collapsed ? displayName : undefined}
-              className={`flex w-full items-center rounded-md text-left text-sm text-snow hover:bg-mist ${
+              aria-label={collapsed ? displayName : undefined}
+              className={`group/tip relative flex w-full items-center rounded-md text-left text-sm text-snow hover:bg-mist ${
                 collapsed ? "justify-center p-1.5" : "gap-2.5 px-3 py-2"
               }`}
             >
+              {collapsed ? <CollapseTip label={displayName} /> : null}
               <UserAvatar name={displayName} image={avatarImage} size="md" />
               {!collapsed ? (
                 <>

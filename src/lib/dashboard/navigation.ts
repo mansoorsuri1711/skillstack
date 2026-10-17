@@ -1,15 +1,24 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  Award,
   Bookmark,
   Bot,
   ClipboardCheck,
+  FileStack,
+  FileText,
+  GitCompareArrows,
   Globe,
+  Hash,
+  KeyRound,
   LayoutDashboard,
   LineChart,
   Link2,
   MessageSquareText,
+  Network,
   Search,
+  Target,
   TrendingUp,
+  Users,
   BarChart3,
 } from "lucide-react";
 
@@ -97,18 +106,22 @@ export const dashboardNavGroups: DashboardNavGroup[] = [
       {
         href: "/dashboard/organic-keyword-checker",
         label: "Organic keywords",
+        icon: KeyRound,
       },
       {
         href: "/dashboard/organic-position-checker",
         label: "Organic positions",
+        icon: Target,
       },
       {
         href: "/dashboard/top-pages-finder",
         label: "Top pages",
+        icon: FileText,
       },
       {
         href: "/dashboard/organic-competitor-finder",
         label: "Organic competitors",
+        icon: Users,
       },
     ],
   },
@@ -120,6 +133,7 @@ export const dashboardNavGroups: DashboardNavGroup[] = [
       {
         href: "/dashboard/content-gap-finder",
         label: "Content gap",
+        icon: GitCompareArrows,
       },
     ],
   },
@@ -131,6 +145,7 @@ export const dashboardNavGroups: DashboardNavGroup[] = [
       {
         href: "/dashboard/best-by-links-finder",
         label: "Best by links",
+        icon: Award,
       },
     ],
   },
@@ -142,15 +157,18 @@ export const dashboardNavGroups: DashboardNavGroup[] = [
       {
         href: "/dashboard/internal-link-checker",
         label: "Internal links",
+        icon: Network,
         exact: true,
       },
       {
         href: "/dashboard/internal-link-checker/most-linked",
         label: "Most linked pages",
+        icon: FileStack,
       },
       {
         href: "/dashboard/internal-link-checker/anchors",
         label: "Internal anchors",
+        icon: Hash,
       },
     ],
   },
