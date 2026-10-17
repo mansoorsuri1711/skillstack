@@ -17,6 +17,11 @@ const links = [
   { href: "/contact", label: "Contact" },
 ];
 
+const btnOutline =
+  "inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-snow/25 px-4 py-1.5 text-sm font-medium text-snow transition-colors hover:bg-snow/5";
+const btnSolid =
+  "inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-snow px-4 py-1.5 text-sm font-medium text-bg transition-opacity hover:opacity-90";
+
 export default function Header() {
   const [solid, setSolid] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -50,11 +55,15 @@ export default function Header() {
           : "bg-transparent"
       }`}
     >
-      <div className="mx-auto grid h-full max-w-6xl grid-cols-[1fr_auto] items-center gap-3 px-4 sm:px-6 md:grid-cols-[1fr_auto_1fr] md:px-8">
-        <Logo size="sm" priority className="relative z-10 shrink-0 justify-self-start" />
+      <div className="relative mx-auto flex h-full max-w-7xl items-center px-4 sm:px-6 md:px-8">
+        {/* Left — logo (balanced with right cluster so center nav stays true-middle) */}
+        <div className="relative z-10 flex min-w-0 flex-1 items-center justify-start">
+          <Logo size="sm" priority className="shrink-0" />
+        </div>
 
+        {/* Center — tight menu cluster, like Cursor */}
         <nav
-          className="hidden items-center gap-8 md:flex"
+          className="absolute left-1/2 top-1/2 z-[5] hidden -translate-x-1/2 -translate-y-1/2 items-center gap-5 md:flex lg:gap-6"
           aria-label="Primary"
         >
           {links.map((link) => (
@@ -62,36 +71,35 @@ export default function Header() {
               key={link.href}
               href={link.href}
               prefetch={true}
-              className="text-sm text-[var(--nav-muted)] transition-colors hover:text-[var(--nav-strong)]"
+              className="whitespace-nowrap text-sm text-[var(--nav-muted)] transition-colors hover:text-[var(--nav-strong)]"
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        <div className="relative z-10 flex shrink-0 items-center justify-end gap-2 sm:gap-3">
-          <ThemeToggle compact />
-
+        {/* Right — auth + theme */}
+        <div className="relative z-10 flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-2.5">
           {showAuth ? (
             <>
               <button
                 type="button"
                 onClick={() => void signOutToHome()}
-                className="hidden text-sm text-[var(--nav-muted)] transition-colors hover:text-[var(--nav-strong)] sm:inline-flex"
+                className={`hidden sm:inline-flex ${btnOutline}`}
               >
                 Sign out
               </button>
               <Link
                 href="/profile"
                 prefetch={true}
-                className="hidden rounded-full border border-snow/25 px-4 py-1.5 text-sm font-medium text-snow transition-colors hover:bg-snow/5 sm:inline-flex"
+                className={`hidden sm:inline-flex ${btnOutline}`}
               >
                 Profile
               </Link>
               <Link
                 href="/dashboard"
                 prefetch={true}
-                className="hidden rounded-full bg-snow px-4 py-1.5 text-sm font-medium text-bg transition-opacity hover:opacity-90 sm:inline-flex"
+                className={`hidden sm:inline-flex ${btnSolid}`}
               >
                 Dashboard
               </Link>
@@ -103,19 +111,23 @@ export default function Header() {
               <Link
                 href="/login"
                 prefetch={true}
-                className="hidden text-sm text-[var(--nav-muted)] transition-colors hover:text-[var(--nav-strong)] sm:inline-flex"
+                className="hidden whitespace-nowrap text-sm text-[var(--nav-muted)] transition-colors hover:text-[var(--nav-strong)] sm:inline-flex"
               >
                 Log in
               </Link>
               <Link
                 href="/register"
                 prefetch={true}
-                className="hidden rounded-full bg-snow px-4 py-1.5 text-sm font-medium text-bg transition-opacity hover:opacity-90 sm:inline-flex"
+                className={`hidden sm:inline-flex ${btnSolid}`}
               >
                 Register
               </Link>
             </>
           ) : null}
+
+          <div className="ml-2 sm:ml-3">
+            <ThemeToggle compact />
+          </div>
 
           <button
             type="button"
@@ -183,7 +195,7 @@ export default function Header() {
                     setMenuOpen(false);
                     void signOutToHome();
                   }}
-                  className="w-full rounded-full px-4 py-3 text-sm font-medium text-[var(--nav-muted)]"
+                  className="w-full rounded-full border border-snow/25 px-4 py-3 text-center text-sm font-medium text-snow"
                 >
                   Sign out
                 </button>
