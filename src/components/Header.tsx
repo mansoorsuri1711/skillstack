@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { signOutToHome } from "@/lib/sign-out";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronDown, LayoutDashboard, LogOut, User } from "lucide-react";
 import Logo from "@/components/Logo";
 import ThemeToggle from "@/components/ThemeToggle";
+import { UserAvatar } from "@/components/UserAvatar";
 import { HEADER_HEIGHT_CLASS } from "@/lib/layout";
 
 const links = [
@@ -17,11 +19,95 @@ const links = [
   { href: "/contact", label: "Contact" },
 ];
 
-/** Shared look only — no `inline-flex`/`hidden` here (those fight in Tailwind). */
-const btnOutline =
-  "shrink-0 items-center justify-center whitespace-nowrap rounded-full border border-snow/25 px-4 py-1.5 text-sm font-medium text-snow transition-colors hover:bg-snow/5";
 const btnSolid =
-  "shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-snow px-4 py-1.5 text-sm font-medium text-bg transition-opacity hover:opacity-90";
+  "inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-snow px-4 py-1.5 text-sm font-medium text-bg transition-opacity hover:opacity-90";
+
+function ProfileMenu({
+  name,
+  image,
+}: {
+  name: string;
+  image: string | null;
+}) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onPointerDown(e: MouseEvent) {
+      if (rootRef.current && !rootRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onPointerDown);
+    return () => document.removeEventListener("mousedown", onPointerDown);
+  }, [open]);
+
+  return (
+    <div ref={rootRef} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-haspopup="menu"
+        className="inline-flex items-center gap-2 rounded-full border border-snow/25 py-1 pl-1 pr-3 text-sm font-medium text-snow transition-colors hover:bg-snow/5"
+      >
+        <UserAvatar name={name} image={image} size="sm" />
+        <span className="max-w-[7rem] truncate">Profile</span>
+        <ChevronDown
+          className={`h-3.5 w-3.5 shrink-0 text-ink-muted transition-transform ${
+            open ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      {open ? (
+        <div
+          role="menu"
+          className="absolute right-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-xl border border-line bg-bg-elevated py-1 shadow-2xl"
+        >
+          <Link
+            href="/dashboard"
+            role="menuitem"
+            prefetch={true}
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-ink transition hover:bg-mist"
+          >
+            <LayoutDashboard className="h-4 w-4 shrink-0" />
+            Dashboard
+          </Link>
+          <Link
+            href="/profile"
+            role="menuitem"
+            prefetch={true}
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-ink transition hover:bg-mist"
+          >
+            <User className="h-4 w-4 shrink-0" />
+            Profile
+          </Link>
+
+          <div className="px-2 py-1">
+            <ThemeToggle className="w-full justify-start rounded-lg border-0 bg-mist/50 px-2.5 py-2.5 hover:bg-mist" />
+          </div>
+
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => {
+              setOpen(false);
+              void signOutToHome();
+            }}
+            className="flex w-full items-center gap-2.5 px-3 py-2.5 text-sm text-ink transition hover:bg-mist"
+          >
+            <LogOut className="h-4 w-4 shrink-0" />
+            Sign out
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 export default function Header() {
   const [solid, setSolid] = useState(false);
@@ -45,13 +131,17 @@ export default function Header() {
 
   const showAuth = status === "authenticated" && Boolean(session?.user);
   const showGuest = !showAuth;
+  const displayName = session?.user?.name ?? "Account";
+  const avatarImage = session?.user?.image ?? null;
 
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-200 ${HEADER_HEIGHT_CLASS} ${
-        solid || menuOpen
-          ? "bg-[var(--header-bg-solid)] backdrop-blur-md"
-          : "bg-transparent"
+        menuOpen
+          ? "bg-bg"
+          : solid
+            ? "bg-[var(--header-bg-solid)] backdrop-blur-md"
+            : "bg-transparent"
       }`}
     >
       <div className="relative mx-auto flex h-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 md:px-8">
@@ -74,31 +164,9 @@ export default function Header() {
         </nav>
 
         <div className="relative z-10 flex shrink-0 items-center gap-2">
-          {/* Desktop-only auth / guest actions */}
           {showAuth ? (
-            <div className="hidden items-center gap-2 md:flex">
-              <button
-                type="button"
-                onClick={() => void signOutToHome()}
-                className={`inline-flex ${btnOutline}`}
-              >
-                Sign out
-              </button>
-              <Link
-                href="/profile"
-                prefetch={true}
-                className={`inline-flex ${btnOutline}`}
-              >
-                Profile
-              </Link>
-              <Link
-                href="/dashboard"
-                prefetch={true}
-                className={`inline-flex ${btnSolid}`}
-              >
-                Dashboard
-              </Link>
-              <ThemeToggle compact />
+            <div className="hidden md:block">
+              <ProfileMenu name={displayName} image={avatarImage} />
             </div>
           ) : null}
 
@@ -111,18 +179,13 @@ export default function Header() {
               >
                 Log in
               </Link>
-              <Link
-                href="/register"
-                prefetch={true}
-                className={`inline-flex ${btnSolid}`}
-              >
+              <Link href="/register" prefetch={true} className={btnSolid}>
                 Register
               </Link>
               <ThemeToggle compact />
             </div>
           ) : null}
 
-          {/* Mobile: hamburger only */}
           <button
             type="button"
             className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-snow/25 text-snow md:hidden"
@@ -147,9 +210,17 @@ export default function Header() {
       </div>
 
       {menuOpen ? (
+        <>
+        {/* Opaque full-screen shield — hides page + blocks clicks behind the menu */}
+        <button
+          type="button"
+          aria-label="Close menu"
+          className="fixed inset-x-0 bottom-0 top-16 z-[45] cursor-default bg-bg sm:top-[4.5rem] md:hidden"
+          onClick={() => setMenuOpen(false)}
+        />
         <nav
           id="mobile-nav"
-          className="absolute inset-x-3 top-full z-50 mt-2 max-h-[calc(100svh-5rem)] overflow-y-auto rounded-2xl border border-line bg-[var(--header-bg-solid)] px-4 pb-5 pt-3 shadow-2xl backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-200 md:hidden"
+          className="absolute inset-x-3 top-full z-50 mt-2 max-h-[calc(100svh-5rem)] overflow-y-auto rounded-2xl border border-line bg-bg px-4 pb-5 pt-3 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200 md:hidden"
           aria-label="Mobile"
         >
           <ul className="flex flex-col">
@@ -167,10 +238,7 @@ export default function Header() {
           </ul>
 
           <div className="mt-3 space-y-3 border-t border-line pt-4">
-            <div className="flex items-center justify-between rounded-xl border border-line bg-mist/40 px-3 py-2.5">
-              <span className="text-sm font-medium text-snow">Theme</span>
-              <ThemeToggle compact />
-            </div>
+            <ThemeToggle className="w-full justify-start rounded-xl border-line bg-mist/40 px-3 py-3" />
 
             {showAuth ? (
               <div className="flex flex-col gap-2.5">
@@ -221,6 +289,7 @@ export default function Header() {
             ) : null}
           </div>
         </nav>
+        </>
       ) : null}
     </header>
   );

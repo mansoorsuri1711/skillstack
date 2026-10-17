@@ -19,15 +19,15 @@ export default function DashboardShell({
 }) {
   return (
     <div className="dashboard-shell flex min-h-0 flex-1 flex-col overflow-hidden bg-bg-soft md:border-l md:border-line">
-      <header className="flex h-14 shrink-0 items-center justify-between gap-3 px-3.5 sm:px-6">
+      <header className="flex min-h-14 shrink-0 items-center justify-between gap-3 px-3.5 py-2.5 sm:px-6">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <DashboardMobileToggle />
           <div className="min-w-0 flex-1">
-            <h1 className="truncate text-[15px] font-semibold leading-tight tracking-tight text-snow sm:text-base">
+            <h1 className="truncate text-lg font-semibold leading-tight tracking-tight text-snow sm:text-xl">
               {title}
             </h1>
             {description ? (
-              <p className="truncate text-[12px] leading-tight text-ink-muted">
+              <p className="mt-0.5 truncate text-sm leading-snug text-ink-muted">
                 {description}
               </p>
             ) : null}
