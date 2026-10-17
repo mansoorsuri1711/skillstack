@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
@@ -45,8 +45,10 @@ export default function RankTrackingPage() {
   const { project, dataForSeoConfigured } = useDashboardProject();
 
   const [domains, setDomains] = useState<TrackedDomainSummary[]>([]);
+  const [domainsReady, setDomainsReady] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detail, setDetail] = useState<TrackedDomainDetail | null>(null);
+  const didAutoOpenDomain = useRef(false);
 
   const [detailLoading, setDetailLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -74,9 +76,17 @@ export default function RankTrackingPage() {
       const res = await fetch("/api/dashboard/rank-tracking");
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-      setDomains(data.domains ?? []);
+      const next = (data.domains ?? []) as TrackedDomainSummary[];
+      setDomains(next);
+      // On first hydrate, open an existing domain instead of the Add Domain empty state.
+      if (!didAutoOpenDomain.current && next[0]?.id) {
+        didAutoOpenDomain.current = true;
+        setSelectedId(next[0].id);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Load failed");
+    } finally {
+      setDomainsReady(true);
     }
   }
 
@@ -312,19 +322,21 @@ export default function RankTrackingPage() {
               title="Tracked Domains"
               flush
               className="overflow-hidden"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2.5 border-b border-line px-4 py-3 sm:px-5 sm:py-4 md:px-6">
-                <p className="text-xs sm:text-sm text-ink-muted">
-                  Add a domain to discover keywords it ranks for and start tracking.
-                </p>
-                {domains.length > 0 ? (
-                  <button type="button" onClick={() => setAddOpen(true)} className={`${buttonPrimaryClass} !py-1.5 !px-3 text-xs`}>
+              actions={
+                domainsReady && domains.length > 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => setAddOpen(true)}
+                    className={`${buttonPrimaryClass} !py-1.5 !px-3 text-xs`}
+                  >
                     <Plus className="h-4 w-4" /> Add Domain
                   </button>
-                ) : null}
-              </div>
-
-              {domains.length === 0 ? (
+                ) : null
+              }
+            >
+              {!domainsReady ? (
+                <div className="min-h-[8rem] p-4 sm:p-6" aria-hidden />
+              ) : domains.length === 0 ? (
                 <div className="p-4 sm:p-6">
                   <EmptyBlock
                     icon={TrendingUp}

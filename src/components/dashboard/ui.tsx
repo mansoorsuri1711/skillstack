@@ -9,12 +9,14 @@ export function DashboardCard({
   children,
   className = "",
   flush = false,
+  actions,
 }: {
   title?: string;
   description?: string;
   children: ReactNode;
   className?: string;
   flush?: boolean;
+  actions?: ReactNode;
 }) {
   return (
     <section
@@ -23,14 +25,27 @@ export function DashboardCard({
       } ${className}`}
     >
       {title ? (
-        <div className={`${flush ? "border-b border-line px-4 py-3.5 sm:px-5 sm:py-4 md:px-6" : "mb-4 sm:mb-5"}`}>
-          <h2 className="font-display text-sm sm:text-base font-semibold text-snow">{title}</h2>
-          {description ? (
-            <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-ink-muted">{description}</p>
-          ) : null}
+        <div
+          className={`flex flex-wrap items-start justify-between gap-3 ${
+            flush
+              ? "border-b border-line px-4 py-3.5 sm:px-5 sm:py-4 md:px-6"
+              : "mb-4 sm:mb-5"
+          }`}
+        >
+          <div className="min-w-0">
+            <h2 className="font-display text-sm sm:text-base font-semibold text-snow">
+              {title}
+            </h2>
+            {description ? (
+              <p className="mt-0.5 sm:mt-1 text-xs sm:text-sm text-ink-muted">
+                {description}
+              </p>
+            ) : null}
+          </div>
+          {actions ? <div className="shrink-0">{actions}</div> : null}
         </div>
       ) : null}
-      {flush ? children : children}
+      {children}
     </section>
   );
 }
