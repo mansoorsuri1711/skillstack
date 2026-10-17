@@ -14,12 +14,12 @@ html:not([data-theme]) {
   --snow: #f0f3f6;
   --ink: #e6edf3;
   --ink-muted: #8b949e;
-  /* Brand teal — stays teal in both themes (logo/hero dots) */
-  --brand: #2dd4bf;
-  --accent: #2dd4bf;
-  --accent-deep: #14b8a6;
+  /* Brand / CTA teal for dark theme */
+  --brand: #2bc1ae;
+  --accent: #2bc1ae;
+  --accent-deep: #219e8e;
   --line: rgba(240, 243, 246, 0.1);
-  --mist: rgba(45, 212, 191, 0.1);
+  --mist: rgba(43, 193, 174, 0.12);
   --header-bg: rgba(1, 4, 9, 0.9);
   --header-bg-solid: rgba(13, 17, 23, 0.95);
   --nav-muted: rgba(255, 255, 255, 0.55);
@@ -48,7 +48,7 @@ html[data-theme="light"] {
   --snow: #0d1117;
   --ink: #0d1117;
   --ink-muted: #57606a;
-  --brand: #2dd4bf;
+  --brand: #2bc1ae;
   --accent: #0d1117;
   --accent-deep: #000000;
   --line: rgba(15, 23, 42, 0.12);

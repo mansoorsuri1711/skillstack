@@ -56,14 +56,14 @@ export default function Header() {
       }`}
     >
       <div className="relative mx-auto flex h-full max-w-7xl items-center px-4 sm:px-6 md:px-8">
-        {/* Left — logo (balanced with right cluster so center nav stays true-middle) */}
-        <div className="relative z-10 flex min-w-0 flex-1 items-center justify-start">
-          <Logo size="sm" priority className="shrink-0" />
+        {/* Left — logo. pointer-events-none so empty flex space doesn't block center nav clicks */}
+        <div className="relative z-10 flex min-w-0 flex-1 items-center justify-start pointer-events-none">
+          <Logo size="sm" priority className="pointer-events-auto shrink-0" />
         </div>
 
-        {/* Center — tight menu cluster, like Cursor */}
+        {/* Center — above side columns so Services…Contact stay clickable */}
         <nav
-          className="absolute left-1/2 top-1/2 z-[5] hidden -translate-x-1/2 -translate-y-1/2 items-center gap-5 md:flex lg:gap-6"
+          className="absolute left-1/2 top-1/2 z-20 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-5 md:flex lg:gap-6"
           aria-label="Primary"
         >
           {links.map((link) => (
@@ -79,27 +79,27 @@ export default function Header() {
         </nav>
 
         {/* Right — auth + theme */}
-        <div className="relative z-10 flex min-w-0 flex-1 items-center justify-end gap-2 sm:gap-2.5">
+        <div className="relative z-10 flex min-w-0 flex-1 items-center justify-end gap-2 pointer-events-none sm:gap-2.5">
           {showAuth ? (
             <>
               <button
                 type="button"
                 onClick={() => void signOutToHome()}
-                className={`hidden sm:inline-flex ${btnOutline}`}
+                className={`pointer-events-auto hidden sm:inline-flex ${btnOutline}`}
               >
                 Sign out
               </button>
               <Link
                 href="/profile"
                 prefetch={true}
-                className={`hidden sm:inline-flex ${btnOutline}`}
+                className={`pointer-events-auto hidden sm:inline-flex ${btnOutline}`}
               >
                 Profile
               </Link>
               <Link
                 href="/dashboard"
                 prefetch={true}
-                className={`hidden sm:inline-flex ${btnSolid}`}
+                className={`pointer-events-auto hidden sm:inline-flex ${btnSolid}`}
               >
                 Dashboard
               </Link>
@@ -111,27 +111,27 @@ export default function Header() {
               <Link
                 href="/login"
                 prefetch={true}
-                className="hidden whitespace-nowrap text-sm text-[var(--nav-muted)] transition-colors hover:text-[var(--nav-strong)] sm:inline-flex"
+                className="pointer-events-auto hidden whitespace-nowrap text-sm text-[var(--nav-muted)] transition-colors hover:text-[var(--nav-strong)] sm:inline-flex"
               >
                 Log in
               </Link>
               <Link
                 href="/register"
                 prefetch={true}
-                className={`hidden sm:inline-flex ${btnSolid}`}
+                className={`pointer-events-auto hidden sm:inline-flex ${btnSolid}`}
               >
                 Register
               </Link>
             </>
           ) : null}
 
-          <div className="ml-2 sm:ml-3">
+          <div className="pointer-events-auto ml-2 sm:ml-3">
             <ThemeToggle compact />
           </div>
 
           <button
             type="button"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-snow/25 text-snow md:hidden"
+            className="pointer-events-auto inline-flex h-9 w-9 items-center justify-center rounded-full border border-snow/25 text-snow md:hidden"
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             aria-label={menuOpen ? "Close menu" : "Open menu"}

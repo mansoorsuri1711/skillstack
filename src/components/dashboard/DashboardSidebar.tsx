@@ -100,7 +100,6 @@ function NavLink({
   label,
   icon: Icon,
   exact,
-  nested,
   onNavigate,
   collapsed,
 }: {
@@ -125,16 +124,12 @@ function NavLink({
       onTouchStart={() => router.prefetch(href)}
       data-nav-active={active ? "true" : undefined}
       onClick={onNavigate}
-      className={`group/tip relative flex items-center rounded-md py-1.5 text-sm font-sans transition-colors ${
-        collapsed
-          ? "justify-center px-0"
-          : nested
-            ? "gap-2.5 px-3 pl-6"
-            : "gap-2.5 px-3"
+      className={`group/tip relative flex items-center rounded-lg py-1.5 text-sm font-sans transition-colors ${
+        collapsed ? "justify-center px-0" : "gap-2.5 px-3"
       } ${
         active
           ? "bg-mist font-medium text-snow"
-          : "text-ink-muted hover:bg-mist hover:text-snow"
+          : "text-ink-muted hover:bg-mist/70 hover:text-snow"
       }`}
     >
       {active && !collapsed ? (
@@ -142,8 +137,8 @@ function NavLink({
       ) : null}
       {Icon ? (
         <Icon
-          className={`dash-icon h-4 w-4 shrink-0 ${
-            active ? "" : "dash-icon-muted"
+          className={`h-4 w-4 shrink-0 ${
+            active ? "text-accent" : "dash-icon-muted"
           }`}
           strokeWidth={active ? 2.25 : 2}
         />
@@ -211,8 +206,8 @@ function ProjectRowItem({
     <div
       className={`group relative flex items-center justify-between rounded-lg px-2.5 py-1.5 text-left text-xs transition-colors ${
         isActive
-          ? "bg-white/10 font-medium text-snow shadow-sm"
-          : "text-ink-muted hover:bg-white/5 hover:text-ink"
+          ? "bg-accent/15 font-medium text-snow shadow-sm"
+          : "text-ink-muted hover:bg-mist hover:text-ink"
       }`}
     >
       <button
@@ -313,7 +308,7 @@ function ProjectsSidebarSection({
           type="button"
           onClick={onOpenNewModal}
           aria-label="New project"
-          className="group/tip relative flex h-9 w-9 items-center justify-center rounded-md border border-line text-snow transition hover:bg-mist"
+          className="group/tip relative flex h-9 w-9 items-center justify-center rounded-xl border border-line text-snow transition hover:bg-accent/10"
         >
           <Plus className="dash-icon h-4 w-4" />
           <CollapseTip label="New project" />
@@ -323,7 +318,7 @@ function ProjectsSidebarSection({
             type="button"
             aria-label={activeProject.name || activeProject.domain}
             onClick={onNavigate}
-            className="group/tip relative flex h-9 w-9 items-center justify-center rounded-md bg-mist text-snow"
+            className="group/tip relative flex h-9 w-9 items-center justify-center rounded-md bg-mist text-accent"
           >
             <Globe className="dash-icon h-4 w-4" />
             <CollapseTip label={activeProject.name || activeProject.domain} />
@@ -449,7 +444,6 @@ function NavGroupSection({
                 label={item.label}
                 icon={item.icon}
                 exact={item.exact}
-                nested
                 onNavigate={onNavigate}
               />
             ))}
@@ -645,7 +639,7 @@ function DashboardSidebarNav({
 
       {/* Browse / Chat Mode Switcher Tabs */}
       <div
-        className={`mb-4 gap-1 rounded-lg border border-line bg-bg p-1 text-xs ${
+        className={`mb-4 gap-1 rounded-lg border border-line bg-bg-elevated p-1 text-xs ${
           collapsed ? "flex flex-col" : "grid grid-cols-2"
         }`}
       >
@@ -660,7 +654,9 @@ function DashboardSidebarNav({
               : "text-ink-muted hover:text-snow"
           }`}
         >
-          <LayoutGrid className="dash-icon h-3.5 w-3.5" />
+          <LayoutGrid
+            className={`h-3.5 w-3.5 ${!isChat ? "text-accent" : "dash-icon"}`}
+          />
           {!collapsed ? "Browse" : <CollapseTip label="Browse" />}
         </Link>
         <Link
@@ -674,7 +670,9 @@ function DashboardSidebarNav({
               : "text-ink-muted hover:text-snow"
           }`}
         >
-          <MessageSquare className="dash-icon h-3.5 w-3.5" />
+          <MessageSquare
+            className={`h-3.5 w-3.5 ${isChat ? "text-accent" : "dash-icon"}`}
+          />
           {!collapsed ? "Chat" : <CollapseTip label="Chat" />}
         </Link>
       </div>
@@ -740,6 +738,12 @@ function SidebarPanel({
   const { data: session } = useSession();
   const { toggleCollapsed } = useSidebarCollapse();
   const [accountOpen, setAccountOpen] = useState(false);
+  const [accountMenuPos, setAccountMenuPos] = useState<{
+    bottom: number;
+    left: number;
+  } | null>(null);
+  const accountButtonRef = useRef<HTMLButtonElement>(null);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
   const [newProjectOpen, setNewProjectOpen] = useState(false);
@@ -763,18 +767,91 @@ function SidebarPanel({
   const avatarImage = profileImage ?? session?.user?.image ?? null;
   const displayName = session?.user?.name ?? "Account";
 
+  useLayoutEffect(() => {
+    if (!accountOpen || !accountButtonRef.current) {
+      setAccountMenuPos(null);
+      return;
+    }
+
+    const updatePos = () => {
+      const rect = accountButtonRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setAccountMenuPos({
+        bottom: window.innerHeight - rect.top + 8,
+        left: collapsed ? rect.right + 8 : rect.left,
+      });
+    };
+
+    updatePos();
+
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        accountMenuRef.current &&
+        !accountMenuRef.current.contains(e.target as Node) &&
+        accountButtonRef.current &&
+        !accountButtonRef.current.contains(e.target as Node)
+      ) {
+        setAccountOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("resize", updatePos);
+    window.addEventListener("scroll", updatePos, true);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("resize", updatePos);
+      window.removeEventListener("scroll", updatePos, true);
+    };
+  }, [accountOpen, collapsed]);
+
+  const accountMenu =
+    accountOpen && accountMenuPos ? (
+      <div
+        ref={accountMenuRef}
+        className="fixed z-[80] w-48 border border-line bg-bg-elevated py-1 shadow-2xl"
+        style={{
+          bottom: accountMenuPos.bottom,
+          left: accountMenuPos.left,
+        }}
+      >
+        <Link
+          href="/profile"
+          prefetch={true}
+          className="flex items-center gap-2 px-3 py-2 text-[13px] text-ink hover:bg-mist"
+          onClick={() => setAccountOpen(false)}
+        >
+          <User className="dash-icon h-4 w-4 shrink-0" /> Profile
+        </Link>
+        <Link
+          href="/"
+          className="flex items-center gap-2 px-3 py-2 text-[13px] text-ink hover:bg-mist"
+          onClick={() => setAccountOpen(false)}
+        >
+          <ExternalLink className="dash-icon h-4 w-4 shrink-0" /> Marketing site
+        </Link>
+        <button
+          type="button"
+          onClick={() => void signOutToHome()}
+          className="flex w-full items-center gap-2 px-3 py-2 text-[13px] text-ink hover:bg-mist"
+        >
+          <LogOut className="dash-icon h-4 w-4 shrink-0" /> Sign out
+        </button>
+      </div>
+    ) : null;
+
   return (
     <>
       <aside
         className={`dashboard-sidebar flex h-full w-full shrink-0 flex-col border-r border-line bg-bg-soft transition-[width] duration-200 ease-out ${
-          collapsed
-            ? "overflow-y-auto overflow-x-visible md:w-[4.5rem]"
-            : "md:w-60"
+          collapsed ? "md:w-[4.5rem]" : "md:w-60"
         }`}
       >
         <div
-          className={`flex items-center border-b border-line py-3.5 ${
-            collapsed ? "flex-col gap-2 px-2" : "justify-between gap-2 px-3"
+          className={`flex shrink-0 items-center border-b border-line ${
+            collapsed
+              ? "h-auto flex-col gap-2 px-2 py-3"
+              : "h-14 justify-between gap-2 px-3"
           }`}
         >
           <Logo
@@ -783,7 +860,7 @@ function SidebarPanel({
             variant={collapsed ? "mark" : "full"}
             className={collapsed ? "justify-center" : undefined}
           />
-          <div className="flex items-center gap-1">
+          <div className={`flex items-center gap-1 ${collapsed ? "w-full justify-center" : ""}`}>
             {showCollapseToggle ? (
               <button
                 type="button"
@@ -819,7 +896,7 @@ function SidebarPanel({
             <button
               type="button"
               onClick={() => setNewProjectOpen(true)}
-              className="flex w-full items-center justify-between rounded-lg border border-line/80 bg-mist px-3 py-2 text-sm font-medium font-sans text-snow shadow-sm transition-all hover:border-snow/25 hover:bg-mist"
+              className="flex w-full items-center justify-between rounded-xl border border-line/80 bg-mist px-3 py-2 text-[13px] font-medium text-snow transition hover:border-accent/40 hover:bg-accent/10"
             >
               <span className="flex items-center gap-2">
                 <Plus className="dash-icon h-4 w-4" />
@@ -838,65 +915,41 @@ function SidebarPanel({
         />
 
         <div className={`border-t border-line ${collapsed ? "p-2" : "p-3"}`}>
-          <div className="relative">
-            <button
-              type="button"
-              onMouseEnter={() => router.prefetch("/profile")}
-              onTouchStart={() => router.prefetch("/profile")}
-              onClick={() => setAccountOpen((v) => !v)}
-              aria-label={collapsed ? displayName : undefined}
-              className={`group/tip relative flex w-full items-center rounded-md text-left text-sm text-snow hover:bg-mist ${
-                collapsed ? "justify-center p-1.5" : "gap-2.5 px-3 py-2"
-              }`}
-            >
-              {collapsed ? <CollapseTip label={displayName} /> : null}
-              <UserAvatar name={displayName} image={avatarImage} size="md" />
-              {!collapsed ? (
-                <>
-                  <span className="min-w-0 flex-1 truncate font-medium font-sans">
-                    {displayName}
-                  </span>
-                  <ChevronDown
-                    className={`dash-icon-muted h-4 w-4 shrink-0 transition-transform ${
-                      accountOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </>
-              ) : null}
-            </button>
-            {accountOpen ? (
-              <div
-                className={`absolute bottom-full mb-1 rounded-lg border border-line bg-bg-elevated py-1 shadow-xl ${
-                  collapsed ? "left-0 w-44" : "left-0 right-0"
-                }`}
-              >
-                <Link
-                  href="/profile"
-                  prefetch={true}
-                  className="flex items-center gap-2 px-3 py-2 text-sm font-sans text-ink hover:bg-mist"
-                  onClick={() => setAccountOpen(false)}
-                >
-                  <User className="dash-icon h-4 w-4" /> Profile
-                </Link>
-                <Link
-                  href="/"
-                  className="flex items-center gap-2 px-3 py-2 text-sm font-sans text-ink hover:bg-mist"
-                  onClick={() => setAccountOpen(false)}
-                >
-                  <ExternalLink className="dash-icon h-4 w-4" /> Marketing site
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => void signOutToHome()}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-sm font-sans text-ink hover:bg-mist"
-                >
-                  <LogOut className="dash-icon h-4 w-4" /> Sign out
-                </button>
-              </div>
+          <button
+            ref={accountButtonRef}
+            type="button"
+            onMouseEnter={() => router.prefetch("/profile")}
+            onTouchStart={() => router.prefetch("/profile")}
+            onClick={() => setAccountOpen((v) => !v)}
+            aria-label={collapsed ? displayName : undefined}
+            aria-expanded={accountOpen}
+            className={`group/tip relative flex w-full items-center text-left text-sm text-snow hover:bg-mist ${
+              collapsed ? "justify-center p-1.5" : "gap-2.5 px-3 py-2"
+            }`}
+          >
+            {collapsed && !accountOpen ? (
+              <CollapseTip label={displayName} />
             ) : null}
-          </div>
+            <UserAvatar name={displayName} image={avatarImage} size="md" />
+            {!collapsed ? (
+              <>
+                <span className="min-w-0 flex-1 truncate font-medium">
+                  {displayName}
+                </span>
+                <ChevronDown
+                  className={`dash-icon-muted h-4 w-4 shrink-0 transition-transform ${
+                    accountOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </>
+            ) : null}
+          </button>
         </div>
       </aside>
+
+      {typeof document !== "undefined" && accountMenu
+        ? createPortal(accountMenu, document.body)
+        : null}
 
       <NewProjectModal
         open={newProjectOpen}
