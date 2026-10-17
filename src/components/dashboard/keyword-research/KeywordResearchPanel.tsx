@@ -814,36 +814,6 @@ export function KeywordResearchPanel({
         <LoadingBlock label="Fetching keyword metrics, difficulty, and global distribution..." />
       ) : results.length > 0 || activeInsights ? (
         <div className="flex flex-col gap-6">
-          {/* Ahrefs-style Overview Header Banner */}
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-line bg-bg-elevated px-5 py-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
-                Overview:
-              </span>
-              <h1 className="font-display text-xl font-bold text-snow">
-                {titleCaseKeyword(activeSeed)}
-              </h1>
-              {activeInsights?.intent ? (
-                <IntentBadge intent={activeInsights.intent} />
-              ) : null}
-              <div className="hidden sm:flex items-center gap-2 text-xs text-ink-muted pl-2 border-l border-line">
-                <span>Database: {currentLocationMeta.flag} {currentLocationMeta.label}</span>
-                <span>·</span>
-                <span>Live DataForSEO & Ahrefs Sync</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => exportCsv()}
-                className={`${buttonGhostClass} px-3 py-1.5 text-xs`}
-              >
-                <Download className="h-3.5 w-3.5" /> Export All
-              </button>
-            </div>
-          </div>
-
           {/* 4 Hero Cards (Ahrefs style) */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {/* 1. Keyword Difficulty Card */}
