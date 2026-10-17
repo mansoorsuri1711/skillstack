@@ -9,7 +9,7 @@ export default function Hero() {
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_20%,rgba(45,212,191,0.12),transparent_55%),radial-gradient(ellipse_60%_40%_at_10%_80%,rgba(56,100,140,0.1),transparent_50%)]"
+        className="theme-ambient pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_20%,rgba(45,212,191,0.12),transparent_55%),radial-gradient(ellipse_60%_40%_at_10%_80%,rgba(56,100,140,0.1),transparent_50%)]"
       />
 
       <div className="relative z-10 mx-auto grid w-full max-w-6xl items-center gap-6 px-4 pb-12 pt-28 sm:gap-8 sm:px-6 sm:pb-16 sm:pt-32 md:grid-cols-[1.15fr_0.85fr] md:gap-12 md:px-8 md:pb-20 md:pt-36">
@@ -44,7 +44,7 @@ export default function Hero() {
             </a>
             <a
               href="/services"
-              className="inline-flex items-center justify-center rounded-md border border-line bg-mist px-3 py-2.5 text-center text-sm font-medium text-snow transition-colors hover:border-line hover:bg-bg-elevated sm:px-6 sm:py-3"
+              className="inline-flex items-center justify-center rounded-md border border-snow/25 bg-transparent px-3 py-2.5 text-center text-sm font-medium text-snow transition-colors hover:bg-mist sm:px-6 sm:py-3"
             >
               See services
             </a>

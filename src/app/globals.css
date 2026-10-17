@@ -14,6 +14,8 @@ html:not([data-theme]) {
   --snow: #f0f3f6;
   --ink: #e6edf3;
   --ink-muted: #8b949e;
+  /* Brand teal — stays teal in both themes (logo/hero dots) */
+  --brand: #2dd4bf;
   --accent: #2dd4bf;
   --accent-deep: #14b8a6;
   --line: rgba(240, 243, 246, 0.1);
@@ -38,25 +40,27 @@ html:not([data-theme]) {
 }
 
 html[data-theme="light"] {
-  --bg: #f4f6f8;
+  /* Full white canvas — CTAs black; brand teal only for dots */
+  --bg: #ffffff;
   --bg-soft: #ffffff;
   --bg-elevated: #ffffff;
-  --bg-input: #ffffff;
+  --bg-input: #f4f4f5;
   --snow: #0d1117;
-  --ink: #1f2328;
+  --ink: #0d1117;
   --ink-muted: #57606a;
-  --accent: #0f766e;
-  --accent-deep: #115e59;
-  --line: rgba(15, 23, 42, 0.14);
-  --mist: rgba(15, 118, 110, 0.12);
+  --brand: #2dd4bf;
+  --accent: #0d1117;
+  --accent-deep: #000000;
+  --line: rgba(15, 23, 42, 0.12);
+  --mist: rgba(15, 23, 42, 0.06);
   --header-bg: rgba(255, 255, 255, 0.92);
   --header-bg-solid: rgba(255, 255, 255, 0.98);
-  --nav-muted: rgba(15, 23, 42, 0.6);
+  --nav-muted: rgba(15, 23, 42, 0.55);
   --nav-strong: #0d1117;
   --accent-fg: #ffffff;
-  --success: #047857;
-  --success-bg: rgba(4, 120, 87, 0.1);
-  --success-border: rgba(4, 120, 87, 0.28);
+  --success: #166534;
+  --success-bg: rgba(22, 101, 52, 0.08);
+  --success-border: rgba(22, 101, 52, 0.25);
   --warn: #b45309;
   --warn-bg: rgba(180, 83, 9, 0.1);
   --warn-border: rgba(180, 83, 9, 0.28);
@@ -83,6 +87,7 @@ html:not([data-theme]) {
   --color-ink-muted: var(--ink-muted);
   --color-accent: var(--accent);
   --color-accent-deep: var(--accent-deep);
+  --color-brand: var(--brand);
   --color-line: var(--line);
   --color-mist: var(--mist);
   --color-accent-fg: var(--accent-fg);
@@ -114,6 +119,7 @@ html:not([data-theme="light"]) .logo-mark-invert {
   --color-ink-muted: var(--ink-muted);
   --color-accent: var(--accent);
   --color-accent-deep: var(--accent-deep);
+  --color-brand: var(--brand);
   --color-line: var(--line);
   --color-mist: var(--mist);
   --color-accent-fg: var(--accent-fg);
@@ -153,6 +159,8 @@ body {
 .text-ink-muted { color: var(--ink-muted) !important; }
 .text-accent { color: var(--accent) !important; }
 .text-accent-deep { color: var(--accent-deep) !important; }
+.text-brand { color: var(--brand) !important; }
+.bg-brand { background-color: var(--brand) !important; }
 .border-line { border-color: var(--line) !important; }
 .bg-mist { background-color: var(--mist) !important; }
 .text-success { color: var(--success) !important; }
@@ -165,18 +173,29 @@ body {
 .bg-danger-bg { background-color: var(--danger-bg) !important; }
 .border-danger-border { border-color: var(--danger-border) !important; }
 
-/* Accent / green CTAs: black text in dark theme, white text in light theme */
+/* Accent CTAs: black text on teal (dark), white text on black (light) */
 .bg-accent {
+  background-color: var(--accent) !important;
   color: var(--accent-fg);
+}
+.hover\:bg-accent-deep:hover {
+  background-color: var(--accent-deep) !important;
 }
 button.bg-accent,
 a.bg-accent,
 .bg-accent.text-white,
-.bg-accent.text-accent-fg {
+.bg-accent.text-accent-fg,
+.bg-accent.text-\[\#010409\] {
   color: var(--accent-fg) !important;
 }
 .text-accent-fg {
   color: var(--accent-fg) !important;
+}
+
+/* Teal ambient glows only on dark theme */
+html[data-theme="light"] .theme-ambient {
+  background-image: none !important;
+  opacity: 0;
 }
 
 select option {

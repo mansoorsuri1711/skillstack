@@ -44,16 +44,19 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b border-line transition-[background-color,backdrop-filter] duration-200 ${HEADER_HEIGHT_CLASS} ${
+      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter] duration-200 ${HEADER_HEIGHT_CLASS} ${
         solid || menuOpen
           ? "bg-[var(--header-bg-solid)] backdrop-blur-md"
-          : "bg-[var(--header-bg)] backdrop-blur-sm"
+          : "bg-transparent"
       }`}
     >
-      <div className="mx-auto flex h-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6 md:px-8">
-        <Logo size="sm" priority className="relative z-10 shrink-0" />
+      <div className="mx-auto grid h-full max-w-6xl grid-cols-[1fr_auto] items-center gap-3 px-4 sm:px-6 md:grid-cols-[1fr_auto_1fr] md:px-8">
+        <Logo size="sm" priority className="relative z-10 shrink-0 justify-self-start" />
 
-        <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
+        <nav
+          className="hidden items-center gap-8 md:flex"
+          aria-label="Primary"
+        >
           {links.map((link) => (
             <Link
               key={link.href}
@@ -66,32 +69,32 @@ export default function Header() {
           ))}
         </nav>
 
-        <div className="relative z-10 flex shrink-0 items-center gap-2">
+        <div className="relative z-10 flex shrink-0 items-center justify-end gap-2 sm:gap-3">
           <ThemeToggle compact />
 
           {showAuth ? (
             <>
-              <Link
-                href="/dashboard"
-                prefetch={true}
-                className="hidden rounded-md bg-accent px-3 py-1.5 text-xs font-semibold text-accent-fg hover:bg-accent-deep sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/profile"
-                prefetch={true}
-                className="hidden rounded-md border border-line px-3 py-1.5 text-xs font-medium text-snow hover:bg-bg-soft sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
-              >
-                Profile
-              </Link>
               <button
                 type="button"
                 onClick={() => void signOutToHome()}
-                className="hidden rounded-md border border-line px-3 py-1.5 text-xs font-medium text-snow hover:bg-bg-soft sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
+                className="hidden text-sm text-[var(--nav-muted)] transition-colors hover:text-[var(--nav-strong)] sm:inline-flex"
               >
                 Sign out
               </button>
+              <Link
+                href="/profile"
+                prefetch={true}
+                className="hidden rounded-full border border-snow/25 px-4 py-1.5 text-sm font-medium text-snow transition-colors hover:bg-snow/5 sm:inline-flex"
+              >
+                Profile
+              </Link>
+              <Link
+                href="/dashboard"
+                prefetch={true}
+                className="hidden rounded-full bg-snow px-4 py-1.5 text-sm font-medium text-bg transition-opacity hover:opacity-90 sm:inline-flex"
+              >
+                Dashboard
+              </Link>
             </>
           ) : null}
 
@@ -100,14 +103,14 @@ export default function Header() {
               <Link
                 href="/login"
                 prefetch={true}
-                className="hidden rounded-md border border-line px-3 py-1.5 text-xs font-medium text-snow hover:bg-bg-soft sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
+                className="hidden text-sm text-[var(--nav-muted)] transition-colors hover:text-[var(--nav-strong)] sm:inline-flex"
               >
                 Log in
               </Link>
               <Link
                 href="/register"
                 prefetch={true}
-                className="hidden rounded-md bg-snow px-3 py-1.5 text-xs font-medium text-bg hover:opacity-90 sm:inline-flex sm:px-4 sm:py-2 sm:text-sm"
+                className="hidden rounded-full bg-snow px-4 py-1.5 text-sm font-medium text-bg transition-opacity hover:opacity-90 sm:inline-flex"
               >
                 Register
               </Link>
@@ -116,7 +119,7 @@ export default function Header() {
 
           <button
             type="button"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line text-snow md:hidden"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-snow/25 text-snow md:hidden"
             aria-expanded={menuOpen}
             aria-controls="mobile-nav"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -140,7 +143,7 @@ export default function Header() {
       {menuOpen ? (
         <nav
           id="mobile-nav"
-          className="absolute inset-x-0 top-full max-h-[calc(100svh-4rem)] overflow-y-auto border-b border-line bg-bg-soft px-4 pb-6 pt-2 animate-in fade-in slide-in-from-top-2 duration-200 sm:max-h-[calc(100svh-4.5rem)] md:hidden"
+          className="absolute inset-x-0 top-full max-h-[calc(100svh-4rem)] overflow-y-auto bg-[var(--header-bg-solid)] px-4 pb-6 pt-2 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-200 sm:max-h-[calc(100svh-4.5rem)] md:hidden"
           aria-label="Mobile"
         >
           <ul className="flex flex-col">
@@ -148,7 +151,7 @@ export default function Header() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="block border-b border-line px-1 py-3.5 text-base text-ink"
+                  className="block px-1 py-3.5 text-base text-ink"
                   onClick={() => setMenuOpen(false)}
                 >
                   {link.label}
@@ -157,20 +160,20 @@ export default function Header() {
             ))}
           </ul>
 
-          <div className="mt-5 flex flex-col gap-2">
+          <div className="mt-5 flex flex-col gap-2.5">
             {showAuth ? (
               <>
                 <Link
                   href="/dashboard"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full rounded-md bg-accent px-4 py-3 text-center text-sm font-semibold text-accent-fg"
+                  className="w-full rounded-full bg-snow px-4 py-3 text-center text-sm font-semibold text-bg"
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/profile"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full rounded-md border border-accent/40 bg-accent/10 px-4 py-3 text-center text-sm font-medium text-accent"
+                  className="w-full rounded-full border border-snow/25 px-4 py-3 text-center text-sm font-medium text-snow"
                 >
                   Profile
                 </Link>
@@ -180,7 +183,7 @@ export default function Header() {
                     setMenuOpen(false);
                     void signOutToHome();
                   }}
-                  className="w-full rounded-md border border-line px-4 py-3 text-sm font-medium text-snow"
+                  className="w-full rounded-full px-4 py-3 text-sm font-medium text-[var(--nav-muted)]"
                 >
                   Sign out
                 </button>
@@ -189,18 +192,18 @@ export default function Header() {
             {showGuest ? (
               <>
                 <Link
-                  href="/login"
-                  onClick={() => setMenuOpen(false)}
-                  className="w-full rounded-md border border-line px-4 py-3 text-center text-sm font-medium text-snow"
-                >
-                  Log in
-                </Link>
-                <Link
                   href="/register"
                   onClick={() => setMenuOpen(false)}
-                  className="w-full rounded-md bg-snow px-4 py-3 text-center text-sm font-semibold text-bg"
+                  className="w-full rounded-full bg-snow px-4 py-3 text-center text-sm font-semibold text-bg"
                 >
                   Register
+                </Link>
+                <Link
+                  href="/login"
+                  onClick={() => setMenuOpen(false)}
+                  className="w-full rounded-full px-4 py-3 text-center text-sm font-medium text-[var(--nav-muted)]"
+                >
+                  Log in
                 </Link>
               </>
             ) : null}

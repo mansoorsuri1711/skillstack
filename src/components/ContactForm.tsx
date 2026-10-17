@@ -127,7 +127,7 @@ export default function ContactForm() {
             name="topic"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            className="w-full appearance-none rounded-md border border-line bg-bg py-2.5 pl-3 pr-11 text-snow outline-none transition-colors focus:border-[#2cd4bf]"
+            className="w-full appearance-none rounded-md border border-line bg-bg py-2.5 pl-3 pr-11 text-snow outline-none transition-colors focus:border-accent"
           >
             <option>Full stack project</option>
             <option>Website build</option>

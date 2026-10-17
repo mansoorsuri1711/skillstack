@@ -76,13 +76,13 @@ function CardStack({
             : "from-[#161b22] to-[#0d1117]";
           const cardBorder = isOut
             ? card.accent || isNew
-              ? "border-accent/45"
+              ? "border-brand/45"
               : "border-line"
             : card.accent
-              ? "border-accent/25"
+              ? "border-brand/25"
               : "border-line";
           const labelColor = card.accent
-            ? "text-accent"
+            ? "text-brand"
             : isOut
               ? "text-[#f0f3f6]"
               : "text-[#c9d1d9]";
@@ -140,7 +140,7 @@ function CardStack({
               <div
                 className={`relative mt-2 h-px w-full bg-gradient-to-r ${
                   card.accent || (isOut && isNew)
-                    ? "from-accent/40"
+                    ? "from-brand/40"
                     : "from-white/15"
                 } to-transparent`}
               />
@@ -165,7 +165,7 @@ export default function Seo2026Path() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="text-center"
         >
-          <p className="text-xs font-medium uppercase tracking-[0.18em] text-accent sm:text-sm">
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-brand sm:text-sm">
             SEO in 2026
           </p>
           <h2 className="font-display mx-auto mt-3 max-w-2xl text-2xl font-bold tracking-tight text-snow sm:text-4xl md:text-5xl">
@@ -199,7 +199,7 @@ export default function Seo2026Path() {
             transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
           >
             <div className="mb-8 text-center">
-              <span className="inline-block rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-medium text-accent">
+              <span className="inline-block rounded-full border border-line bg-mist px-3 py-1 text-xs font-medium text-ink-muted">
                 How it actually works in 2026
               </span>
             </div>

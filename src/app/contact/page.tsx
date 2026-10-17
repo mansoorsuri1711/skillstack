@@ -125,7 +125,7 @@ export default function ContactPage() {
       <div className="relative overflow-hidden">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_45%_40%_at_90%_20%,rgba(45,212,191,0.07),transparent_55%)]"
+          className="theme-ambient pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_45%_40%_at_90%_20%,rgba(45,212,191,0.07),transparent_55%)]"
         />
         <div className="relative mx-auto grid max-w-6xl gap-10 px-6 py-14 md:grid-cols-[1.1fr_0.9fr] md:gap-14 md:px-8 md:py-20">
           <FadeIn>

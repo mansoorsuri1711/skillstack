@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 const DOT_CLASS =
-  "pointer-events-none absolute origin-center rounded-full bg-[#2cd4bf] will-change-transform";
+  "pointer-events-none absolute origin-center rounded-full bg-brand will-change-transform";
 
 const sizeClass =
   "h-3 w-3 sm:h-3.5 sm:w-3.5 md:h-4 md:w-4 lg:h-5 lg:w-5";

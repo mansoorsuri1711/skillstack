@@ -600,7 +600,7 @@ export default function ProfileEditor() {
           onChange={(e) =>
             setForm({ ...form, availableForWork: e.target.checked })
           }
-          className="h-4 w-4 rounded border-line bg-bg accent-[#2cd4bf]"
+          className="h-4 w-4 rounded border-line bg-bg accent-accent"
         />
         <span className="text-sm text-snow">
           Available for projects / open to work

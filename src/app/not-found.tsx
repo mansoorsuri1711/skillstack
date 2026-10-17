@@ -7,7 +7,7 @@ export default function NotFound() {
       <div className="relative flex min-h-[70svh] flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_30%,rgba(45,212,191,0.12),transparent_60%)]"
+          className="theme-ambient pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_30%,rgba(45,212,191,0.12),transparent_60%)]"
         />
         <p className="relative text-xs font-medium uppercase tracking-[0.18em] text-accent">
           404

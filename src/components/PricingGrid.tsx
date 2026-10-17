@@ -15,7 +15,7 @@ export default function PricingGrid() {
     <div className="relative overflow-hidden px-6 py-14 md:px-8 md:py-20">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(45,212,191,0.12),transparent_70%)]"
+        className="theme-ambient pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(45,212,191,0.12),transparent_70%)]"
       />
       <div className="relative mx-auto max-w-4xl">
         <FadeIn delay={0}>

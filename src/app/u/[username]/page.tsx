@@ -77,7 +77,7 @@ export default async function PublicProfilePage({ params }: Props) {
       <div className="relative overflow-hidden border-b border-line bg-bg-soft">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_0%,rgba(45,212,191,0.12),transparent_55%)]"
+          className="theme-ambient pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_0%,rgba(45,212,191,0.12),transparent_55%)]"
         />
         <div className="relative mx-auto max-w-3xl px-6 py-14 md:px-8 md:py-20">
           <FadeIn>

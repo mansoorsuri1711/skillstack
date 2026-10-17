@@ -68,7 +68,7 @@ export default function AboutPage() {
       <div className="relative overflow-hidden border-b border-line bg-bg">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_10%_20%,rgba(45,212,191,0.08),transparent_55%)]"
+          className="theme-ambient pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_10%_20%,rgba(45,212,191,0.08),transparent_55%)]"
         />
         <div className="relative mx-auto grid max-w-6xl gap-12 px-6 py-14 md:grid-cols-[1.15fr_0.85fr] md:gap-16 md:px-8 md:py-20">
           <FadeIn>

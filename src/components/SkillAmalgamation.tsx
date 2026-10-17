@@ -113,7 +113,7 @@ export default function SkillAmalgamation() {
             <div
               key={layer.label}
               className={`pointer-events-none absolute right-0 w-[96%] max-w-[360px] rounded-md border bg-gradient-to-br px-3.5 py-2.5 shadow-[0_12px_40px_rgba(0,0,0,0.45)] transition-all duration-300 ease-out sm:px-5 sm:py-4 ${layer.tone} ${
-                isHovered ? "border-accent/50 z-40" : layer.border
+                isHovered ? "border-brand/50 z-40" : layer.border
               }`}
               style={{
                 zIndex: isHovered ? 40 : i + 1,
@@ -132,7 +132,7 @@ export default function SkillAmalgamation() {
                   {String(i + 1).padStart(2, "0")}
                 </span>
               </div>
-              <div className="mt-1.5 h-px w-full bg-gradient-to-r from-accent/40 to-transparent sm:mt-2" />
+              <div className="mt-1.5 h-px w-full bg-gradient-to-r from-brand/40 to-transparent sm:mt-2" />
             </div>
           );
         })}

@@ -31,7 +31,7 @@ export default function PageHero({
     >
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_85%_10%,rgba(45,212,191,0.12),transparent_55%),radial-gradient(ellipse_50%_40%_at_5%_90%,rgba(56,100,140,0.14),transparent_50%)]"
+        className="theme-ambient pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_85%_10%,rgba(45,212,191,0.12),transparent_55%),radial-gradient(ellipse_50%_40%_at_5%_90%,rgba(56,100,140,0.14),transparent_50%)]"
       />
       <div className="relative z-10 mx-auto max-w-6xl px-6 md:px-8">
         <FadeIn>
