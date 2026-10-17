@@ -308,7 +308,7 @@ function ProjectsSidebarSection({
           type="button"
           onClick={onOpenNewModal}
           aria-label="New project"
-          className="group/tip relative flex h-9 w-9 items-center justify-center rounded-xl border border-line bg-[#142628] text-snow transition hover:bg-[#1a3235]"
+          className="group/tip relative flex h-9 w-9 items-center justify-center rounded-xl border border-line text-snow transition hover:bg-accent/10"
         >
           <Plus className="dash-icon h-4 w-4" />
           <CollapseTip label="New project" />
@@ -887,7 +887,7 @@ function SidebarPanel({
             <button
               type="button"
               onClick={() => setNewProjectOpen(true)}
-              className="flex w-full items-center justify-between rounded-xl border border-line/80 bg-[#142628] px-3 py-2 text-[13px] font-medium text-snow transition hover:border-accent/40 hover:bg-[#1a3235]"
+              className="flex w-full items-center justify-between rounded-xl border border-line/80 bg-mist px-3 py-2 text-[13px] font-medium text-snow transition hover:border-accent/40 hover:bg-accent/10"
             >
               <span className="flex items-center gap-2">
                 <Plus className="dash-icon h-4 w-4" />
