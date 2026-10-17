@@ -23,6 +23,7 @@ export default function Logo({
 }: LogoProps) {
   const px = size === "sm" ? 34 : 40;
   const textSize = size === "sm" ? "text-base" : "text-xl";
+  const showWordmark = variant === "full";
 
   const mark = (
     <Image
@@ -35,12 +36,18 @@ export default function Logo({
     />
   );
 
-  const inner =
-    variant === "mark" ? (
-      mark
-    ) : (
-      <span className="inline-flex items-center gap-1.5">
-        {mark}
+  const inner = (
+    <span className="inline-flex min-w-0 items-center gap-1.5">
+      {mark}
+      {/* Keep wordmark mounted so collapse/expand animates symmetrically (no pop-in on the ●). */}
+      <span
+        className={`inline-flex min-w-0 items-baseline overflow-hidden whitespace-nowrap transition-[max-width,opacity,margin] duration-200 ease-out ${
+          showWordmark
+            ? "ml-0 max-w-[9.5rem] opacity-100"
+            : "ml-0 max-w-0 opacity-0"
+        }`}
+        aria-hidden={!showWordmark}
+      >
         <span
           className={`font-display font-bold tracking-tight text-snow ${textSize}`}
         >
@@ -53,7 +60,8 @@ export default function Logo({
           </span>
         </span>
       </span>
-    );
+    </span>
+  );
 
   if (!href) {
     return <span className={className}>{inner}</span>;
