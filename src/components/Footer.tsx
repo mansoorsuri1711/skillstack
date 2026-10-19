@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
 import {
+  INSTAGRAM_URL,
   LINKEDIN_URL,
   OFFICE,
   SITE_EMAIL,
@@ -123,6 +124,14 @@ export default function Footer() {
                 className="text-ink-muted transition-colors hover:text-accent"
               >
                 X
+              </a>
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer me"
+                className="text-ink-muted transition-colors hover:text-accent"
+              >
+                Instagram
               </a>
             </div>
           </div>

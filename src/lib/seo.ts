@@ -14,6 +14,8 @@ export const SITE_PHONE_HREF = `tel:${SITE_PHONE.replace(/[^\d+]/g, "")}`;
 export const FOUNDER_NAME = "Mansoor Khan";
 export const LINKEDIN_URL = "https://www.linkedin.com/company/skillstack-co/";
 export const X_URL = "https://x.com/skillstack_co";
+export const INSTAGRAM_URL =
+  "https://www.instagram.com/skillstack.com.pk/?__d=1%3Futm_source%3Dig_embed";
 
 /** Shared social / Google preview images (JPEG for LinkedIn/Facebook compatibility). */
 export const OG_IMAGE = {
@@ -244,7 +246,7 @@ export function siteGraphJsonLd() {
         disambiguatingDescription:
           "SkillStack is a registered Pakistani tech company (SkillStack Private Limited), not to be confused with the general concept of skill stacking. It is a web development and SEO agency based in Gilgit-Baltistan, Pakistan, operating at skillstack.com.pk.",
         slogan: "From keyword to Google's first page — websites built to rank and earn.",
-        sameAs: [LINKEDIN_URL, X_URL],
+        sameAs: [LINKEDIN_URL, X_URL, INSTAGRAM_URL],
         founder: { "@id": `${SITE_URL}/#mansoor-khan` },
         foundingLocation: {
           "@type": "Place",
@@ -324,7 +326,7 @@ export function siteGraphJsonLd() {
         email: SITE_EMAIL,
         ...(SITE_PHONE ? { telephone: SITE_PHONE } : {}),
         priceRange: "$$",
-        sameAs: [LINKEDIN_URL, X_URL],
+        sameAs: [LINKEDIN_URL, X_URL, INSTAGRAM_URL],
         parentOrganization: { "@id": `${SITE_URL}/#organization` },
         address: {
           "@type": "PostalAddress",
