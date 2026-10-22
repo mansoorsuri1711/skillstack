@@ -53,7 +53,6 @@ export default function ProcessPage() {
         eyebrow="Process"
         title="A straight path from research to revenue."
         lead="Four stages. Clear approvals. No mystery black-box SEO. Here’s exactly how a SkillStack engagement typically runs."
-        tone="elevated"
         breadcrumbs={[{ label: "Process" }]}
       />
       <ProcessDetail />
