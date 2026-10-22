@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Syne, Public_Sans } from "next/font/google";
+import localFont from "next/font/local";
 import { auth } from "@/auth";
 import Providers from "@/components/Providers";
 import AttributionCapture from "@/components/AttributionCapture";
@@ -8,18 +8,20 @@ import { SITE_URL, siteGraphJsonLd } from "@/lib/seo";
 import { THEME_BOOTSTRAP_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
-const syne = Syne({
+/* Self-hosted: avoids intermittent next/font/google Turbopack failures
+   when Google returns extensionless /l/font?kit=… URLs (vercel/next.js#99114). */
+const syne = localFont({
+  src: "./fonts/Syne-latin.woff2",
   variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: "400 800",
   display: "swap",
   preload: true,
 });
 
-const publicSans = Public_Sans({
+const publicSans = localFont({
+  src: "./fonts/PublicSans-latin.woff2",
   variable: "--font-body",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: "100 900",
   display: "swap",
   preload: true,
 });
