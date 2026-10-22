@@ -4,15 +4,6 @@ import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const oldStack = [
-  { label: "#1 on Google", sub: "The dream", top: true },
-  { label: "Clicks", sub: "Traffic" },
-  { label: "Rankings", sub: "SERP position" },
-  { label: "Content", sub: "Blog posts" },
-  { label: "Backlinks", sub: "Link building" },
-  { label: "Keywords", sub: "Research" },
-];
-
 const newStack = [
   { label: "Cited AND Ranked", sub: "Goal achieved", accent: true },
   { label: "Brand Mentions", sub: "Real-world signals" },
@@ -177,35 +168,20 @@ export default function Seo2026Path() {
           </p>
         </motion.div>
 
-        <div className="mt-16 grid grid-cols-1 gap-16 md:grid-cols-2 md:gap-20">
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, x: -24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <div className="mb-8 text-center">
-              <span className="inline-block rounded-full border border-line bg-mist px-3 py-1 text-xs font-medium text-ink-muted">
-                How Traditional SEO Works
-              </span>
-            </div>
-            <CardStack cards={oldStack} variant="old" />
-          </motion.div>
-
-          <motion.div
-            initial={reduceMotion ? false : { opacity: 0, x: 24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-          >
-            <div className="mb-8 text-center">
-              <span className="inline-block rounded-full border border-line bg-mist px-3 py-1 text-xs font-medium text-ink-muted">
-                How it actually works in 2026
-              </span>
-            </div>
-            <CardStack cards={newStack} variant="new" />
-          </motion.div>
-        </div>
+        <motion.div
+          className="mt-16"
+          initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="mb-8 text-center">
+            <h3 className="font-display text-xl font-semibold tracking-tight text-snow sm:text-2xl">
+              How it actually works in 2026
+            </h3>
+          </div>
+          <CardStack cards={newStack} variant="new" />
+        </motion.div>
 
         <motion.div
           className="mt-14 flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-center sm:gap-5"
