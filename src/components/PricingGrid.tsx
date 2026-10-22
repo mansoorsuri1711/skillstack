@@ -55,10 +55,10 @@ export default function PricingGrid() {
                 <h3 className="text-xs font-semibold uppercase tracking-wider text-ink-muted mb-4">
                   What&apos;s Included
                 </h3>
-                <ul className="space-y-3">
+                <ul className="space-y-2.5">
                   {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-3 text-sm text-ink">
-                      <Check className="h-4 w-4 shrink-0 text-accent mt-0.5" />
+                    <li key={i} className="flex items-start gap-2.5 text-sm leading-snug text-ink">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
                       <span>{feature}</span>
                     </li>
                   ))}
