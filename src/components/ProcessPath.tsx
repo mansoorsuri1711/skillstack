@@ -20,13 +20,11 @@ export default function ProcessPath() {
                 {i + 1}
               </span>
 
-              {/* Mobile horizontal connector to next */}
-              {i < processSteps.length - 1 ? (
-                <span
-                  aria-hidden
-                  className="h-px flex-1 bg-gradient-to-r from-accent/50 to-line md:hidden"
-                />
-              ) : null}
+              {/* Mobile horizontal rail (all phases, including last) */}
+              <span
+                aria-hidden
+                className="h-px flex-1 bg-gradient-to-r from-accent/50 to-line md:hidden"
+              />
             </div>
 
             <span className="font-display text-xs font-medium uppercase tracking-wider text-accent/85">
