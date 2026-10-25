@@ -137,11 +137,12 @@ export default function AboutPage() {
                 }}
               />
               <div className="absolute inset-x-0 bottom-0 p-6 md:p-7">
-                <blockquote className="font-display text-base font-medium leading-snug tracking-tight text-snow sm:text-lg">
+                {/* Fixed light colors — photo vignette is always dark */}
+                <blockquote className="font-display text-base font-medium leading-snug tracking-tight text-white sm:text-lg">
                   &ldquo;Rank honestly. Share what you learn. Build people who
                   can stand on their own.&rdquo;
                 </blockquote>
-                <p className="mt-3 text-xs font-medium uppercase tracking-[0.14em] text-accent">
+                <p className="mt-3 text-xs font-medium uppercase tracking-[0.14em] text-brand">
                   Mansoor Khan &mdash; CEO, SkillStack Private Limited
                 </p>
               </div>
